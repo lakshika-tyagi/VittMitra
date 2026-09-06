@@ -6,7 +6,7 @@ The platform is developed methodically through structured, verified milestones.
 
 ## Milestone Breakdown
 
-### 📍 Milestone 1: Repository & Development Environment Initialization `[CURRENT / COMPLETED]`
+### 📍 Milestone 1: Repository & Development Environment Initialization `[COMPLETED]`
 - [x] Git repository initialization and `.gitignore` setup.
 - [x] Standard multi-service project directory structure (`frontend/`, `backend/`, `ai-services/`, `data/`, `database/`, `docs/`, `scripts/`, `tests/`).
 - [x] Next.js + TypeScript frontend foundation.
@@ -18,11 +18,13 @@ The platform is developed methodically through structured, verified milestones.
 
 ---
 
-### ⏳ Milestone 2: Data Models, Schema Design & Controlled Seed Dataset Setup
-- [ ] Database schema DDL for core entities (`users`, `entrepreneur_profiles`, `businesses`, `locations`, `schemes`, `eligibility_rules`, `financial_profiles`).
-- [ ] PostGIS spatial schema for location tracking & district mapping.
-- [ ] Controlled seed dataset for verified flagship schemes (PMEGP, Stand-Up India, Mudra, PM-SVANidhi, etc.).
-- [ ] Schema validation and Alembic migration scripts.
+### 📍 Milestone 2: Database Foundation (PostgreSQL + PostGIS + SQLAlchemy + Alembic) `[COMPLETED]`
+- [x] Async database engine and session management in `backend/app/db/` using SQLAlchemy 2.0.
+- [x] PostGIS spatial extension enabled and configured via Alembic.
+- [x] Minimal development infrastructure testing model (`InfrastructureHeartbeat`).
+- [x] Alembic migration system configured with offline & online async execution (`backend/alembic/`).
+- [x] Database health check (`/health/db`) and PostGIS check (`/health/postgis`) implemented with secure 503 error handling.
+- [x] Comprehensive architecture and data dictionary documentation updated.
 
 ---
 

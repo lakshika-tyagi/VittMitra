@@ -1,4 +1,7 @@
 """
 Database ORM Models package for VittMitra.
-Database entities will be fully introduced in Step 2.
 """
+from app.db.base import Base
+from app.models.infrastructure import InfrastructureHeartbeat
+
+__all__ = ["Base", "InfrastructureHeartbeat"]
