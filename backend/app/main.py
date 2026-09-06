@@ -1,9 +1,14 @@
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List, Optional
 from app.core.config import settings
+from app.db.session import get_db
 from app.api.v1.api import api_router
 from app.schemas.health import HealthResponse, DatabaseHealthResponse, PostGISHealthResponse
+from app.schemas.scheme import SchemeDetailResponse, SchemeListResponse
 from app.api.v1.endpoints.health import check_database_health, check_postgis_health
+from app.api.v1.endpoints.schemes import list_schemes, get_scheme_by_identifier
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -46,11 +51,7 @@ def create_application() -> FastAPI:
         response_model=DatabaseHealthResponse,
         tags=["System"],
         summary="Root Database Health Check",
-        description="Validate PostgreSQL database connectivity.",
-        responses={
-            200: {"description": "Database is connected"},
-            503: {"description": "Database is disconnected"}
-        }
+        description="Validate PostgreSQL database connectivity."
     )
     async def root_db_health(response: Response) -> DatabaseHealthResponse:
         return await check_database_health(response)
@@ -61,14 +62,38 @@ def create_application() -> FastAPI:
         response_model=PostGISHealthResponse,
         tags=["System"],
         summary="Root PostGIS Extension Check",
-        description="Validate PostGIS extension availability.",
-        responses={
-            200: {"description": "PostGIS is enabled"},
-            503: {"description": "PostGIS is unreachable"}
-        }
+        description="Validate PostGIS extension availability."
     )
     async def root_postgis_health(response: Response) -> PostGISHealthResponse:
         return await check_postgis_health(response)
+
+    # Root Scheme Endpoints (Shortcuts)
+    @application.get(
+        "/schemes",
+        response_model=List[SchemeListResponse],
+        tags=["Schemes"],
+        summary="Root List Schemes",
+        description="Shortcut for /api/v1/schemes"
+    )
+    async def root_list_schemes(
+        sector: Optional[str] = None,
+        beneficiary: Optional[str] = None,
+        db: AsyncSession = Depends(get_db)
+    ) -> List[SchemeListResponse]:
+        return await list_schemes(sector=sector, beneficiary=beneficiary, db=db)
+
+    @application.get(
+        "/schemes/{scheme_identifier}",
+        response_model=SchemeDetailResponse,
+        tags=["Schemes"],
+        summary="Root Get Scheme Details",
+        description="Shortcut for /api/v1/schemes/{scheme_identifier}"
+    )
+    async def root_get_scheme(
+        scheme_identifier: str,
+        db: AsyncSession = Depends(get_db)
+    ) -> SchemeDetailResponse:
+        return await get_scheme_by_identifier(scheme_identifier=scheme_identifier, db=db)
 
     # Register API v1 routes
     application.include_router(api_router, prefix=settings.API_V1_STR)

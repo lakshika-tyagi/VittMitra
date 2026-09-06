@@ -1,0 +1,116 @@
+{
+  "scheme_code": "PM_VISHWAKARMA",
+  "scheme_name": "PM Vishwakarma Scheme",
+  "short_description": "Central sector scheme providing end-to-end holistic support, skill certification, toolkit incentives, and collateral-free credit at 5% interest to traditional artisans across 18 trades.",
+  "nodal_ministry": "Ministry of Micro, Small and Medium Enterprises",
+  "nodal_department": "Ministry of MSME & Ministry of Skill Development and Entrepreneurship",
+  "geography_level": "NATIONAL",
+  "target_beneficiaries": [
+    "Traditional_Artisans",
+    "Craftspeople",
+    "SC",
+    "ST",
+    "OBC",
+    "Women_Artisans",
+    "Rural_Artisans"
+  ],
+  "purpose": "To strengthen and nurture the Guru-Shishya parampara or family-based traditional skills of artisans and craftspeople working with their hands and tools, ensuring quality products and access to formal value chains.",
+  "benefits_summary": {
+    "recognition": "PM Vishwakarma Certificate & Digital ID Card",
+    "skill_training_stipend_per_day_inr": 500,
+    "toolkit_incentive_evoucher_inr": 15000,
+    "first_tranche_loan_inr": 100000,
+    "first_tranche_tenure_months": 18,
+    "second_tranche_loan_inr": 200000,
+    "second_tranche_tenure_months": 30,
+    "concessional_interest_rate_pct": 5.0,
+    "interest_subvention_paid_by_govt_pct": 8.0,
+    "collateral_required": false
+  },
+  "business_stages": [
+    "new_enterprise",
+    "expansion"
+  ],
+  "sectors": [
+    "handicrafts",
+    "manufacturing",
+    "services"
+  ],
+  "data_status": "VERIFIED",
+  "is_active": true,
+  "sources": [
+    {
+      "source_name": "PM Vishwakarma Official Portal",
+      "source_type": "OFFICIAL_PORTAL",
+      "official_url": "https://pmvishwakarma.gov.in/",
+      "document_reference": "PM Vishwakarma Scheme Guidelines 2023, Ministry of MSME",
+      "publication_date": "2023-09-17",
+      "last_verified_at": "2026-09-06T12:00:00Z",
+      "version": "1.0",
+      "notes": "Covers 18 traditional trades with full interest subvention and toolkit vouchers."
+    }
+  ],
+  "eligibility_rules": [
+    {
+      "rule_code": "VISHWAKARMA_MIN_AGE",
+      "field_name": "age",
+      "operator": ">=",
+      "expected_value": 18,
+      "description": "Applicant must be at least 18 years of age on the date of application."
+    },
+    {
+      "rule_code": "VISHWAKARMA_TRADITIONAL_TRADE",
+      "field_name": "is_notified_trade",
+      "operator": "==",
+      "expected_value": true,
+      "description": "The beneficiary must be engaged in one of the 18 identified traditional family-based trades on a self-employment basis."
+    },
+    {
+      "rule_code": "VISHWAKARMA_ONE_PER_FAMILY",
+      "field_name": "is_single_family_applicant",
+      "operator": "==",
+      "expected_value": true,
+      "description": "Benefits are limited to one member of a family (husband, wife, and unmarried children)."
+    },
+    {
+      "rule_code": "VISHWAKARMA_NO_GOVT_SERVANTS",
+      "field_name": "has_govt_employee_in_family",
+      "operator": "==",
+      "expected_value": false,
+      "description": "A person in government service and their family members shall not be eligible under the scheme."
+    },
+    {
+      "rule_code": "VISHWAKARMA_NO_PRIOR_LOANS_5Y",
+      "field_name": "availed_pmegp_mudra_last_5yr",
+      "operator": "==",
+      "expected_value": false,
+      "description": "Applicant should not have availed credit assistance under similar central/state schemes (PMEGP, MUDRA, PM SVANidhi) in the past 5 years."
+    }
+  ],
+  "documents": [
+    {
+      "document_code": "AADHAAR_VISHWAKARMA",
+      "document_name": "Aadhaar Card",
+      "description": "Biometric verification of identity",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "MOBILE_AADHAAR_LINK",
+      "document_name": "Active Mobile Number Linked to Aadhaar",
+      "description": "Required for OTP and e-KYC authentication",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "BANK_ACCOUNT_DETAILS",
+      "document_name": "Bank Account Details (Passbook / Cancelled Cheque)",
+      "description": "Required for DBT credit of stipend and toolkit incentive voucher",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "RATION_CARD_FAMILY",
+      "document_name": "Ration Card / Family ID Proof",
+      "description": "Required to verify single beneficiary per family condition",
+      "is_mandatory": true
+    }
+  ]
+}

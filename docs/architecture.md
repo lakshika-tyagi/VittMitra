@@ -2,7 +2,7 @@
 
 ## 1. System Overview
 
-VittMitra is designed with an API-first, decoupled architecture separating the Presentation Layer (Next.js), Core Business & API Layer (FastAPI), Persistence Layer (PostgreSQL with PostGIS), and Intelligence Layer (Deterministic Rule Engines + Grounded Gemini RAG Services).
+VittMitra is designed with an API-first, decoupled architecture separating the Presentation Layer (Next.js), Core Business & API Layer (FastAPI), Persistence Layer (PostgreSQL with PostGIS), Scheme Knowledge Layer, and Intelligence Layer (Deterministic Rule Engines + Grounded Gemini RAG Services).
 
 ```mermaid
 flowchart TD
@@ -17,8 +17,16 @@ flowchart TD
         GeoSvc["Geospatial & Location Service"]
         BizSvc["Business Feasibility Engine"]
         FinSvc["Financial Structuring Engine"]
+        SchemeKnowledgeAPI["Scheme Discovery & Retrieval API"]
         RuleEngine["Deterministic Scheme Eligibility Engine"]
         AppSvc["Application Assistance & Tracker"]
+    end
+
+    subgraph SchemeKnowledge["Authoritative Scheme Knowledge Layer"]
+        SchemeStore[("Verified Schemes Repository")]
+        SourceStore[("Source & Gazette Metadata")]
+        RuleStore[("Deterministic Rule Specs")]
+        DocStore[("Required Document Specs")]
     end
 
     subgraph Database["Persistence Layer (PostgreSQL + PostGIS)"]
@@ -36,6 +44,7 @@ flowchart TD
 
     UI -->|REST / JSON| Gateway
     VoiceUI -->|Voice / Audio Stream| Gateway
+    Gateway --> SchemeKnowledgeAPI
     Gateway --> AuthSvc
     Gateway --> GeoSvc
     Gateway --> BizSvc
@@ -43,64 +52,59 @@ flowchart TD
     Gateway --> RuleEngine
     Gateway --> AppSvc
 
-    AuthSvc --> DBSession
-    GeoSvc --> DBSession
-    BizSvc --> DBSession
-    FinSvc --> DBSession
-    RuleEngine --> DBSession
-    AppSvc --> DBSession
+    SchemeKnowledgeAPI --> SchemeStore
+    SchemeKnowledgeAPI --> SourceStore
+    SchemeKnowledgeAPI --> RuleStore
+    SchemeKnowledgeAPI --> DocStore
+
+    SchemeStore --> DBSession
+    SourceStore --> DBSession
+    RuleStore --> DBSession
+    DocStore --> DBSession
 
     DBSession --> PostgresDB
     DBSession --> PostGISSpatial
     AlembicMgr --> PostgresDB
 
-    RuleEngine -->|Qualified Schemes + Criteria Matches| GeminiLLM
-    VectorDB -->|Retrieved Clause Context| GeminiLLM
+    RuleEngine -->|Evaluates against| RuleStore
+    VectorDB -->|Indexes verified text from| SourceStore
+    RuleEngine -->|Deterministic Results| GeminiLLM
+    VectorDB -->|Retrieved Context| GeminiLLM
     GeminiLLM -->|Explainable Recommendations| Gateway
     Bhashini -->|Language Translation & Speech| Gateway
 ```
 
 ---
 
-## 2. Database & Spatial Architecture (PostgreSQL + PostGIS)
+## 2. Scheme Knowledge Architecture & Anti-Hallucination Framework
 
-### A. Engine & Asynchronous Connection Layer
-- **Database Engine**: PostgreSQL 15+ with native PostGIS 3.3+ spatial extension.
-- **ORM & Dialect**: SQLAlchemy 2.0 (Asyncio) paired with `asyncpg` for high-throughput non-blocking database queries.
-- **Connection Pooling**: Pre-ping enabled async connection pool (`pool_size=10`, `max_overflow=20`, `timeout=5s`) ensuring robust connection recovery.
-- **Session Lifecycle**: Handled via FastAPI dependency injection (`get_db()`) yielding clean per-request transaction contexts that automatically commit on success and rollback on exceptions.
+### A. Authoritative Grounding Principle
+To protect marginalized entrepreneurs from misleading advice, government scheme information is treated as an authoritative, source-traceable knowledge asset:
+1. **Zero Hallucination Tolerance**: Scheme parameters (subsidy percentages, project cost limits, interest rates, age thresholds) are NEVER invented or approximated by LLMs.
+2. **Every Record Source-Linked**: Each scheme record contains foreign-key relationships to `scheme_sources` containing official URLs (`kviconline.gov.in`, `standupmitra.in`, `mudra.org.in`, etc.), ministry guideline publication dates, and verification timestamps (`last_verified_at`).
+3. **Explicit Data Status**: The system strictly categorizes data confidence into:
+   - `VERIFIED`: Directly verified from official government gazettes, ministry circulars, or central portals.
+   - `ESTIMATED`: Used only for non-legal projections (never for legal scheme eligibility).
+   - `UNVERIFIED`: Explicitly flagged if authoritative source data is unavailable or undergoing revision.
 
-### B. PostGIS Geospatial Capability & Location Architecture
-VittMitra integrates PostGIS (`CREATE EXTENSION IF NOT EXISTS postgis;`) to power location intelligence without relying on opaque third-party black boxes:
-1. **Spatial Point Storage**: Entrepreneur business coordinates, shop locations, and partner locations stored as `Geometry(Point, 4326)` (WGS 84 coordinate reference system).
-2. **Spatial Indexing**: GIST (Generalized Search Tree) indexes created on all geometry columns (`idx_<table>_<geom>`) for sub-millisecond proximity queries.
-3. **District & Zoning Feasibility**: Location-aware scheme eligibility evaluating:
-   - Special category areas (North Eastern Region / Hilly States / Island Territories).
-   - Aspirational Districts (NITI Aayog prioritized developmental blocks).
-   - Urban vs. Rural boundary classification using spatial polygons.
-4. **Channel Partner & CSC Proximity**: Geospatial distance calculations (`ST_DWithin`, `ST_DistanceSphere`) to match entrepreneurs with the closest verified channel partner or Common Service Centre.
-
-### C. Migration Lifecycle & Schema Versioning
-- **Migration Framework**: Alembic 1.13+ configured with async execution and dynamic settings injection.
-- **Spatial Object Filters**: Configured in `env.py` to preserve PostGIS internal system tables (`spatial_ref_sys`, `geometry_columns`, etc.) without unintended drops.
-- **Zero-Downtime Conventions**: Standardized constraint naming conventions (`pk_`, `fk_`, `uq_`, `ix_`) ensuring reliable schema evolutions.
+### B. Separation of Scheme Knowledge vs Engines
+- **Step 3 Knowledge Layer**: Stores structured, machine-readable representations of schemes, rules, sources, and documents.
+- **Step 4 Eligibility Engine (Future)**: Evaluates user profiles deterministically against `scheme_eligibility_rules` via strict Boolean logic.
+- **Step 5 Grounded AI / RAG (Future)**: Uses official scheme text to synthesize empathetic explanations and conversational guidance.
 
 ---
 
-## 3. Core Architectural Separation Principles
+## 3. Database & Spatial Architecture (PostgreSQL + PostGIS)
 
-1. **Deterministic Rule Engine (Python/SQL)**: Hard eligibility conditions (Age, Gender, Social Category, Religion, State/District, Urban/Rural status, Investment cap, Prior business experience, Disqualification triggers) are evaluated purely deterministically in code and database queries.
-2. **Deterministic Financial Engine (Python/SQL)**: Mathematical calculations (Project Cost = Fixed + Working Capital, Own Contribution % based on Category, Government Subsidy %, Net Bank Loan, Amortization EMI, DSCR, Payback period) are calculated using pure deterministic logic. LLMs are NEVER used for mathematical computations.
-3. **AI & RAG Engine (Gemini API)**: Generative AI is strictly tasked with:
-   - Synthesizing natural-language, compassionate explanations based on deterministic match results.
-   - Answering user questions about specific scheme clauses retrieved via RAG.
-   - Translating and simplifying complex government notifications into conversational Indian languages.
-   - Guiding document checklist preparation and post-loan business advisory.
+- **Database Engine**: PostgreSQL 15+ with PostGIS 3.3+ spatial extension.
+- **ORM & Dialect**: SQLAlchemy 2.0 (Asyncio) with `asyncpg` driver.
+- **Connection Pooling**: Pre-ping enabled async connection pool (`pool_size=10`, `max_overflow=20`, `timeout=5s`).
+- **Migration Framework**: Alembic 1.13+ configured with async execution and PostGIS table isolation filters.
 
 ---
 
-## 4. Security & Data Integrity
+## 4. Security & Data Protection
 
-- **Environment-Driven Configuration**: Database connection URLs (`DATABASE_URL`) configured strictly via `.env` with `.env.example` templates.
-- **Sanitized Health Checks**: `/health/db` and `/health/postgis` probe active database availability while guaranteeing zero credential leakage in error responses.
-- **Relational Integrity**: Foreign keys, check constraints, non-nullable flags, and UTC timezone-aware timestamps enforced across all persistent tables.
+- **Public Scheme Knowledge**: Government scheme data is public and free of PII.
+- **Environment Isolation**: Connection secrets managed strictly through `.env` with zero committed credentials.
+- **Sanitized API Responses**: Clear separation between public API responses and internal database columns.

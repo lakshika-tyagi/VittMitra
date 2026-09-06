@@ -1,0 +1,92 @@
+{
+  "scheme_code": "PM_SVANIDHI",
+  "scheme_name": "PM Street Vendor's AtmaNirbhar Nidhi (PM SVANidhi)",
+  "short_description": "Special micro-credit facility providing collateral-free working capital loans up to ₹50,000 with 7% interest subsidy for urban street vendors.",
+  "nodal_ministry": "Ministry of Housing and Urban Affairs",
+  "nodal_department": "Urban Livelihoods Division / SIDBI",
+  "geography_level": "NATIONAL",
+  "target_beneficiaries": [
+    "Street_Vendors",
+    "Hawkers",
+    "Informal_Micro_Traders",
+    "Women_Vendors",
+    "SC",
+    "ST",
+    "OBC"
+  ],
+  "purpose": "To facilitate collateral-free working capital loans to street vendors to resume their livelihoods and incentivize digital transactions and timely repayment.",
+  "benefits_summary": {
+    "first_tranche_loan_inr": 10000,
+    "first_tranche_tenure_months": 12,
+    "second_tranche_loan_inr": 20000,
+    "third_tranche_loan_inr": 50000,
+    "interest_subsidy_rate_pct": 7.0,
+    "digital_cashback_per_annum_inr": 1200,
+    "collateral_required": false
+  },
+  "business_stages": [
+    "new_enterprise",
+    "expansion"
+  ],
+  "sectors": [
+    "trading",
+    "services"
+  ],
+  "data_status": "VERIFIED",
+  "is_active": true,
+  "sources": [
+    {
+      "source_name": "PM SVANidhi Portal, MoHUA",
+      "source_type": "OFFICIAL_PORTAL",
+      "official_url": "https://pmsvanidhi.mohua.gov.in/",
+      "document_reference": "PM SVANidhi Scheme Guidelines, MoHUA",
+      "publication_date": "2020-06-01",
+      "last_verified_at": "2026-09-06T12:00:00Z",
+      "version": "1.3",
+      "notes": "Includes 1st, 2nd, and 3rd loan tranches with DBT interest subsidy of 7%."
+    }
+  ],
+  "eligibility_rules": [
+    {
+      "rule_code": "SVANIDHI_MIN_AGE",
+      "field_name": "age",
+      "operator": ">=",
+      "expected_value": 18,
+      "description": "Applicant must be at least 18 years of age."
+    },
+    {
+      "rule_code": "SVANIDHI_VENDOR_STATUS",
+      "field_name": "has_vending_proof",
+      "operator": "==",
+      "expected_value": true,
+      "description": "Vendor must possess Certificate of Vending (CoV), Identity Card issued by Urban Local Body (ULB), or Letter of Recommendation (LoR)."
+    },
+    {
+      "rule_code": "SVANIDHI_AREA_TYPE",
+      "field_name": "area_type",
+      "operator": "in",
+      "expected_value": ["urban", "peri_urban"],
+      "description": "Vending activity must be situated in urban or surrounding peri-urban jurisdictions."
+    }
+  ],
+  "documents": [
+    {
+      "document_code": "AADHAAR_SVANIDHI",
+      "document_name": "Aadhaar Card",
+      "description": "Identity verification with active mobile link",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "VENDING_CERTIFICATE",
+      "document_name": "Certificate of Vending / ULB Identity Card / Letter of Recommendation",
+      "description": "Official vending credential issued by Municipal Corporation / Urban Local Body",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "BANK_PASSBOOK",
+      "document_name": "Bank Account Details / Passbook Copy",
+      "description": "Required for direct benefit transfer (DBT) of interest subsidy and loan disbursement",
+      "is_mandatory": true
+    }
+  ]
+}

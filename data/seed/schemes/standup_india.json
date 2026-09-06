@@ -1,0 +1,108 @@
+{
+  "scheme_code": "STANDUP_INDIA",
+  "scheme_name": "Stand-Up India Scheme",
+  "short_description": "Facilitates bank loans between ₹10 Lakhs and ₹1 Crore to SC/ST and Women borrowers for setting up greenfield enterprises.",
+  "nodal_ministry": "Ministry of Finance",
+  "nodal_department": "Department of Financial Services (DFS) / SIDBI",
+  "geography_level": "NATIONAL",
+  "target_beneficiaries": [
+    "SC",
+    "ST",
+    "Women"
+  ],
+  "purpose": "Promoting entrepreneurship among SC/ST and Women communities by facilitating bank loans for greenfield enterprises in manufacturing, services, agri-allied activities, or trading.",
+  "benefits_summary": {
+    "min_loan_amount_inr": 1000000,
+    "max_loan_amount_inr": 10000000,
+    "loan_coverage_pct": 85.0,
+    "margin_money_pct": 15.0,
+    "repayment_period_years": 7,
+    "moratorium_period_months": 18,
+    "security": "Primary security on assets financed, Credit Guarantee Fund for Stand-Up India (CGFSI)"
+  },
+  "business_stages": [
+    "new_enterprise"
+  ],
+  "sectors": [
+    "manufacturing",
+    "services",
+    "trading",
+    "agro_allied"
+  ],
+  "data_status": "VERIFIED",
+  "is_active": true,
+  "sources": [
+    {
+      "source_name": "Stand-Up Mitra Portal / DFS Ministry of Finance",
+      "source_type": "OFFICIAL_PORTAL",
+      "official_url": "https://www.standupmitra.in/",
+      "document_reference": "Stand-Up India Guidelines (Extended up to 2025), DFS",
+      "publication_date": "2021-04-01",
+      "last_verified_at": "2026-09-06T12:00:00Z",
+      "version": "2.0",
+      "notes": "Margin money revised from 25% to up to 15% with eligible convergence subsidies."
+    }
+  ],
+  "eligibility_rules": [
+    {
+      "rule_code": "SUI_MIN_AGE",
+      "field_name": "age",
+      "operator": ">=",
+      "expected_value": 18,
+      "description": "Applicant must be at least 18 years of age."
+    },
+    {
+      "rule_code": "SUI_TARGET_GROUP",
+      "field_name": "category_or_gender",
+      "operator": "in",
+      "expected_value": ["SC", "ST", "female"],
+      "description": "Applicant must be an SC/ST individual or a Woman entrepreneur. For non-individual enterprises, 51% of shareholding and controlling stake must be held by SC/ST or Women."
+    },
+    {
+      "rule_code": "SUI_GREENFIELD_ONLY",
+      "field_name": "is_greenfield",
+      "operator": "==",
+      "expected_value": true,
+      "description": "Borrower must be establishing a greenfield (first-time) enterprise in manufacturing, services, agri-allied activities, or trading."
+    },
+    {
+      "rule_code": "SUI_NON_DEFAULTER",
+      "field_name": "is_defaulter",
+      "operator": "==",
+      "expected_value": false,
+      "description": "Borrower should not be in default to any bank or financial institution."
+    }
+  ],
+  "documents": [
+    {
+      "document_code": "IDENTITY_PROOF",
+      "document_name": "Proof of Identity (Aadhaar / Voter ID / Passport)",
+      "description": "Official government photo identification",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "RESIDENCE_PROOF",
+      "document_name": "Proof of Residence",
+      "description": "Electricity bill / Ration card / Passport",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "CASTE_CERTIFICATE_SUI",
+      "document_name": "Caste Certificate (for SC/ST applicants)",
+      "description": "Official caste certificate issued by competent revenue authority",
+      "is_mandatory": false
+    },
+    {
+      "document_code": "DPR_SUI",
+      "document_name": "Detailed Project Report (DPR)",
+      "description": "Technical and financial viability report for the greenfield enterprise",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "BUSINESS_PREMISES_PROOF",
+      "document_name": "Proof of Business Address / Lease Agreement",
+      "description": "Rent agreement or title deed for proposed business location",
+      "is_mandatory": true
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "scheme_code": "PMEGP",
+  "scheme_name": "Prime Minister's Employment Generation Programme",
+  "short_description": "Credit-linked subsidy programme aimed at generating self-employment opportunities through micro-enterprises in non-farm sectors.",
+  "nodal_ministry": "Ministry of Micro, Small and Medium Enterprises",
+  "nodal_department": "Khadi and Village Industries Commission (KVIC)",
+  "geography_level": "NATIONAL",
+  "target_beneficiaries": [
+    "General",
+    "SC",
+    "ST",
+    "OBC",
+    "Women",
+    "Minorities",
+    "SpeciallyAbled",
+    "Ex-Servicemen",
+    "NER"
+  ],
+  "purpose": "To generate continuous and sustainable employment opportunities in rural and urban areas by setting up new micro enterprises and projects.",
+  "benefits_summary": {
+    "max_project_cost_manufacturing_inr": 5000000,
+    "max_project_cost_services_inr": 2000000,
+    "subsidy_rate_urban_general_pct": 15.0,
+    "subsidy_rate_rural_general_pct": 25.0,
+    "subsidy_rate_urban_special_pct": 25.0,
+    "subsidy_rate_rural_special_pct": 35.0,
+    "own_contribution_general_pct": 10.0,
+    "own_contribution_special_pct": 5.0,
+    "lock_in_period_years": 3
+  },
+  "business_stages": [
+    "new_enterprise"
+  ],
+  "sectors": [
+    "manufacturing",
+    "services",
+    "agro_allied",
+    "handicrafts"
+  ],
+  "data_status": "VERIFIED",
+  "is_active": true,
+  "sources": [
+    {
+      "source_name": "Ministry of MSME - PMEGP Scheme Guidelines",
+      "source_type": "OFFICIAL_GUIDELINE",
+      "official_url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp",
+      "document_reference": "PMEGP Scheme Guidelines 2022-26, MSME Ministry",
+      "publication_date": "2022-05-30",
+      "last_verified_at": "2026-09-06T12:00:00Z",
+      "version": "2022.1",
+      "notes": "Revised subsidy ceilings and project cost limits up to 50 Lakhs for manufacturing."
+    }
+  ],
+  "eligibility_rules": [
+    {
+      "rule_code": "PMEGP_MIN_AGE",
+      "field_name": "age",
+      "operator": ">=",
+      "expected_value": 18,
+      "description": "Applicant must be at least 18 years of age at the time of application."
+    },
+    {
+      "rule_code": "PMEGP_UNIT_STAGE",
+      "field_name": "business_stage",
+      "operator": "==",
+      "expected_value": "new_enterprise",
+      "description": "Assistance under PMEGP is strictly available for setting up new micro-enterprise units only."
+    },
+    {
+      "rule_code": "PMEGP_MIN_EDUCATION_MFG",
+      "field_name": "education_mfg_above_10lakh",
+      "operator": "==",
+      "expected_value": "8th_pass",
+      "description": "Applicant must possess at least 8th standard pass educational qualification for manufacturing projects exceeding Rs 10 Lakhs."
+    },
+    {
+      "rule_code": "PMEGP_MIN_EDUCATION_SRV",
+      "field_name": "education_srv_above_5lakh",
+      "operator": "==",
+      "expected_value": "8th_pass",
+      "description": "Applicant must possess at least 8th standard pass educational qualification for service projects exceeding Rs 5 Lakhs."
+    }
+  ],
+  "documents": [
+    {
+      "document_code": "AADHAAR_CARD",
+      "document_name": "Aadhaar Card",
+      "description": "Primary identity and address verification",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "PAN_CARD",
+      "document_name": "PAN Card",
+      "description": "Permanent Account Number card",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "CASTE_CERTIFICATE",
+      "document_name": "Caste / Category Certificate",
+      "description": "Mandatory for SC, ST, OBC, or Minority applicants claiming special subsidy rates",
+      "is_mandatory": false
+    },
+    {
+      "document_code": "PROJECT_REPORT",
+      "document_name": "Detailed Project Report (DPR)",
+      "description": "Comprehensive project report outlining fixed capital, working capital, and projected revenues",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "RURAL_CERTIFICATE",
+      "document_name": "Rural Area Certificate",
+      "description": "Issued by local Gram Panchayat / Revenue authority if claiming rural subsidy",
+      "is_mandatory": false
+    },
+    {
+      "document_code": "EDUCATION_CERTIFICATE",
+      "document_name": "Educational Qualification Certificate",
+      "description": "Required if project cost exceeds 10 Lakhs (Mfg) or 5 Lakhs (Service)",
+      "is_mandatory": false
+    }
+  ]
+}

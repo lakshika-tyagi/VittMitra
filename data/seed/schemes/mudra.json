@@ -1,0 +1,116 @@
+{
+  "scheme_code": "MUDRA_PMMY",
+  "scheme_name": "Pradhan Mantri MUDRA Yojana (PMMY)",
+  "short_description": "Collateral-free institutional micro-credit up to ₹10 Lakhs for non-corporate, non-farm small and micro enterprises.",
+  "nodal_ministry": "Ministry of Finance",
+  "nodal_department": "Department of Financial Services / MUDRA",
+  "geography_level": "NATIONAL",
+  "target_beneficiaries": [
+    "General",
+    "SC",
+    "ST",
+    "OBC",
+    "Women",
+    "Minorities",
+    "Micro_Entrepreneurs",
+    "Artisans",
+    "Retailers"
+  ],
+  "purpose": "To provide funding to non-corporate small business segment (NCSBS) comprising proprietorship / partnership firms running small manufacturing units, service sector units, shopkeepers, fruit/vegetable vendors, and artisans.",
+  "benefits_summary": {
+    "product_categories": {
+      "shishu": {
+        "max_loan_inr": 50000,
+        "purpose": "Covering initial start-up financing requirements"
+      },
+      "kishore": {
+        "min_loan_inr": 50001,
+        "max_loan_inr": 500000,
+        "purpose": "Mid-stage development and equipment acquisition"
+      },
+      "tarun": {
+        "min_loan_inr": 500001,
+        "max_loan_inr": 1000000,
+        "purpose": "Growth capital and enterprise expansion"
+      }
+    },
+    "collateral_required": false,
+    "processing_fee_shishu_kishore": 0.0,
+    "mudra_card": "Available for hassle-free working capital withdrawals"
+  },
+  "business_stages": [
+    "idea",
+    "new_enterprise",
+    "expansion"
+  ],
+  "sectors": [
+    "manufacturing",
+    "services",
+    "trading",
+    "handicrafts",
+    "agro_allied"
+  ],
+  "data_status": "VERIFIED",
+  "is_active": true,
+  "sources": [
+    {
+      "source_name": "MUDRA Official Portal",
+      "source_type": "OFFICIAL_PORTAL",
+      "official_url": "https://www.mudra.org.in/",
+      "document_reference": "PMMY Operational Guidelines, DFS Ministry of Finance",
+      "publication_date": "2015-04-08",
+      "last_verified_at": "2026-09-06T12:00:00Z",
+      "version": "1.0",
+      "notes": "Covers Shishu, Kishore, and Tarun loan tranches via scheduled commercial banks, RRBs, SFBs, and MFIs."
+    }
+  ],
+  "eligibility_rules": [
+    {
+      "rule_code": "MUDRA_MIN_AGE",
+      "field_name": "age",
+      "operator": ">=",
+      "expected_value": 18,
+      "description": "Applicant must be an Indian citizen of at least 18 years of age."
+    },
+    {
+      "rule_code": "MUDRA_ACTIVITY_TYPE",
+      "field_name": "is_non_farm_income_generating",
+      "operator": "==",
+      "expected_value": true,
+      "description": "The loan must be utilized for a non-farm income-generating micro-business activity."
+    },
+    {
+      "rule_code": "MUDRA_NO_DEFAULTS",
+      "field_name": "is_defaulter",
+      "operator": "==",
+      "expected_value": false,
+      "description": "Applicant must not have a previous default record with any banking or financial institution."
+    }
+  ],
+  "documents": [
+    {
+      "document_code": "PROOFOF_ID_MUDRA",
+      "document_name": "Proof of Identity (Aadhaar / Voter ID / Driving License)",
+      "description": "Valid government-issued photo identity",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "PROOFOF_RESIDENCE_MUDRA",
+      "document_name": "Proof of Residence",
+      "description": "Recent utility bill / Aadhaar card / Voter ID",
+      "is_mandatory": true
+    },
+    {
+      "document_code": "QUOTATION_EQUIPMENT",
+      "document_name": "Quotation of Machinery / Items to be Purchased",
+      "description": "Supplier quotation for capital items or raw materials to be acquired",
+      "is_mandatory": false
+    },
+    {
+      "document_code": "BUSINESS_REG_PROOF",
+      "document_name": "Proof of Business Enterprise (Udyam Registration)",
+      "description": "Udyam registration certificate or municipal trade license if already in operation",
+      "is_mandatory": false
+    }
+  ]
+}
