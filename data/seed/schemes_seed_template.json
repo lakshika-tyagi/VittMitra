@@ -1,0 +1,33 @@
+[
+  {
+    "code": "TEMPLATE_SCHEME_CODE",
+    "name": "Scheme Full Name (Template)",
+    "nodal_ministry": "Ministry of Micro, Small and Medium Enterprises",
+    "target_beneficiaries": ["SC", "ST", "Women", "OBC", "General"],
+    "purpose": "Financial assistance for setting up new micro-enterprises",
+    "benefits": "Subsidy ranging from 15% to 35% of project cost",
+    "max_project_cost": 5000000,
+    "subsidy_percentage_general": 15.0,
+    "subsidy_percentage_special": 25.0,
+    "own_contribution_percentage_general": 10.0,
+    "own_contribution_percentage_special": 5.0,
+    "eligibility_criteria": {
+      "min_age": 18,
+      "max_age": null,
+      "allowed_sectors": ["manufacturing", "services"],
+      "allowed_area_types": ["rural", "urban"],
+      "min_education": "8th Pass for projects > 10 Lakhs (Mfg)"
+    },
+    "required_documents": [
+      "Aadhaar Card",
+      "PAN Card",
+      "Caste / Category Certificate (if applicable)",
+      "Detailed Project Report (DPR)",
+      "Educational Qualification Proof"
+    ],
+    "official_portal_url": "https://msme.gov.in",
+    "source": "Official Ministry Guidelines 2024",
+    "is_active": true,
+    "last_verified_at": "2024-01-01T00:00:00Z"
+  }
+]

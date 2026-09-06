@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Database Service (PostgreSQL + PostGIS)
+  database:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: vittmitra_database
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vittmitra_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vittmitra_password}
+      POSTGRES_DB: ${POSTGRES_DB:-vittmitra_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vittmitra_user -d vittmitra_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend Service (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vittmitra_backend
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=True
+      - DATABASE_URL=postgresql+asyncpg://vittmitra_user:vittmitra_password@database:5432/vittmitra_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend Service (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vittmitra_frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
