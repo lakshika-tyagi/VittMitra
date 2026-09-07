@@ -11,6 +11,14 @@ from app.schemas.scheme import (
     SchemeListResponse,
     SchemeSeedPayload,
 )
+from app.schemas.eligibility import (
+    EligibilityStatus,
+    EntrepreneurProfileInput,
+    EligibilityCheckRequest,
+    CriterionResult,
+    EligibilitySummary,
+    EligibilityCheckResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -22,4 +30,10 @@ __all__ = [
     "SchemeDetailResponse",
     "SchemeListResponse",
     "SchemeSeedPayload",
+    "EligibilityStatus",
+    "EntrepreneurProfileInput",
+    "EligibilityCheckRequest",
+    "CriterionResult",
+    "EligibilitySummary",
+    "EligibilityCheckResponse",
 ]

@@ -51,7 +51,7 @@ Authoritative source traceability linking every government fact to official reco
 
 ---
 
-### C. `scheme_eligibility_rules` `[ACTIVE / STEP 3]`
+### C. `scheme_eligibility_rules` `[ACTIVE / STEP 3 & 4]`
 Structured deterministic eligibility criteria for automated rule evaluation.
 
 | Column | Type | Constraints | Description |
@@ -65,6 +65,7 @@ Structured deterministic eligibility criteria for automated rule evaluation.
 | `description` | `TEXT` | NOT NULL | Plain English explainable explanation of rule |
 | `source_id` | `INTEGER` | Foreign Key (`scheme_sources.id` ON DELETE SET NULL) | Traceable source guideline reference |
 | `rule_version` | `VARCHAR(50)` | NOT NULL, Default: `'1.0'` | Rule criteria version |
+| `is_mandatory` | `BOOLEAN` | NOT NULL, Default: `true` | Mandatory vs. optional/advisory rule flag |
 | `is_active` | `BOOLEAN` | NOT NULL, Default: `true` | Rule evaluation flag |
 | `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Record creation timestamp |
 | `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Record last updated timestamp |

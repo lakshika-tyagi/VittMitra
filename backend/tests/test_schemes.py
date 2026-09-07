@@ -286,13 +286,13 @@ def test_get_unknown_scheme_returns_404(mock_client_with_schemes):
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()
 
-def test_confirm_no_eligibility_or_ai_endpoints():
-    """Verify that NO eligibility calculation, matching, or AI endpoints exist."""
+def test_confirm_no_matching_or_ai_endpoints():
+    """Verify that matching engine, recommendations, and AI endpoints do NOT exist."""
     client = TestClient(app)
     
-    # Assert eligibility engine does not exist
+    # Assert eligibility engine exists and enforces validation
     res_eligibility = client.post("/api/v1/eligibility/check", json={})
-    assert res_eligibility.status_code in [404, 405]
+    assert res_eligibility.status_code == 422 # Pydantic validation error since endpoint is active
     
     # Assert matching engine does not exist
     res_match = client.post("/api/v1/schemes/match", json={})

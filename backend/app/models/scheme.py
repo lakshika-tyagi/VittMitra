@@ -101,10 +101,12 @@ class SchemeEligibilityRule(Base, TimestampMixin):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     source_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("scheme_sources.id", ondelete="SET NULL"), nullable=True)
     rule_version: Mapped[str] = mapped_column(String(50), default="1.0", nullable=False)
+    is_mandatory: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     # Relationships
     scheme: Mapped["Scheme"] = relationship("Scheme", back_populates="eligibility_rules")
+    source: Mapped[Optional["SchemeSource"]] = relationship("SchemeSource", foreign_keys=[source_id])
 
 
 class SchemeDocument(Base, TimestampMixin):

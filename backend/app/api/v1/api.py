@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, schemes
+from app.api.v1.endpoints import health, schemes, eligibility
 
 api_router = APIRouter()
 
@@ -8,3 +8,7 @@ api_router.include_router(health.router, tags=["Health"])
 
 # Include scheme knowledge router under /api/v1
 api_router.include_router(schemes.router, tags=["Schemes"])
+
+# Include eligibility engine router under /api/v1
+api_router.include_router(eligibility.router, tags=["Eligibility"])
+

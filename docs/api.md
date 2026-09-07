@@ -2,17 +2,18 @@
 
 ## 1. Conventions & Standards
 
-- **Base URL Prefix**: `/api/v1` (with convenience root shortcuts for health and scheme exploration)
+- **Base URL Prefix**: `/api/v1` (with convenience root shortcuts for health, schemes, and eligibility)
 - **Data Format**: `application/json`
-- **Authentication**: Public read-only endpoints (Auth introduced in future milestone)
+- **Authentication**: Public endpoints (Auth introduced in future milestone)
 - **Status Codes**:
   - `200 OK`: Request succeeded
   - `404 Not Found`: Scheme or resource does not exist
+  - `422 Unprocessable Entity`: Request body validation error
   - `503 Service Unavailable`: Dependent service (e.g. database) unreachable
 
 ---
 
-## 2. Implemented Endpoints (Milestones 1, 2, & 3)
+## 2. Implemented Endpoints (Milestones 1, 2, 3, & 4)
 
 ### System & Database Health
 - `GET /health` or `GET /api/v1/health` — Service heartbeat.
@@ -30,97 +31,100 @@ List all verified active government schemes with summary metadata.
 - `sector` (string, e.g. `manufacturing`, `services`, `trading`, `handicrafts`)
 - `beneficiary` (string, e.g. `SC`, `ST`, `Women`, `OBC`)
 
-**Response Example**:
-```json
-[
-  {
-    "id": 1,
-    "scheme_code": "PMEGP",
-    "scheme_name": "Prime Minister's Employment Generation Programme",
-    "short_description": "Credit-linked subsidy programme aimed at generating self-employment opportunities...",
-    "nodal_ministry": "Ministry of Micro, Small and Medium Enterprises",
-    "geography_level": "NATIONAL",
-    "target_beneficiaries": ["General", "SC", "ST", "OBC", "Women", "Minorities"],
-    "sectors": ["manufacturing", "services", "agro_allied", "handicrafts"],
-    "data_status": "VERIFIED",
-    "is_active": true,
-    "last_verified_at": "2026-09-06T12:00:00Z"
-  }
-]
-```
-
 ---
 
 #### `GET /api/v1/schemes/{scheme_identifier}` (or `GET /schemes/{scheme_identifier}`)
 Retrieve comprehensive scheme specifications by database ID or unique scheme code (`PMEGP`, `STANDUP_INDIA`, `MUDRA_PMMY`, `PM_SVANIDHI`, `PM_VISHWAKARMA`).
 
-**Response Example**:
+---
+
+### Deterministic Scheme Eligibility Engine `[STEP 4]`
+
+#### `POST /api/v1/eligibility/check` (or `POST /eligibility/check`)
+Evaluates an entrepreneur's structured profile inputs against official government scheme rules stored in the database.
+
+> [!NOTE]
+> This endpoint is completely deterministic and explainable. No LLM or generative AI model is involved in decision-making.
+
+**Request Payload**:
 ```json
 {
-  "id": 1,
+  "scheme_id": "PMEGP",
+  "profile": {
+    "age": 27,
+    "gender": "female",
+    "category": "OBC",
+    "business_stage": "new_enterprise",
+    "sector": "manufacturing",
+    "area_type": "rural",
+    "is_defaulter": false
+  }
+}
+```
+
+**Request Parameters**:
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `scheme_id` | `string \| integer` | Yes | Target scheme database ID (e.g. `1`) or unique scheme code (e.g. `"PMEGP"`) |
+| `profile` | `object` | Yes | Structured applicant and business attributes (e.g. `age`, `category`, `gender`, `business_stage`, `sector`, `area_type`, `annual_income`, `is_defaulter`, etc.) |
+
+**Response Example (200 OK — MATCHED)**:
+```json
+{
+  "scheme_id": 1,
   "scheme_code": "PMEGP",
   "scheme_name": "Prime Minister's Employment Generation Programme",
-  "short_description": "Credit-linked subsidy programme aimed at generating self-employment opportunities...",
-  "nodal_ministry": "Ministry of Micro, Small and Medium Enterprises",
-  "nodal_department": "Khadi and Village Industries Commission (KVIC)",
-  "geography_level": "NATIONAL",
-  "target_beneficiaries": ["General", "SC", "ST", "OBC", "Women"],
-  "purpose": "To generate continuous and sustainable employment opportunities in rural and urban areas...",
-  "benefits_summary": {
-    "max_project_cost_manufacturing_inr": 5000000,
-    "max_project_cost_services_inr": 2000000,
-    "subsidy_rate_urban_general_pct": 15.0,
-    "subsidy_rate_rural_general_pct": 25.0,
-    "subsidy_rate_urban_special_pct": 25.0,
-    "subsidy_rate_rural_special_pct": 35.0,
-    "own_contribution_general_pct": 10.0,
-    "own_contribution_special_pct": 5.0
+  "overall_status": "MATCHED",
+  "evaluated_at": "2026-09-07T12:00:00Z",
+  "summary": {
+    "total_rules": 4,
+    "matched_count": 4,
+    "failed_count": 0,
+    "unverified_count": 0
   },
-  "business_stages": ["new_enterprise"],
-  "sectors": ["manufacturing", "services", "agro_allied", "handicrafts"],
-  "data_status": "VERIFIED",
-  "is_active": true,
-  "created_at": "2026-09-06T18:40:00Z",
-  "updated_at": "2026-09-06T18:40:00Z",
-  "sources": [
+  "criteria": [
     {
-      "id": 1,
-      "source_name": "Ministry of MSME - PMEGP Scheme Guidelines",
-      "source_type": "OFFICIAL_GUIDELINE",
-      "official_url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp",
-      "document_reference": "PMEGP Scheme Guidelines 2022-26, MSME Ministry",
-      "publication_date": "2022-05-30",
-      "last_verified_at": "2026-09-06T12:00:00Z",
-      "version": "2022.1",
-      "notes": "Revised subsidy ceilings up to 50 Lakhs for manufacturing.",
-      "is_active": true
-    }
-  ],
-  "eligibility_rules": [
-    {
-      "id": 1,
+      "rule_id": 1,
       "rule_code": "PMEGP_MIN_AGE",
-      "field_name": "age",
-      "operator": ">=",
-      "expected_value": 18,
-      "description": "Applicant must be at least 18 years of age at the time of application.",
-      "source_id": 1,
-      "rule_version": "1.0",
-      "is_active": true
-    }
-  ],
-  "documents": [
-    {
-      "id": 1,
-      "document_code": "AADHAAR_CARD",
-      "document_name": "Aadhaar Card",
-      "description": "Primary identity and address verification",
+      "criterion": "age",
+      "status": "MATCHED",
+      "user_value": 27,
+      "required_condition": ">= 18",
+      "explanation": "Applicant age is 27; meets required minimum of >= 18.",
       "is_mandatory": true,
-      "source_id": 1
+      "source_id": 1,
+      "source_name": "Ministry of MSME - PMEGP Scheme Guidelines",
+      "source_url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp",
+      "rule_version": "1.0"
+    },
+    {
+      "rule_id": 2,
+      "rule_code": "PMEGP_UNIT_STAGE",
+      "criterion": "business_stage",
+      "status": "MATCHED",
+      "user_value": "new_enterprise",
+      "required_condition": "== new_enterprise",
+      "explanation": "Applicant business stage is new_enterprise; satisfies requirement of == new_enterprise.",
+      "is_mandatory": true,
+      "source_id": 1,
+      "source_name": "Ministry of MSME - PMEGP Scheme Guidelines",
+      "source_url": "https://www.kviconline.gov.in/pmegpeportal/pmegphome/index.jsp",
+      "rule_version": "1.0"
     }
   ]
 }
 ```
+
+**Response Fields**:
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `scheme_id` | `integer` | Database scheme ID |
+| `scheme_code` | `string` | Unique scheme code |
+| `scheme_name` | `string` | Official scheme title |
+| `overall_status` | `string` | Aggregated result: `MATCHED`, `FAILED`, or `UNVERIFIED` |
+| `evaluated_at` | `string (ISO 8601)` | Evaluation UTC timestamp |
+| `summary` | `object` | Total rules, matched, failed, and unverified counts |
+| `criteria` | `array[object]` | Individual criterion evaluation details with explanation and source links |
 
 ---
 
@@ -128,7 +132,7 @@ Retrieve comprehensive scheme specifications by database ID or unique scheme cod
 
 | Domain | Method | Endpoint | Milestone |
 | :--- | :--- | :--- | :--- |
-| **Eligibility** | `POST` | `/api/v1/eligibility/evaluate` | Step 4 (Deterministic Eligibility Engine) |
 | **Finance** | `POST` | `/api/v1/finance/calculate-dpr` | Step 5 (Deterministic Financial Engine) |
-| **AI / RAG** | `POST` | `/api/v1/ai/explain-scheme` | Step 6 (Grounded AI Explanations) |
-| **Applications**| `POST` | `/api/v1/applications` | Step 7 (Application Tracking) |
+| **Matching** | `POST` | `/api/v1/schemes/match` | Step 6 (Multi-Scheme Matching & Ranking) |
+| **AI / RAG** | `POST` | `/api/v1/ai/explain-scheme` | Step 7 (Grounded AI Explanations) |
+| **Applications**| `POST` | `/api/v1/applications` | Step 9 (Application Tracking) |

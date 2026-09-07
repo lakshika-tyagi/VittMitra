@@ -29,6 +29,7 @@ class SchemeEligibilityRuleSchema(BaseModel):
     description: str = Field(..., min_length=5, description="Plain English explainable description")
     source_id: Optional[int] = None
     rule_version: str = Field(default="1.0")
+    is_mandatory: bool = Field(default=True, description="Whether this criterion is mandatory for overall eligibility")
     is_active: bool = Field(default=True)
 
     model_config = ConfigDict(from_attributes=True)

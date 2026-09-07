@@ -7,8 +7,10 @@ from app.db.session import get_db
 from app.api.v1.api import api_router
 from app.schemas.health import HealthResponse, DatabaseHealthResponse, PostGISHealthResponse
 from app.schemas.scheme import SchemeDetailResponse, SchemeListResponse
+from app.schemas.eligibility import EligibilityCheckRequest, EligibilityCheckResponse
 from app.api.v1.endpoints.health import check_database_health, check_postgis_health
 from app.api.v1.endpoints.schemes import list_schemes, get_scheme_by_identifier
+from app.api.v1.endpoints.eligibility import check_scheme_eligibility
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -94,6 +96,20 @@ def create_application() -> FastAPI:
         db: AsyncSession = Depends(get_db)
     ) -> SchemeDetailResponse:
         return await get_scheme_by_identifier(scheme_identifier=scheme_identifier, db=db)
+
+    # Root Eligibility Check Shortcut
+    @application.post(
+        "/eligibility/check",
+        response_model=EligibilityCheckResponse,
+        tags=["Eligibility"],
+        summary="Root Deterministic Eligibility Check",
+        description="Shortcut for /api/v1/eligibility/check"
+    )
+    async def root_check_eligibility(
+        payload: EligibilityCheckRequest,
+        db: AsyncSession = Depends(get_db)
+    ) -> EligibilityCheckResponse:
+        return await check_scheme_eligibility(payload=payload, db=db)
 
     # Register API v1 routes
     application.include_router(api_router, prefix=settings.API_V1_STR)
