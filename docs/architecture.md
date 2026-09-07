@@ -139,7 +139,68 @@ Every criterion result is linked to its authoritative guideline record (`source_
 
 ---
 
-## 3. Scheme Knowledge & Anti-Hallucination Framework `[STEP 3]`
+## 3. Deterministic Financial Engine Architecture `[STEP 5]`
+
+### A. Non-Black-Box Financial Modeling Principle
+The Financial Engine helps entrepreneurs model the loan structure, required margin money, financing gap, reducing-balance EMI amortization, total repayment liabilities, and affordability indicators (DTI) using transparent mathematical formulations.
+
+**Zero LLM / Generative AI Involvement**: No AI model or statistical approximation generates financial figures. All calculations utilize Python's `Decimal` standard library with `ROUND_HALF_UP` to prevent floating-point inaccuracies.
+
+```
+Entrepreneur Financial Inputs (JSON)
+        ↓
+Input Validation & Boundary Checking (Negative amounts, Tenure > 0, Income >= 0)
+        ↓
+Project Cost & Financing Gap Calculator (Machinery + Working Capital + Other - Own Contribution)
+        ↓
+Reducing-Balance EMI Amortization (P * r * (1+r)^n / ((1+r)^n - 1))
+        ↓
+Full Repayment Summary (Total Repayment, Total Interest, Financing %, Own %)
+        ↓
+Affordability & Debt-to-Income Stress Analyzer (DTI Ratio & Risk Categorization)
+        ↓
+Scenario Evaluation Engine (Base vs. Conservative vs. Optimistic vs. Custom Scenarios)
+        ↓
+Structured API Responses: POST /api/v1/finance/calculate & POST /api/v1/finance/scenarios
+```
+
+### B. Core Mathematical Formulations
+
+1. **Project Cost Breakdown & Validation**:
+   - $\text{Total Cost} = \text{Machinery Cost} + \text{Working Capital} + \text{Other Costs}$
+   - If total cost is directly supplied, the sum of breakdown items must match or be smaller than total cost.
+   - $\text{Financing Gap} = \max(0, \text{Project Cost} - \text{Own Contribution})$
+   - $\text{Financing Percentage} = \frac{\text{Financing Gap}}{\text{Project Cost}} \times 100$
+   - $\text{Own Contribution Percentage} = \frac{\text{Own Contribution}}{\text{Project Cost}} \times 100$
+
+2. **Reducing-Balance Monthly EMI**:
+   - Formula: $\text{EMI} = \frac{P \times r \times (1+r)^n}{(1+r)^n - 1}$
+   - Where:
+     - $P$ = Principal Loan Amount / Financing Gap ($\ge 0$)
+     - $r$ = Monthly interest rate $= \frac{\text{annual\_interest\_rate}}{12 \times 100}$
+     - $n$ = Loan tenure in months ($n > 0$)
+   - For $0\%$ Interest / Subsidized Loans: $\text{EMI} = \frac{P}{n}$
+
+3. **Repayment Summary**:
+   - $\text{Total Repayment} = \text{EMI} \times n$
+   - $\text{Total Interest} = \max(0, \text{Total Repayment} - P)$
+
+4. **Debt-to-Income (DTI) & Affordability Stress**:
+   - If Monthly Income $> 0$:
+     - $\text{DTI} = \frac{\text{EMI} + \text{Existing Monthly Obligations}}{\text{Monthly Income}} \times 100$
+     - Risk Classification:
+       - $\text{DTI} \le 30\% \rightarrow \mathbf{LOW\_RISK}$ (Healthy repayment capacity)
+       - $30\% < \text{DTI} \le 50\% \rightarrow \mathbf{MODERATE\_RISK}$ (Manageable debt load)
+       - $\text{DTI} > 50\% \rightarrow \mathbf{HIGH\_RISK}$ (High repayment stress / high default risk)
+   - If Monthly Income is missing or $0$: Category $= \mathbf{UNSPECIFIED}$, explanation clarifies missing baseline.
+
+5. **Scenario Comparison Engine**:
+   - Evaluates interest rate variations (Base, Conservative $+1.5\%$, Optimistic $-1.5\%$) and tenure shifts.
+   - Computes delta metrics against base scenario for transparent decision-making.
+
+---
+
+## 4. Scheme Knowledge & Anti-Hallucination Framework `[STEP 3]`
 
 1. **Zero Hallucination Tolerance**: Scheme parameters (subsidy percentages, project cost limits, interest rates, age thresholds) are NEVER invented or approximated by LLMs.
 2. **Every Record Source-Linked**: Each scheme record contains foreign-key relationships to `scheme_sources` containing official URLs (`kviconline.gov.in`, `standupmitra.in`, `mudra.org.in`, etc.), ministry guideline publication dates, and verification timestamps (`last_verified_at`).

@@ -94,19 +94,50 @@ Development verification table validating PostgreSQL ORM and PostGIS spatial poi
 
 ---
 
-## 2. Planned / Future Conceptual Entities (Step 4+ Implementation)
+## 2. Financial Engine Data Contracts & Precision Standards `[STEP 5]`
+
+The Financial Engine is stateless and operates directly on strictly validated Pydantic models. All monetary calculations are performed with Python `Decimal` (`ROUND_HALF_UP` rounding to 2 decimal places) to eliminate floating-point approximation errors.
+
+### A. Financial Calculation Data Models
+- **`FinancialCalculationRequest`**:
+  - `project_cost` (Decimal, $> 0$): Total project/business investment required.
+  - `own_contribution` (Decimal, $\ge 0$): Promoter/entrepreneur equity or margin money.
+  - `annual_interest_rate` (Decimal, $\ge 0$): Nominal annual interest rate in percent (e.g. `9.5`).
+  - `tenure_months` (Integer, $> 0$, max 360): Loan repayment period in months.
+  - `monthly_income` (Decimal, optional, $\ge 0$): Monthly baseline income for DTI analysis.
+  - `existing_monthly_obligations` (Decimal, optional, $\ge 0$): Prior existing debt service.
+  - `cost_breakdown` (Object, optional): Itemized breakdown (`machinery_cost`, `working_capital`, `other_costs`).
+
+- **`FinancialCalculationResponse`**:
+  - `project_cost`, `own_contribution`, `financing_gap`: Net loan requirement ($\text{cost} - \text{own}$).
+  - `financing_percentage`, `own_contribution_percentage`: Structural equity/debt proportions.
+  - `emi`: Monthly reducing-balance installment.
+  - `repayment_summary`: Principal, monthly installment, total interest, total repayment.
+  - `affordability_indicator`: DTI ratio (%), risk level (`LOW_RISK`, `MODERATE_RISK`, `HIGH_RISK`, `UNSPECIFIED`), and plain-language explanation.
+  - `cost_breakdown`: Itemized expenditure components.
+  - `calculated_at`: ISO 8601 UTC timestamp.
+
+### B. Financial Scenarios Data Models
+- **`ScenarioComparisonRequest`**:
+  - Base project parameters + array of comparative alternative scenarios (`annual_interest_rate`, `tenure_months`, `scenario_name`).
+- **`ScenarioComparisonResponse`**:
+  - Base scenario result alongside list of comparative scenarios including delta metrics (`delta_emi_vs_base`, `delta_total_interest_vs_base`).
+
+---
+
+## 3. Planned / Future Conceptual Entities (Step 6+ Implementation)
 
 > [!IMPORTANT]
 > The following entities are **PLANNED CONCEPTUAL DESIGNS** for subsequent milestones.
-> They are intentionally **NOT** created in the database during Step 3.
+> They are intentionally **NOT** created in the database during Step 5.
 
 - **`users`** `[PLANNED]`: User accounts and roles.
 - **`entrepreneur_profiles`** `[PLANNED]`: Demographics (Age, Category, Gender, Education, Income).
 - **`businesses`** `[PLANNED]`: Enterprise concept, sector, stage, and ownership.
 - **`locations`** `[PLANNED]`: PostGIS spatial profiles (State, District, Urban/Rural, Coordinates).
 - **`business_signals`** `[PLANNED]`: Regional demand clusters and supply chain viability indicators.
-- **`financial_profiles`** `[PLANNED]`: Fixed capital, working capital, subsidy, and loan structure.
-- **`financial_scenarios`** `[PLANNED]`: Cash-flow projections, DSCR, and monthly EMI amortization.
+- **`financial_profiles`** `[PLANNED]`: Persisted loan structure records.
+- **`financial_scenarios`** `[PLANNED]`: Persisted multi-year cash flow projections.
 - **`recommendations`** `[PLANNED]`: Best-fit scheme rankings.
 - **`eligibility_results`** `[PLANNED]`: Deterministic rule evaluation pass/fail logs.
 - **`channel_partners`** `[PLANNED]`: CSC centers and DIC offices with spatial coordinates.
@@ -115,8 +146,8 @@ Development verification table validating PostgreSQL ORM and PostGIS spatial poi
 
 ---
 
-## 3. Data Integrity & Anti-Hallucination Principles
+## 4. Data Integrity & Anti-Hallucination Principles
 
 1. **Strict Authoritative Grounding**: All scheme parameters must reference official ministry URLs and gazette citations.
-2. **Deterministic Computations**: Eligibility and financial math are evaluated in code/SQL, never in LLMs.
+2. **Deterministic Computations**: Eligibility rules and financial formulas are evaluated in pure code/SQL, never in LLMs.
 3. **Auditability**: Every scheme change preserves version metadata and `last_verified_at` timestamps.

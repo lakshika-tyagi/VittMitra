@@ -19,6 +19,17 @@ from app.schemas.eligibility import (
     EligibilitySummary,
     EligibilityCheckResponse,
 )
+from app.schemas.finance import (
+    ProjectCostBreakdownSchema,
+    LoanRepaymentSummarySchema,
+    AffordabilityIndicatorSchema,
+    FinancialCalculationRequest,
+    FinancialCalculationResponse,
+    FinancialScenarioInput,
+    ScenarioComparisonRequest,
+    FinancialScenarioResult,
+    ScenarioComparisonResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -36,4 +47,13 @@ __all__ = [
     "CriterionResult",
     "EligibilitySummary",
     "EligibilityCheckResponse",
+    "ProjectCostBreakdownSchema",
+    "LoanRepaymentSummarySchema",
+    "AffordabilityIndicatorSchema",
+    "FinancialCalculationRequest",
+    "FinancialCalculationResponse",
+    "FinancialScenarioInput",
+    "ScenarioComparisonRequest",
+    "FinancialScenarioResult",
+    "ScenarioComparisonResponse",
 ]

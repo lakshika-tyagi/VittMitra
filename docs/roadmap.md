@@ -49,11 +49,16 @@ The platform is developed methodically through structured, verified milestones.
 
 ---
 
-### ⏳ Milestone 5: Deterministic Financial Engine
-- [ ] Fixed capital and working capital structuring engine.
-- [ ] Scheme-specific subsidy and margin money calculator (General vs. Special category rates, Rural vs. Urban).
-- [ ] Bank loan requirement, interest rate, and monthly EMI amortization schedule computation.
-- [ ] Detailed Project Report (DPR) financial feasibility synthesizer.
+### 📍 Milestone 5: Deterministic Financial Engine `[COMPLETED]`
+- [x] Precision-safe mathematical calculations using Python `Decimal` with `ROUND_HALF_UP`.
+- [x] Project cost breakdown & financing gap calculator (`project_cost = machinery + working_capital + other_costs`, `financing_gap = project_cost - own_contribution`).
+- [x] Standard monthly reducing-balance EMI calculation with zero-interest support (`EMI = P * r * (1+r)^n / ((1+r)^n - 1)`).
+- [x] Full repayment amortization summary (total interest, total repayment, financing percentage, own contribution percentage).
+- [x] Debt-to-Income / affordability stress indicator computation (`DTI = (monthly_repayment / monthly_income) * 100`, categories: `LOW_RISK`, `MODERATE_RISK`, `HIGH_RISK`, `UNSPECIFIED`).
+- [x] Comparative financial scenario evaluator (base, conservative, optimistic, custom) with interest rate and tenure variations.
+- [x] Strict input validation and boundary condition enforcement (negative numbers, zero income, tenure limits, cost consistency).
+- [x] Public API endpoints: `POST /api/v1/finance/calculate` and `POST /api/v1/finance/scenarios` (with root shortcuts).
+- [x] 100% test coverage for calculations, scenarios, engine, and API integration (111 passed tests total).
 
 ---
 

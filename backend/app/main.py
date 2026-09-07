@@ -8,9 +8,16 @@ from app.api.v1.api import api_router
 from app.schemas.health import HealthResponse, DatabaseHealthResponse, PostGISHealthResponse
 from app.schemas.scheme import SchemeDetailResponse, SchemeListResponse
 from app.schemas.eligibility import EligibilityCheckRequest, EligibilityCheckResponse
+from app.schemas.finance import (
+    FinancialCalculationRequest,
+    FinancialCalculationResponse,
+    ScenarioComparisonRequest,
+    ScenarioComparisonResponse,
+)
 from app.api.v1.endpoints.health import check_database_health, check_postgis_health
 from app.api.v1.endpoints.schemes import list_schemes, get_scheme_by_identifier
 from app.api.v1.endpoints.eligibility import check_scheme_eligibility
+from app.api.v1.endpoints.finance import calculate_finance, compare_finance_scenarios
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -110,6 +117,33 @@ def create_application() -> FastAPI:
         db: AsyncSession = Depends(get_db)
     ) -> EligibilityCheckResponse:
         return await check_scheme_eligibility(payload=payload, db=db)
+
+    # Root Financial Calculation Shortcut
+    @application.post(
+        "/finance/calculate",
+        response_model=FinancialCalculationResponse,
+        tags=["Finance"],
+        summary="Root Financial Calculation",
+        description="Shortcut for /api/v1/finance/calculate"
+    )
+    async def root_calculate_finance(
+        payload: FinancialCalculationRequest,
+        db: AsyncSession = Depends(get_db)
+    ) -> FinancialCalculationResponse:
+        return await calculate_finance(payload=payload, db=db)
+
+    # Root Financial Scenarios Shortcut
+    @application.post(
+        "/finance/scenarios",
+        response_model=ScenarioComparisonResponse,
+        tags=["Finance"],
+        summary="Root Financial Scenarios Comparison",
+        description="Shortcut for /api/v1/finance/scenarios"
+    )
+    async def root_compare_scenarios(
+        payload: ScenarioComparisonRequest
+    ) -> ScenarioComparisonResponse:
+        return await compare_finance_scenarios(payload=payload)
 
     # Register API v1 routes
     application.include_router(api_router, prefix=settings.API_V1_STR)

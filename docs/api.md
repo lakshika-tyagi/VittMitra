@@ -128,11 +128,134 @@ Evaluates an entrepreneur's structured profile inputs against official governmen
 
 ---
 
+### Deterministic Financial Engine `[STEP 5]`
+
+#### `POST /api/v1/finance/calculate` (or `POST /finance/calculate`)
+Computes transparent loan repayment metrics, reducing-balance EMI amortization, project cost breakdown, financing gap, and affordability (DTI) indicators.
+
+**Request Payload**:
+```json
+{
+  "project_cost": 1000000,
+  "own_contribution": 100000,
+  "annual_interest_rate": 9.5,
+  "tenure_months": 60,
+  "monthly_income": 45000,
+  "existing_monthly_obligations": 5000,
+  "cost_breakdown": {
+    "machinery_cost": 600000,
+    "working_capital": 300000,
+    "other_costs": 100000
+  }
+}
+```
+
+**Response Example (200 OK)**:
+```json
+{
+  "project_cost": 1000000.0,
+  "own_contribution": 100000.0,
+  "financing_gap": 900000.0,
+  "financing_percentage": 90.0,
+  "own_contribution_percentage": 10.0,
+  "annual_interest_rate": 9.5,
+  "tenure_months": 60,
+  "emi": 18911.39,
+  "repayment_summary": {
+    "principal_amount": 900000.0,
+    "monthly_emi": 18911.39,
+    "total_interest": 234683.4,
+    "total_repayment": 1134683.4,
+    "tenure_months": 60,
+    "annual_interest_rate": 9.5
+  },
+  "affordability_indicator": {
+    "monthly_income": 45000.0,
+    "existing_obligations": 5000.0,
+    "proposed_emi": 18911.39,
+    "total_monthly_obligations": 23911.39,
+    "debt_to_income_ratio": 53.14,
+    "affordability_category": "HIGH_RISK",
+    "explanation": "Total monthly debt obligations (Rs. 23,911.39) represent 53.14% of monthly income (Rs. 45,000.00). DTI exceeds 50.0%, indicating high financial stress and elevated risk of loan default."
+  },
+  "cost_breakdown": {
+    "machinery_cost": 600000.0,
+    "working_capital": 300000.0,
+    "other_costs": 100000.0,
+    "total_cost": 1000000.0
+  },
+  "calculated_at": "2026-09-07T12:00:00Z"
+}
+```
+
+---
+
+#### `POST /api/v1/finance/scenarios` (or `POST /finance/scenarios`)
+Evaluates comparative financial scenarios (Base, Conservative $+1.5\%$, Optimistic $-1.5\%$, or custom variations) for interest rates and tenures.
+
+**Request Payload**:
+```json
+{
+  "project_cost": 1000000,
+  "own_contribution": 100000,
+  "base_annual_interest_rate": 9.5,
+  "base_tenure_months": 60,
+  "monthly_income": 45000,
+  "scenarios": [
+    {
+      "scenario_name": "Conservative (+1.5% Rate)",
+      "annual_interest_rate": 11.0,
+      "tenure_months": 60
+    },
+    {
+      "scenario_name": "Optimistic (-1.5% Rate)",
+      "annual_interest_rate": 8.0,
+      "tenure_months": 60
+    }
+  ]
+}
+```
+
+**Response Example (200 OK)**:
+```json
+{
+  "project_cost": 1000000.0,
+  "own_contribution": 100000.0,
+  "financing_gap": 900000.0,
+  "base_scenario": {
+    "scenario_name": "Base Scenario",
+    "annual_interest_rate": 9.5,
+    "tenure_months": 60,
+    "monthly_emi": 18911.39,
+    "total_interest": 234683.4,
+    "total_repayment": 1134683.4,
+    "debt_to_income_ratio": 42.03,
+    "affordability_category": "MODERATE_RISK"
+  },
+  "scenarios": [
+    {
+      "scenario_name": "Conservative (+1.5% Rate)",
+      "annual_interest_rate": 11.0,
+      "tenure_months": 60,
+      "monthly_emi": 19567.89,
+      "total_interest": 274073.4,
+      "total_repayment": 1174073.4,
+      "debt_to_income_ratio": 43.48,
+      "affordability_category": "MODERATE_RISK",
+      "delta_emi_vs_base": 656.5,
+      "delta_total_interest_vs_base": 39390.0
+    }
+  ],
+  "calculated_at": "2026-09-07T12:00:00Z"
+}
+```
+
+---
+
 ## 3. Planned Endpoints (Future Milestones)
 
 | Domain | Method | Endpoint | Milestone |
 | :--- | :--- | :--- | :--- |
-| **Finance** | `POST` | `/api/v1/finance/calculate-dpr` | Step 5 (Deterministic Financial Engine) |
 | **Matching** | `POST` | `/api/v1/schemes/match` | Step 6 (Multi-Scheme Matching & Ranking) |
 | **AI / RAG** | `POST` | `/api/v1/ai/explain-scheme` | Step 7 (Grounded AI Explanations) |
 | **Applications**| `POST` | `/api/v1/applications` | Step 9 (Application Tracking) |
