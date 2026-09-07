@@ -378,3 +378,105 @@ export async function updateApplicationStatus(
   return await res.json();
 }
 
+// -------------------------------------------------------------
+// Step 11: Grounded AI & RAG Client Functions
+// -------------------------------------------------------------
+
+export async function getAIHealth(): Promise<import('../types').AIServiceHealth> {
+  const res = await fetch(`${API_BASE_URL}/ai/health`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch AI health status (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function sendChatMessage(
+  request: import('../types').GroundedChatRequest
+): Promise<import('../types').GroundedChatResponse> {
+  const res = await fetch(`${API_BASE_URL}/ai/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `AI chat request failed (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function explainEligibilityAI(
+  profileId: string,
+  schemeCode: string
+): Promise<import('../types').GroundedChatResponse> {
+  const params = new URLSearchParams({
+    profile_id: profileId,
+    scheme_code: schemeCode,
+  });
+  const res = await fetch(`${API_BASE_URL}/ai/explain/eligibility?${params.toString()}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `AI eligibility explanation failed (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function explainFinanceAI(
+  profileId: string,
+  schemeCode: string
+): Promise<import('../types').GroundedChatResponse> {
+  const params = new URLSearchParams({
+    profile_id: profileId,
+    scheme_code: schemeCode,
+  });
+  const res = await fetch(`${API_BASE_URL}/ai/explain/finance?${params.toString()}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `AI finance explanation failed (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function explainFeasibilityAI(
+  profileId: string
+): Promise<import('../types').GroundedChatResponse> {
+  const params = new URLSearchParams({
+    profile_id: profileId,
+  });
+  const res = await fetch(`${API_BASE_URL}/ai/explain/feasibility?${params.toString()}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `AI feasibility explanation failed (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function explainSchemeAI(
+  schemeCode: string
+): Promise<import('../types').GroundedChatResponse> {
+  const params = new URLSearchParams({
+    scheme_code: schemeCode,
+  });
+  const res = await fetch(`${API_BASE_URL}/ai/explain/scheme?${params.toString()}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `AI scheme explanation failed (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+

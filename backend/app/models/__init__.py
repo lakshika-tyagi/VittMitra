@@ -7,6 +7,7 @@ from app.models.scheme import Scheme, SchemeSource, SchemeEligibilityRule, Schem
 from app.models.profile import Entrepreneur, BusinessProfile, FinancialProfile
 from app.models.intelligence import DistrictMSMEEcosystem, MSMECluster
 from app.models.access import ChannelPartner, SchemeChannelPartner, Application, ApplicationStatusHistory
+from app.models.knowledge import KnowledgeChunk
 
 __all__ = [
     "Base",
@@ -24,4 +25,6 @@ __all__ = [
     "SchemeChannelPartner",
     "Application",
     "ApplicationStatusHistory",
+    "KnowledgeChunk",
 ]
+

@@ -88,6 +88,15 @@ from app.schemas.application import (
     RequiredDocumentChecklistItem,
     ApplicationAssistanceResponse,
 )
+from app.schemas.ai import (
+    ConfidenceLevel,
+    SectionType,
+    CitationSource,
+    GroundedChatRequest,
+    GroundedChatResponse,
+    GroundedExplainRequest,
+    KnowledgeChunkItem,
+)
 
 __all__ = [
     "HealthResponse",
@@ -162,4 +171,12 @@ __all__ = [
     "ApplicationDetailResponse",
     "RequiredDocumentChecklistItem",
     "ApplicationAssistanceResponse",
+    "ConfidenceLevel",
+    "SectionType",
+    "CitationSource",
+    "GroundedChatRequest",
+    "GroundedChatResponse",
+    "GroundedExplainRequest",
+    "KnowledgeChunkItem",
 ]
+

@@ -30,7 +30,7 @@ import {
 import SchemeCard from '@/components/schemes/SchemeCard';
 import ComparisonDrawer from '@/components/schemes/ComparisonDrawer';
 
-export default function SchemesPage() {
+function SchemesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const profileIdQuery = searchParams.get('profile_id');
@@ -718,5 +718,20 @@ export default function SchemesPage() {
         </>
       )}
     </main>
+  );
+}
+
+export default function SchemesPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main className="max-w-7xl mx-auto px-4 py-12 text-center text-slate-400">
+          <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-3" />
+          <p>Loading Scheme Discovery Engine...</p>
+        </main>
+      }
+    >
+      <SchemesContent />
+    </React.Suspense>
   );
 }

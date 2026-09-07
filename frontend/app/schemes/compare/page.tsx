@@ -28,7 +28,7 @@ import {
 } from '@/types';
 import SchemeComparisonTable from '@/components/schemes/SchemeComparisonTable';
 
-export default function CompareSchemesPage() {
+function CompareSchemesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -407,5 +407,20 @@ export default function CompareSchemesPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function CompareSchemesPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main className="max-w-7xl mx-auto px-4 py-12 text-center text-slate-400">
+          <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-3" />
+          <p>Loading Scheme Comparison Matrix...</p>
+        </main>
+      }
+    >
+      <CompareSchemesContent />
+    </React.Suspense>
   );
 }

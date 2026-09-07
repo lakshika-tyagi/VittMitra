@@ -727,3 +727,56 @@ export interface ApplicationStatusUpdatePayload {
   source_type?: StatusSourceType;
 }
 
+// -------------------------------------------------------------
+// Step 11: Grounded AI & RAG Types
+// -------------------------------------------------------------
+
+export type ConfidenceLevel = 'HIGH' | 'MEDIUM' | 'LOW' | 'INSUFFICIENT_DATA';
+
+export interface CitationSource {
+  source_id?: number | null;
+  source_name: string;
+  source_type: string;
+  official_url?: string | null;
+  document_reference?: string | null;
+  section_type?: string | null;
+  last_verified_at?: string | null;
+}
+
+export interface GroundedChatRequest {
+  message: string;
+  profile_id?: string | null;
+  scheme_id?: string | null;
+  topic?: string;
+  context?: Record<string, any>;
+  conversation_history?: Array<{ role: string; content: string }>;
+}
+
+export interface GroundedChatResponse {
+  answer: string;
+  grounded: boolean;
+  confidence: ConfidenceLevel;
+  sources: CitationSource[];
+  limitations: string[];
+  suggested_actions: string[];
+  disclaimer: string;
+  evaluated_at: string;
+}
+
+export interface GroundedExplainRequest {
+  profile_id?: string | null;
+  scheme_code?: string | null;
+  topic: string;
+  custom_query?: string | null;
+  context?: Record<string, any>;
+}
+
+export interface AIServiceHealth {
+  status: string;
+  provider: string;
+  model: string;
+  is_live_configured: boolean;
+  capabilities: string[];
+}
+
+

@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     
     DATABASE_URL: str = "postgresql+asyncpg://vittmitra_user:vittmitra_password@localhost:5432/vittmitra_db"
     GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    RAG_TOP_K: int = 5
+    RAG_SIMILARITY_THRESHOLD: float = 0.35
     
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -37,3 +40,4 @@ class Settings(BaseSettings):
     )
 
 settings = Settings()
+

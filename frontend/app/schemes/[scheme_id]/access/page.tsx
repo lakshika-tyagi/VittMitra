@@ -24,10 +24,12 @@ import {
   SchemeDetailResponse,
   ApplicationAssistance,
   ApplicationCreatePayload,
+  GroundedChatResponse,
 } from '@/types';
 import { ApplicationAssistanceView } from '@/components/applications';
+import { AIExplanationCard, GroundedChatDrawer } from '@/components/ai';
 
-export default function SchemeAccessPage() {
+function SchemeAccessContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -39,6 +41,9 @@ export default function SchemeAccessPage() {
   const [scheme, setScheme] = useState<SchemeDetailResponse | null>(null);
   const [assistance, setAssistance] = useState<ApplicationAssistance | null>(null);
   const [entrepreneurId, setEntrepreneurId] = useState<number | null>(null);
+
+  // Step 11: Grounded AI Drawer State
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadData() {
@@ -140,17 +145,28 @@ export default function SchemeAccessPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-slate-400">
-        <Link href="/" className="hover:text-slate-200">Dashboard</Link>
-        <span>/</span>
-        <Link href="/schemes" className="hover:text-slate-200">Schemes</Link>
-        <span>/</span>
-        <Link href={`/schemes/${scheme.id || scheme.scheme_code}`} className="hover:text-slate-200">
-          {scheme.scheme_code}
-        </Link>
-        <span>/</span>
-        <span className="text-emerald-400 font-medium">Access & Channel Partners</span>
+      {/* Breadcrumb & AI Assist Header Action */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800/60">
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <Link href="/" className="hover:text-slate-200">Dashboard</Link>
+          <span>/</span>
+          <Link href="/schemes" className="hover:text-slate-200">Schemes</Link>
+          <span>/</span>
+          <Link href={`/schemes/${scheme.id || scheme.scheme_code}`} className="hover:text-slate-200">
+            {scheme.scheme_code}
+          </Link>
+          <span>/</span>
+          <span className="text-emerald-400 font-medium">Access & Channel Partners</span>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsChatOpen(true)}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 text-xs font-medium transition-all shadow-sm"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Ask AI About Preparation</span>
+        </button>
       </div>
 
       {/* Main Guidance View */}
@@ -160,6 +176,30 @@ export default function SchemeAccessPage() {
         onCreateApplication={createApplication}
         onApplicationCreated={handleApplicationCreated}
       />
+
+      {/* Grounded AI Assistant Drawer */}
+      <GroundedChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        activeProfileId={entrepreneurId ? String(entrepreneurId) : null}
+        activeSchemeCode={scheme.scheme_code}
+        initialQuery={`What documents and preparation steps are required for ${scheme.scheme_name} (${scheme.scheme_code})?`}
+      />
     </main>
+  );
+}
+
+export default function SchemeAccessPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main className="max-w-6xl mx-auto px-4 py-12 text-center text-slate-400">
+          <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-3" />
+          <p>Loading Scheme Application Guidance...</p>
+        </main>
+      }
+    >
+      <SchemeAccessContent />
+    </React.Suspense>
   );
 }

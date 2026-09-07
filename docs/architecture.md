@@ -491,24 +491,77 @@ VittMitra bridges scheme discovery with last-mile loan application execution thr
 
 ---
 
-## 11. Database & Spatial Architecture (PostgreSQL + PostGIS)
+## 11. Grounded AI & RAG Intelligence Layer Architecture `[STEP 11]`
+
+### A. Non-Negotiable Grounding & Authority Principle
+Google Gemini (`gemini-2.5-flash`) operates exclusively as an **explanation and conversational interaction layer**.
+- **Sole Deterministic Authority**: Deterministic engines remain the sole authority for eligibility evaluation (Step 4), financial math and EMIs (Step 5), match scoring (Step 6), location feasibility signals (Step 9), and application tracking states (Step 10).
+- **Anti-Hallucination Constraints**: Gemini prompts are strictly structured with XML boundaries `<GROUNDED_SCHEME_KNOWLEDGE>`, `<DETERMINISTIC_ENGINE_RESULTS>`, and `<USER_CONTEXT>`.
+- **Zero Fabricated Citations**: AI responses must cite only verified database source records retrieved via RAG.
+- **Insufficient Data Protocol**: If official scheme knowledge does not provide sufficient facts, the model explicitly outputs `confidence: "INSUFFICIENT_DATA"` and directs the entrepreneur to the official ministry portal.
+
+```
++-------------------------------------------------------------------------+
+|                         VittMitra Grounded RAG Flow                      |
+|                                                                         |
+|   User Query / Request                                                  |
+|          │                                                              |
+|          ▼                                                              |
+|   [Hybrid RAG Retriever] ─── (SQL Filter: scheme_code, section_type)    |
+|          │                                                              |
+|          ├─── (Dense Embedding: text-embedding-004 + Local Fallback)   |
+|          └─── (Relevance Ranking: Cosine Similarity + Keyword Boost)    |
+|          │                                                              |
+|          ▼                                                              |
+|   [Retrieved Knowledge Chunks]                                          |
+|          │                                                              |
+|          ├──────► [Step 4 Eligibility Engine Results]                   |
+|          ├──────► [Step 5 Financial Calculator Results]                 |
+|          ├──────► [Step 9 Feasibility Signals]                          |
+|          │                                                              |
+|          ▼                                                              |
+|   [Structured System Prompt Assembly with Anti-Injection Safeguards]     |
+|          │                                                              |
+|          ▼                                                              |
+|   [Google Gemini 2.5 Flash / Grounded Fallback Synthesizer]             |
+|          │                                                              |
+|          ▼                                                              |
+|   [Structured JSON Output: Answer + Confidence + Verified Citations]     |
++-------------------------------------------------------------------------+
+```
+
+### B. Knowledge Base Chunking & Embedding Infrastructure
+- **Model**: `KnowledgeChunk` (`knowledge_chunks` table in PostgreSQL).
+- **Semantic Sections**:
+  1. `overview`: Scheme purpose, nodal ministry, scope, and objectives.
+  2. `eligibility_criteria`: Full criteria conditions, age limits, enterprise requirements, and mandatory rules.
+  3. `financial_benefits`: Maximum loan amounts, interest rates, capital subsidies, and promoter equity.
+  4. `required_documents`: Mandatory and conditional document checklists and verification stages.
+  5. `application_steps`: Step-by-step submission procedure, portal URLs, and implementing agencies.
+- **Embeddings**: 128-dimensional deterministic normalized vectors with Gemini `text-embedding-004` online mode and zero-network local hashing fallback.
+
+---
+
+## 12. Database & Spatial Architecture (PostgreSQL + PostGIS)
 
 - **Database Engine**: PostgreSQL 15+ with PostGIS 3.3+ spatial extension.
 - **Spatial Tables**:
   - `district_msme_ecosystems`: District-level MSME density, thrust sectors, infrastructure, and DIC office points.
   - `msme_clusters`: Registered industrial/artisan clusters with spatial point coordinates (`POINT(lon, lat)` SRID 4326).
   - `channel_partners`: Implementing agencies, bank branches, and facilitation centres with spatial point coordinates (`POINT(lon, lat)` SRID 4326).
+  - `knowledge_chunks`: Semantically decomposed scheme knowledge chunks with vector embeddings and source traceability.
 - **ORM & Dialect**: SQLAlchemy 2.0 (Asyncio) with GeoAlchemy2 and `asyncpg` driver.
 - **Connection Pooling**: Pre-ping enabled async connection pool (`pool_size=10`, `max_overflow=20`, `timeout=5s`).
 - **Migration Framework**: Alembic 1.13+ configured with async execution and PostGIS table isolation filters.
 
 ---
 
-## 12. Security & Data Protection
+## 13. Security & Data Protection
 
 - **Public Scheme Knowledge**: Government scheme and MSME cluster data is public and free of PII.
 - **Client Rule Isolation**: Clients cannot manipulate authoritative rule definitions or scoring weights in API requests.
 - **Environment Isolation**: Connection secrets managed strictly through `.env` with zero committed credentials.
 - **Sanitized API Responses**: Clear separation between public API responses and internal database columns.
+
 
 

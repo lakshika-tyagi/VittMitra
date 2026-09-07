@@ -14,6 +14,10 @@ import {
   Calculator,
   Briefcase,
   HelpCircle,
+  Sparkles,
+  Bot,
+  Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import {
   fetchSchemeDetail,
@@ -21,20 +25,24 @@ import {
   getProfileFinanceSummary,
   getUnifiedProfile,
   listProfiles,
+  explainSchemeAI,
+  explainEligibilityAI,
 } from '@/services/api';
 import {
   SchemeDetailResponse,
   EligibilityCheckResponse,
   FinancialCalculationResponse,
   UnifiedProfileResponse,
+  GroundedChatResponse,
 } from '@/types';
 import MatchBadge from '@/components/schemes/MatchBadge';
 import WhyThisScheme from '@/components/schemes/WhyThisScheme';
 import EligibilityBreakdown from '@/components/schemes/EligibilityBreakdown';
 import DocumentList from '@/components/schemes/DocumentList';
 import SourceCard from '@/components/schemes/SourceCard';
+import { AIExplanationCard, GroundedChatDrawer } from '@/components/ai';
 
-export default function SchemeDetailPage() {
+function SchemeDetailContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const schemeIdParam = params.scheme_id as string;
@@ -47,6 +55,41 @@ export default function SchemeDetailPage() {
   const [profile, setProfile] = useState<UnifiedProfileResponse | null>(null);
   const [eligibility, setEligibility] = useState<EligibilityCheckResponse | null>(null);
   const [financialSummary, setFinancialSummary] = useState<FinancialCalculationResponse | null>(null);
+
+  // Step 11: Grounded AI State
+  const [aiExplanation, setAiExplanation] = useState<GroundedChatResponse | null>(null);
+  const [aiLoading, setAiLoading] = useState<boolean>(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+
+  const handleExplainScheme = async () => {
+    if (!scheme) return;
+    try {
+      setAiLoading(true);
+      setAiError(null);
+      const res = await explainSchemeAI(scheme.scheme_code);
+      setAiExplanation(res);
+    } catch (err: any) {
+      setAiError(err.message || 'AI explanation failed.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleExplainEligibility = async () => {
+    if (!scheme || !profile || !profile.entrepreneur) return;
+    try {
+      setAiLoading(true);
+      setAiError(null);
+      const res = await explainEligibilityAI(String(profile.entrepreneur.id), scheme.scheme_code);
+      setAiExplanation(res);
+    } catch (err: any) {
+      setAiError(err.message || 'Eligibility explanation failed.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     async function loadData() {
@@ -225,12 +268,81 @@ export default function SchemeDetailPage() {
         {/* Main Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', gridColumn: 'span 2' }}>
           
+          {/* SECTION 1.5: Grounded AI Scheme Intelligence */}
+          <section className="glass-panel" style={{ padding: '1.75rem', border: '1px solid rgba(99, 102, 241, 0.25)', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(255, 255, 255, 0.02))' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <div style={{ padding: '0.4rem', background: '#4f46e5', borderRadius: '0.5rem', color: '#fff' }}>
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                    Grounded AI Decision Assistant
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
+                    Source-grounded explanations powered by Google Gemini and verified scheme knowledge.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleExplainScheme}
+                  disabled={aiLoading}
+                  className="btn-secondary"
+                  style={{ fontSize: '0.8rem', padding: '0.5rem 0.85rem' }}
+                >
+                  {aiLoading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                  <span>Explain Scheme with AI</span>
+                </button>
+
+                {profile && (
+                  <button
+                    type="button"
+                    onClick={handleExplainEligibility}
+                    disabled={aiLoading}
+                    className="btn-secondary"
+                    style={{ fontSize: '0.8rem', padding: '0.5rem 0.85rem' }}
+                  >
+                    {aiLoading ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
+                    <span>Explain My Eligibility</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setIsChatOpen(true)}
+                  className="btn-primary"
+                  style={{ fontSize: '0.8rem', padding: '0.5rem 0.85rem', backgroundColor: '#4f46e5', borderColor: '#4338ca' }}
+                >
+                  <Bot size={14} />
+                  <span>Ask Question</span>
+                </button>
+              </div>
+            </div>
+
+            {aiError && (
+              <div style={{ padding: '0.75rem 1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: 'var(--radius-md)', color: '#f87171', fontSize: '0.85rem', marginBottom: '1rem' }}>
+                {aiError}
+              </div>
+            )}
+
+            {aiExplanation && (
+              <AIExplanationCard
+                explanation={aiExplanation}
+                title={`Grounded AI Analysis: ${scheme.scheme_code}`}
+              />
+            )}
+          </section>
+
           {/* SECTION 2 & 3: Target Beneficiaries & Sectors */}
           <section className="glass-panel" style={{ padding: '1.75rem' }}>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Briefcase size={20} color="#38bdf8" />
               <span>Target Beneficiaries & Scope</span>
             </h3>
+
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
               <div>
@@ -534,6 +646,30 @@ export default function SchemeDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Grounded AI Assistant Drawer */}
+      <GroundedChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        activeSchemeCode={scheme?.scheme_code}
+        activeProfileId={profile?.entrepreneur ? String(profile.entrepreneur.id) : null}
+      />
     </main>
   );
 }
+
+export default function SchemeDetailPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <main className="max-w-7xl mx-auto px-4 py-12 text-center text-slate-400">
+          <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-3" />
+          <p>Loading Scheme Intelligence & Diagnostics...</p>
+        </main>
+      }
+    >
+      <SchemeDetailContent />
+    </React.Suspense>
+  );
+}
+

@@ -444,23 +444,54 @@ Maintains an immutable chronological audit trail of all application status trans
 
 ---
 
-## 6. Planned / Future Conceptual Entities (Step 11+ Implementation)
+## 6. Grounded AI & RAG Knowledge Base Tables `[ACTIVE / STEP 11]`
 
-> [!IMPORTANT]
-> The following entities are **PLANNED CONCEPTUAL DESIGNS** for subsequent milestones.
-> They are intentionally **NOT** created in the database during Step 10.
+### A. `knowledge_chunks` `[ACTIVE / STEP 11]`
+Semantically decomposed and vector-embedded scheme knowledge units for retrieval-augmented generation and grounded explanations.
 
-- **`grounded_guidelines_index`** `[PLANNED / STEP 11]`: Vector / text chunks of official scheme policy guidelines.
-- **`conversations` / `copilot_context`** `[PLANNED / STEP 12]`: Post-loan AI advisor chat sessions.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `INTEGER` | PRIMARY KEY, Auto-Increment | Unique chunk record ID |
+| `chunk_id` | `VARCHAR(100)` | UNIQUE, INDEXED, NOT NULL | Deterministic semantic chunk identifier (e.g. `'PMEGP_OVERVIEW_001'`) |
+| `scheme_id` | `INTEGER` | Foreign Key (`schemes.id`, CASCADE), INDEXED, NULLABLE | Associated master scheme |
+| `scheme_code` | `VARCHAR(50)` | INDEXED, NOT NULL | Standard scheme identifier code |
+| `source_id` | `INTEGER` | Foreign Key (`scheme_sources.id`, SET NULL), NULLABLE | Traceable source guideline record |
+| `source_name` | `VARCHAR(255)` | NOT NULL | Official publishing authority / document title |
+| `source_type` | `VARCHAR(50)` | NOT NULL, Default: `'OFFICIAL_GUIDELINE'` | Source category |
+| `official_url` | `VARCHAR(1000)` | NULLABLE | Official accessible ministry web address |
+| `section_type` | `VARCHAR(50)` | INDEXED, NOT NULL | Section classification (`overview`, `eligibility_criteria`, `financial_benefits`, `required_documents`, `application_steps`, `nodal_agencies`) |
+| `title` | `VARCHAR(255)` | NOT NULL | Human-readable title of the semantic chunk |
+| `content` | `TEXT` | NOT NULL | Cleaned, factual scheme text extracted from official sources |
+| `token_count` | `INTEGER` | NOT NULL, Default: 0 | Estimated token length for prompt budget allocation |
+| `content_hash` | `VARCHAR(64)` | NOT NULL | SHA-256 hash ensuring content integrity and idempotency |
+| `embedding` | `JSON` | NULLABLE | Normalized float vector embedding for dense similarity search |
+| `embedding_model` | `VARCHAR(50)` | NOT NULL, Default: `'text-embedding-004'` | Embedding model identifier |
+| `chunk_metadata` | `JSON` | NOT NULL, Default: `{}` | Dynamic metadata attributes (ministry, sectors, rules) |
+| `version` | `VARCHAR(50)` | NOT NULL, Default: `'1.0'` | Knowledge chunk version |
+| `is_active` | `BOOLEAN` | NOT NULL, Default: `true`, INDEXED | Active index inclusion flag |
+| `last_verified_at` | `TIMESTAMPTZ` | NULLABLE | Timestamp when chunk was verified against source |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Chunk creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
 
 ---
 
-## 7. Data Integrity & Anti-Hallucination Principles
+## 7. Planned / Future Conceptual Entities (Step 12+ Implementation)
 
-1. **Strict Authoritative Grounding**: All scheme, cluster, and partner parameters must reference official ministry URLs and gazette citations.
+> [!IMPORTANT]
+> The following entities are **PLANNED CONCEPTUAL DESIGNS** for Step 12.
+> They are intentionally **NOT** created in the database during Step 11.
+
+- **`copilot_conversations` / `compliance_deadlines`** `[PLANNED / STEP 12]`: Post-loan compliance tracker and post-disbursement advisory context.
+
+---
+
+## 8. Data Integrity & Anti-Hallucination Principles
+
+1. **Strict Authoritative Grounding**: All scheme, cluster, partner, and RAG knowledge chunks reference official ministry URLs and gazette citations.
 2. **Deterministic Computations**: Eligibility rules, financial formulas, matching scores, feasibility signals, and partner matching are evaluated in pure code/SQL, never in LLMs.
-3. **Auditability**: Every scheme and cluster change preserves version metadata and `last_verified_at` timestamps; application status transitions are recorded in an immutable history ledger.
+3. **Auditability**: Every scheme, cluster, and knowledge chunk preserves version metadata, SHA-256 content hashes, and `last_verified_at` timestamps; application status transitions are recorded in an immutable history ledger.
 4. **Anti-Fake Tracking Guarantee**: All application status entries explicitly identify `source_type` (`USER_RECORDED`), prohibiting simulated or fabricated government portal responses.
-5. **Regulatory Disclaimers**: Non-guarantee disclaimers accompany all match score, financial, feasibility, and application tracking views.
+5. **Regulatory Disclaimers**: Non-guarantee disclaimers accompany all match score, financial, feasibility, application tracking, and AI explanation views.
+
 
 

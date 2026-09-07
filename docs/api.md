@@ -631,12 +631,70 @@ Appends a status transition event to the application timeline with immutable aud
 
 ---
 
+### Grounded AI & RAG Intelligence `[STEP 11]`
+
+#### `GET /api/v1/ai/health`
+Returns operational and configuration status of the Grounded AI layer, active Gemini model (`gemini-2.5-flash`), live key status, and supported capabilities.
+
+#### `POST /api/v1/ai/chat`
+Submits a conversational question to VittMitra AI. Synthesizes relevant profile context, deterministic engine results, and hybrid RAG chunks into a grounded response with verified citations and confidence rating.
+
+**Request Payload (`GroundedChatRequest`)**:
+```json
+{
+  "message": "What is the PMEGP subsidy percentage for rural women entrepreneurs?",
+  "profile_id": "4261da24-814e-4f01-9f93-e40742f15033",
+  "scheme_code": "PMEGP",
+  "topic": "finance",
+  "language": "en"
+}
+```
+
+**Response Payload (`GroundedChatResponse`)**:
+```json
+{
+  "answer": "Under the Prime Minister's Employment Generation Programme (PMEGP), women entrepreneurs setting up manufacturing or service enterprises in rural areas receive a 35% margin money government subsidy, requiring only a 5% promoter equity contribution.",
+  "grounded": true,
+  "confidence": "HIGH",
+  "sources": [
+    {
+      "source_name": "KVIC Official Portal",
+      "source_type": "OFFICIAL_PORTAL",
+      "official_url": "https://www.kviconline.gov.in/pmegpeportal",
+      "section_type": "financial_benefits"
+    }
+  ],
+  "limitations": [
+    "Maximum subsidy is capped at Rs. 50 Lakhs for manufacturing projects"
+  ],
+  "suggested_actions": [
+    "Use the VittMitra Financial Calculator to simulate loan amortization",
+    "Assemble your Aadhaar, PAN, and rural residence proof"
+  ],
+  "disclaimer": "VittMitra AI is an explainable decision-support assistant grounded in official government scheme guidelines. Deterministic engines remain authoritative for eligibility, financial calculations, and application status.",
+  "evaluated_at": "2026-09-07T17:48:00Z"
+}
+```
+
+#### `POST /api/v1/ai/explain/eligibility`
+Generates a plain-language grounded explanation of Step 4 Eligibility Engine results.
+
+#### `POST /api/v1/ai/explain/finance`
+Generates a plain-language grounded explanation of Step 5 Financial Engine loan structuring and amortization calculations.
+
+#### `POST /api/v1/ai/explain/feasibility`
+Generates a plain-language grounded explanation of Step 9 Feasibility signals and MSME cluster density.
+
+#### `POST /api/v1/ai/explain/scheme`
+Generates a plain-language grounded overview of scheme guidelines, benefits, and required documents.
+
+---
+
 ## 3. Planned Endpoints (Future Milestones)
 
 | Domain | Method | Endpoint | Milestone |
 | :--- | :--- | :--- | :--- |
-| **Grounded AI / RAG** | `POST` | `/api/v1/ai/explain-scheme` | Step 11 (Grounded AI Explanations & Multilingual) |
-| **Bhashini Voice** | `POST` | `/api/v1/ai/voice-assist` | Step 11 (Bhashini Voice Integration) |
-| **Post-Loan Copilot** | `POST` | `/api/v1/copilot/chat` | Step 12 (Post-Loan Business Copilot) |
+| **Post-Loan Copilot** | `POST` | `/api/v1/copilot/monitor` | Step 12 (Post-Loan Business Copilot) |
+
 
 

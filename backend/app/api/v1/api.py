@@ -9,6 +9,7 @@ from app.api.v1.endpoints import (
     feasibility,
     partners,
     applications,
+    ai,
 )
 
 api_router = APIRouter()
@@ -39,5 +40,9 @@ api_router.include_router(partners.router, tags=["Partners"])
 
 # Include application assistance & tracking router under /api/v1
 api_router.include_router(applications.router, tags=["Applications"])
+
+# Include grounded AI & RAG router under /api/v1
+api_router.include_router(ai.router, prefix="/ai", tags=["AI & RAG"])
+
 
 

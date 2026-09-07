@@ -10,6 +10,9 @@ import {
   AlertTriangle,
   Compass,
   ShieldCheck,
+  Sparkles,
+  Bot,
+  Loader2,
 } from 'lucide-react';
 import {
   getUnifiedProfile,
@@ -17,6 +20,7 @@ import {
   getProfileFeasibility,
   fetchLocationIntelligence,
   fetchNearbyClusters,
+  explainFeasibilityAI,
 } from '@/services/api';
 import {
   UnifiedProfileResponse,
@@ -24,6 +28,7 @@ import {
   DistrictEcosystem,
   NearbyCluster,
   Entrepreneur,
+  GroundedChatResponse,
 } from '@/types';
 import {
   FeasibilitySummaryCard,
@@ -32,8 +37,9 @@ import {
   LocationIntelligenceCard,
   MissingInfoPrompt,
 } from '@/components/feasibility';
+import { AIExplanationCard, GroundedChatDrawer } from '@/components/ai';
 
-export default function FeasibilityPage() {
+function FeasibilityContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const profileIdQuery = searchParams.get('profile_id');
@@ -50,6 +56,27 @@ export default function FeasibilityPage() {
   const [feasibilityData, setFeasibilityData] = useState<FeasibilityAnalysisResponse | null>(null);
   const [districtEcosystem, setDistrictEcosystem] = useState<DistrictEcosystem | null>(null);
   const [nearbyClusters, setNearbyClusters] = useState<NearbyCluster[]>([]);
+
+  // Step 11: Grounded AI State
+  const [aiExplanation, setAiExplanation] = useState<GroundedChatResponse | null>(null);
+  const [aiLoading, setAiLoading] = useState<boolean>(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+
+  const handleExplainFeasibility = async () => {
+    if (!activeProfileId) return;
+    try {
+      setAiLoading(true);
+      setAiError(null);
+      const res = await explainFeasibilityAI(String(activeProfileId));
+      setAiExplanation(res);
+    } catch (err: any) {
+      setAiError(err.message || 'AI feasibility explanation failed.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
 
   // Load profiles on mount
   useEffect(() => {
@@ -244,6 +271,56 @@ export default function FeasibilityPage() {
               profileId={activeProfileId || undefined}
             />
 
+            {/* 1.5 Grounded AI Feasibility Explanation Panel */}
+            <div className="p-6 rounded-2xl border border-indigo-500/20 bg-linear-to-br from-indigo-950/30 via-slate-900/40 to-slate-950/60 backdrop-blur-xl shadow-lg space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-100">Grounded AI Feasibility Synthesis</h3>
+                    <p className="text-[11px] text-slate-400">Natural-language interpretation grounded in your location MSME density and financial equity</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExplainFeasibility}
+                    disabled={aiLoading}
+                    className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+                  >
+                    {aiLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                    <span>Explain Feasibility with AI</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsChatOpen(true)}
+                    className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition-all"
+                  >
+                    <Bot className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Ask Question</span>
+                  </button>
+                </div>
+              </div>
+
+              {aiError && (
+                <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-500/30 text-xs text-rose-300">
+                  {aiError}
+                </div>
+              )}
+
+              {aiExplanation && (
+                <AIExplanationCard
+                  explanation={aiExplanation}
+                  title="Grounded AI Feasibility Interpretation"
+                  className="bg-slate-900/90 border-slate-800 text-slate-200"
+                />
+              )}
+            </div>
+
             {/* 2. Missing Profile Information Notice (if any) */}
             {missingFields.length > 0 && (
               <MissingInfoPrompt
@@ -251,6 +328,7 @@ export default function FeasibilityPage() {
                 profileId={activeProfileId || undefined}
               />
             )}
+
 
             {/* 3. Structured 4-Quadrant Drivers, Risks & Actions */}
             <section className="space-y-3">
@@ -299,5 +377,22 @@ export default function FeasibilityPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function FeasibilityPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-8">
+          <div className="text-center space-y-3">
+            <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto" />
+            <p className="text-xs text-slate-400">Loading Feasibility Intelligence...</p>
+          </div>
+        </div>
+      }
+    >
+      <FeasibilityContent />
+    </React.Suspense>
   );
 }
