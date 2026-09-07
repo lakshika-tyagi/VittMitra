@@ -14,10 +14,20 @@ from app.schemas.finance import (
     ScenarioComparisonRequest,
     ScenarioComparisonResponse,
 )
+from app.schemas.matching import (
+    SchemeMatchingRequest,
+    SchemeMatchingResponse,
+)
+from app.schemas.feasibility import (
+    FeasibilityAnalysisRequest,
+    FeasibilityAnalysisResponse,
+)
 from app.api.v1.endpoints.health import check_database_health, check_postgis_health
 from app.api.v1.endpoints.schemes import list_schemes, get_scheme_by_identifier
 from app.api.v1.endpoints.eligibility import check_scheme_eligibility
 from app.api.v1.endpoints.finance import calculate_finance, compare_finance_scenarios
+from app.api.v1.endpoints.matching import match_schemes
+from app.api.v1.endpoints.feasibility import analyze_feasibility_endpoint
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -144,6 +154,34 @@ def create_application() -> FastAPI:
         payload: ScenarioComparisonRequest
     ) -> ScenarioComparisonResponse:
         return await compare_finance_scenarios(payload=payload)
+
+    # Root Scheme Matching Shortcut
+    @application.post(
+        "/matching/schemes",
+        response_model=SchemeMatchingResponse,
+        tags=["Matching"],
+        summary="Root Explainable Scheme Matching & Ranking",
+        description="Shortcut for /api/v1/matching/schemes"
+    )
+    async def root_match_schemes(
+        payload: SchemeMatchingRequest,
+        db: AsyncSession = Depends(get_db)
+    ) -> SchemeMatchingResponse:
+        return await match_schemes(payload=payload, db=db)
+
+    # Root Business & Location Feasibility Shortcut
+    @application.post(
+        "/feasibility/analyze",
+        response_model=FeasibilityAnalysisResponse,
+        tags=["Feasibility"],
+        summary="Root Business & Location Feasibility Evaluation",
+        description="Shortcut for /api/v1/feasibility/analyze"
+    )
+    async def root_analyze_feasibility(
+        payload: FeasibilityAnalysisRequest,
+        db: AsyncSession = Depends(get_db)
+    ) -> FeasibilityAnalysisResponse:
+        return await analyze_feasibility_endpoint(payload=payload, db=db)
 
     # Register API v1 routes
     application.include_router(api_router, prefix=settings.API_V1_STR)

@@ -125,29 +125,250 @@ The Financial Engine is stateless and operates directly on strictly validated Py
 
 ---
 
-## 3. Planned / Future Conceptual Entities (Step 6+ Implementation)
+## 3. Scheme Matching & Ranking Engine Data Models `[STEP 6]`
 
-> [!IMPORTANT]
-> The following entities are **PLANNED CONCEPTUAL DESIGNS** for subsequent milestones.
-> They are intentionally **NOT** created in the database during Step 5.
+The Scheme Matching & Ranking Engine operates statelessly by evaluating active database scheme records against runtime entrepreneur profiles and Step 4 / Step 5 engine outputs.
 
-- **`users`** `[PLANNED]`: User accounts and roles.
-- **`entrepreneur_profiles`** `[PLANNED]`: Demographics (Age, Category, Gender, Education, Income).
-- **`businesses`** `[PLANNED]`: Enterprise concept, sector, stage, and ownership.
-- **`locations`** `[PLANNED]`: PostGIS spatial profiles (State, District, Urban/Rural, Coordinates).
-- **`business_signals`** `[PLANNED]`: Regional demand clusters and supply chain viability indicators.
-- **`financial_profiles`** `[PLANNED]`: Persisted loan structure records.
-- **`financial_scenarios`** `[PLANNED]`: Persisted multi-year cash flow projections.
-- **`recommendations`** `[PLANNED]`: Best-fit scheme rankings.
-- **`eligibility_results`** `[PLANNED]`: Deterministic rule evaluation pass/fail logs.
-- **`channel_partners`** `[PLANNED]`: CSC centers and DIC offices with spatial coordinates.
-- **`applications`** `[PLANNED]`: Application drafts, submissions, and status history.
-- **`conversations` / `copilot_context`** `[PLANNED]`: Post-loan AI advisor chat sessions.
+### A. Core Matching Enums & Schemas
+- **`MatchCategory`** (Enum):
+  - `ELIGIBLE`: Scheme satisfies all evaluated mandatory eligibility rules and all compatibility constraints match.
+  - `POTENTIALLY_RELEVANT`: No mandatory failure, but critical criteria or profile fields are unverified.
+  - `NOT_ELIGIBLE`: One or more mandatory eligibility rules or hard compatibility constraints failed.
+
+- **`DimensionScore`**:
+  - `factor` (String): Dimension identifier (`eligibility`, `financial_fit`, `sector_fit`, `stage_fit`, `beneficiary_fit`, `geography_fit`).
+  - `status` (`MATCHED`, `FAILED`, `UNVERIFIED`): Evaluation result on this dimension.
+  - `weight` (Float): Configured maximum points for this factor (sums to 100.0).
+  - `score_awarded` (Float): Points earned ($1.0 \times \text{weight}$ for MATCHED, $0.5 \times \text{weight}$ for UNVERIFIED, $0.0$ for FAILED).
+  - `explanation` (String): Deterministic plain-language description of the score contribution.
+
+- **`MatchReasons`**:
+  - `positive` (List[String]): Positive alignment facts ("Why this scheme is ranked highly").
+  - `negative` (List[String]): Criterion-level failure facts ("Why not currently eligible").
+  - `unverified` (List[String]): Unverified parameters or missing profile inputs.
+
+- **`SchemeMatchResult`**:
+  - `rank` (Integer, $\ge 1$): Deterministic 1-based shortlist position.
+  - `scheme_id` (Integer), `scheme_code` (String), `scheme_name` (String), `nodal_ministry` (String).
+  - `match_category` (`MatchCategory`), `match_score` (Float, 0.0 to 100.0), `eligibility_status` (`EligibilityStatus`).
+  - `reasons` (`MatchReasons`), `score_breakdown` (List[`DimensionScore`]).
+  - `eligibility_summary` (`EligibilitySummary`), `financial_summary` (Optional Object).
+
+- **`SchemeMatchingRequest`**:
+  - `profile` (`EntrepreneurProfileInput` / Object): Structured applicant, business, and location attributes.
+  - `financial` (`FinancialCalculationRequest` / Object, Optional): Proposed project cost, own equity, loan requirement, income.
+  - `limit` (Integer, Default: 10, Range: 1–50): Shortlist result limit.
+  - `include_ineligible` (Boolean, Default: True): Whether to include failed schemes with failure explanations.
+
+- **`SchemeMatchingResponse`**:
+  - `total_schemes_evaluated` (Integer), `eligible_count` (Integer), `potentially_relevant_count` (Integer), `not_eligible_count` (Integer).
+  - `results` (List[`SchemeMatchResult`]): Ranked scheme shortlist.
+  - `disclaimer` (String): Required regulatory non-guarantee notice.
+  - `evaluated_at` (ISO 8601 UTC Timestamp).
 
 ---
 
-## 4. Data Integrity & Anti-Hallucination Principles
+### F. `entrepreneurs` `[ACTIVE / STEP 7]`
+Core applicant entity representing an entrepreneur or self-employed individual.
 
-1. **Strict Authoritative Grounding**: All scheme parameters must reference official ministry URLs and gazette citations.
-2. **Deterministic Computations**: Eligibility rules and financial formulas are evaluated in pure code/SQL, never in LLMs.
-3. **Auditability**: Every scheme change preserves version metadata and `last_verified_at` timestamps.
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `INTEGER` | Primary Key, Auto-Increment | Unique entrepreneur record ID |
+| `full_name` | `VARCHAR(255)` | INDEXED, NOT NULL | Full name of the applicant |
+| `date_of_birth` | `DATE` | NULLABLE | Date of birth |
+| `age` | `INTEGER` | NULLABLE | Age in completed years |
+| `gender` | `VARCHAR(50)` | NULLABLE | Gender (`male`, `female`, `other`, `prefer_not_to_say`) |
+| `category` | `VARCHAR(50)` | NULLABLE | Social category (`General`, `SC`, `ST`, `OBC`, `Minorities`) |
+| `preferred_language` | `VARCHAR(20)` | NOT NULL, Default: `'en'` | Preferred interface/communication language |
+| `phone_number` | `VARCHAR(20)` | NULLABLE | 10-digit mobile contact number |
+| `email` | `VARCHAR(255)` | NULLABLE | Email address |
+| `state` | `VARCHAR(100)` | INDEXED, NULLABLE | State / UT of residence |
+| `district` | `VARCHAR(100)` | NULLABLE | District |
+| `city` | `VARCHAR(100)` | NULLABLE | City / Town / Village |
+| `pincode` | `VARCHAR(10)` | NULLABLE | 6-digit postal PIN code |
+| `area_type` | `VARCHAR(50)` | NULLABLE | Area type (`urban`, `rural`, `peri_urban`) |
+| `latitude` | `NUMERIC(9,6)` | NULLABLE | Geographic latitude |
+| `longitude` | `NUMERIC(9,6)` | NULLABLE | Geographic longitude |
+| `is_active` | `BOOLEAN` | NOT NULL, Default: `true` | Active status flag |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+---
+
+### G. `business_profiles` `[ACTIVE / STEP 7]`
+Enterprise profile representing an existing or proposed micro/small business initiative.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `INTEGER` | Primary Key, Auto-Increment | Unique business profile ID |
+| `entrepreneur_id` | `INTEGER` | Foreign Key (`entrepreneurs.id` ON DELETE CASCADE), INDEXED | Parent entrepreneur reference |
+| `business_name` | `VARCHAR(255)` | NULLABLE | Registered or trade enterprise name |
+| `business_type` | `VARCHAR(100)` | NULLABLE | Constitution (`proprietorship`, `partnership`, `self_employed`) |
+| `sector` | `VARCHAR(100)` | INDEXED, NULLABLE | Sector (`manufacturing`, `services`, `trading`, `handicrafts`, `agro_allied`) |
+| `sub_sector` | `VARCHAR(150)` | NULLABLE | Specific industry trade or activity |
+| `business_stage` | `VARCHAR(50)` | NULLABLE | Enterprise phase (`idea`, `new_enterprise`, `expansion`) |
+| `business_description` | `TEXT` | NULLABLE | Business activities summary |
+| `existing_business_vintage_years` | `INTEGER` | NULLABLE | Operational vintage in years |
+| `is_greenfield` | `BOOLEAN` | NULLABLE | New first-time setup flag |
+| `has_vending_proof` | `BOOLEAN` | NULLABLE | PM SVANidhi vending certificate / ID |
+| `is_notified_trade` | `BOOLEAN` | NULLABLE | PM Vishwakarma 18 notified artisan trade check |
+| `is_single_family_applicant` | `BOOLEAN` | NULLABLE | Sole applicant per family check |
+| `has_govt_employee_in_family` | `BOOLEAN` | NULLABLE | Family government employee check |
+| `availed_pmegp_mudra_last_5yr` | `BOOLEAN` | NULLABLE | Prior central credit check |
+| `is_non_farm_income_generating` | `BOOLEAN` | NULLABLE | Non-farm micro-enterprise check |
+| `is_defaulter` | `BOOLEAN` | Default: `false`, NULLABLE | Past default history flag |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+---
+
+### H. `financial_profiles` `[ACTIVE / STEP 7]`
+Financial inputs profile storing user-provided investment requirements and income parameters.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `INTEGER` | Primary Key, Auto-Increment | Unique financial profile ID |
+| `entrepreneur_id` | `INTEGER` | Foreign Key (`entrepreneurs.id` ON DELETE CASCADE), INDEXED | Parent entrepreneur reference |
+| `business_profile_id` | `INTEGER` | Foreign Key (`business_profiles.id` ON DELETE SET NULL), NULLABLE | Associated business profile reference |
+| `project_cost` | `NUMERIC(14,2)`| NULLABLE | Estimated total project investment cost |
+| `own_contribution` | `NUMERIC(14,2)`| Default: `0.00`, NULLABLE | Promoter equity contribution |
+| `loan_requirement` | `NUMERIC(14,2)`| NULLABLE | Desired loan assistance |
+| `annual_income` | `NUMERIC(14,2)`| NULLABLE | Total annual household/business income |
+| `monthly_income` | `NUMERIC(14,2)`| NULLABLE | Average monthly net income |
+| `existing_monthly_obligations` | `NUMERIC(14,2)`| Default: `0.00`, NULLABLE | Current debt repayments |
+| `machinery_equipment_cost` | `NUMERIC(14,2)`| NULLABLE | Equipment cost breakdown |
+| `infrastructure_cost` | `NUMERIC(14,2)`| NULLABLE | Infrastructure/civil cost breakdown |
+| `working_capital_cost` | `NUMERIC(14,2)`| NULLABLE | Working capital breakdown |
+| `other_expenses_cost` | `NUMERIC(14,2)`| NULLABLE | Contingency/license cost breakdown |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+---
+
+## 3. Scheme Discovery, Explainability & Comparison Contracts `[STEP 8]`
+
+### A. Match Categories & Numeric Score Scale
+- **`ELIGIBLE` (Strong Match)**: All mandatory rules satisfied; high sector, stage, geographic, and financial compatibility. Rendered in Emerald Green (`#059669`).
+- **`POTENTIALLY_RELEVANT` (Needs Verification)**: Profile is missing certain fields or has unverified criteria, but no mandatory failures. Rendered in Amber/Orange (`#d97706`).
+- **`NOT_ELIGIBLE` (Not Currently Eligible)**: Failed at least one mandatory rule or hard sector/stage constraint. Rendered in Slate Gray / Crimson (`#dc2626`).
+- **Match Score**: Scaled float from `0.0` to `100.0` representing multi-dimensional fit.
+
+### B. Criterion Evaluation Record (`CriterionEvaluation`)
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| `rule_id` | `INTEGER` | Database ID of the scheme rule |
+| `rule_code` | `VARCHAR` | Unique identifier (e.g. `'PMEGP_MIN_AGE'`) |
+| `criterion` | `VARCHAR` | Evaluated attribute name |
+| `status` | `VARCHAR` | Evaluation outcome (`MATCHED`, `FAILED`, `UNVERIFIED`) |
+| `user_value` | `ANY` | Normalized profile value provided by applicant |
+| `required_condition` | `VARCHAR` | Formatted condition string (e.g. `'>= 18'`) |
+| `explanation` | `VARCHAR` | Deterministic explanation of the evaluation outcome |
+| `is_mandatory` | `BOOLEAN` | Whether failure marks the scheme overall as `FAILED` |
+| `source_name` | `VARCHAR` | Gazette / guideline citation title |
+| `source_url` | `VARCHAR` | Accessible government URL |
+
+### I. `district_msme_ecosystems` `[ACTIVE / STEP 9]`
+District-level MSME ecosystem metadata, industrial density, and District Industries Centre (DIC) office support details.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `INTEGER` | Primary Key, Auto-Increment | Unique district ecosystem ID |
+| `state_name` | `VARCHAR(100)` | INDEXED, NOT NULL | State name (e.g. `'Maharashtra'`) |
+| `district_name` | `VARCHAR(100)` | INDEXED, NOT NULL | District name (e.g. `'Pune'`) |
+| `state_code` | `VARCHAR(10)` | NULLABLE | 2-letter state abbreviation |
+| `district_code` | `VARCHAR(20)` | NULLABLE | Census / LGD district code |
+| `tier` | `VARCHAR(20)` | NULLABLE | Urban tier classification (`Tier 1`, `Tier 2`, `Tier 3`) |
+| `category` | `VARCHAR(50)` | NULLABLE | Geographic category (`General`, `Aspirational`, `Hilly/NER`) |
+| `industrial_density_score` | `INTEGER` | NULLABLE | Verified MSME density index (0–100) |
+| `prominent_sectors` | `JSON` | Default: `[]`, NOT NULL | List of active industrial / manufacturing sectors |
+| `thrust_sectors` | `JSON` | Default: `[]`, NOT NULL | State/District priority thrust sectors eligible for special benefits |
+| `infrastructure_highlights`| `TEXT` | NULLABLE | Power, water, logistics, and rail connectivity highlights |
+| `dic_office_address` | `TEXT` | NULLABLE | Official District Industries Centre (DIC) office address |
+| `dic_contact_phone` | `VARCHAR(50)` | NULLABLE | DIC nodal officer contact telephone |
+| `dic_contact_email` | `VARCHAR(100)` | NULLABLE | DIC official nodal support email |
+| `latitude` | `NUMERIC(9,6)` | NULLABLE | District center latitude |
+| `longitude` | `NUMERIC(9,6)` | NULLABLE | District center longitude |
+| `location` | `GEOMETRY(POINT, 4326)` | Spatial Index (GIST) | PostGIS spatial point for proximity queries |
+| `data_confidence` | `VARCHAR(50)` | NOT NULL, Default: `'VERIFIED'` | Provenance tag (`VERIFIED`, `ESTIMATED`, `UNVERIFIED`) |
+| `source_name` | `VARCHAR(255)` | NOT NULL | Official data agency (e.g. `'Ministry of MSME - District Industrial Profile'`) |
+| `source_url` | `VARCHAR(500)` | NULLABLE | URL reference to official profile document |
+| `source_version` | `VARCHAR(50)` | NOT NULL, Default: `'2024-25'` | Edition / census year |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+---
+
+### J. `msme_clusters` `[ACTIVE / STEP 9]`
+Registered industrial and artisan clusters under Micro and Small Enterprises Cluster Development Programme (MSE-CDP) or State MSME departments.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `INTEGER` | Primary Key, Auto-Increment | Unique cluster ID |
+| `cluster_code` | `VARCHAR(50)` | UNIQUE, NOT NULL | Machine-readable cluster code (e.g. `'PUNE_AUTO_COMP'`) |
+| `cluster_name` | `VARCHAR(255)` | NOT NULL | Official cluster title |
+| `state_name` | `VARCHAR(100)` | INDEXED, NOT NULL | State name |
+| `district_name` | `VARCHAR(100)` | INDEXED, NOT NULL | District name |
+| `sector` | `VARCHAR(100)` | INDEXED, NOT NULL | Primary sector (`manufacturing`, `handicrafts`, `textiles`, etc.) |
+| `sub_sector` | `VARCHAR(150)` | NULLABLE | Specific sub-trade (e.g. `'auto_components'`) |
+| `cluster_type` | `VARCHAR(50)` | NULLABLE | Type (`Industrial`, `Artisan`, `Service`, `Agro-Processing`) |
+| `specialization` | `TEXT` | NULLABLE | Technical and manufacturing specialization summary |
+| `key_products` | `JSON` | Default: `[]`, NOT NULL | List of core manufactured goods / products |
+| `raw_material_access` | `VARCHAR(50)` | NULLABLE | Access rating (`High`, `Moderate`, `Low`) |
+| `market_linkage` | `VARCHAR(50)` | NULLABLE | Market access rating (`High`, `Moderate`, `Low`) |
+| `common_facility_centers` | `JSON` | Default: `[]`, NOT NULL | Available shared testing / tooling CFCs |
+| `latitude` | `NUMERIC(9,6)` | NOT NULL | Cluster center latitude |
+| `longitude` | `NUMERIC(9,6)` | NOT NULL | Cluster center longitude |
+| `location` | `GEOMETRY(POINT, 4326)` | Spatial Index (GIST) | PostGIS spatial point for proximity calculation |
+| `data_confidence` | `VARCHAR(50)` | NOT NULL, Default: `'VERIFIED'` | Provenance tag (`VERIFIED`, `ESTIMATED`, `UNVERIFIED`) |
+| `source_agency` | `VARCHAR(255)` | NOT NULL | Reporting agency (e.g. `'MSME-CDP / Development Commissioner (MSME)'`) |
+| `source_url` | `VARCHAR(500)` | NULLABLE | Official URL |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+---
+
+## 4. Business Feasibility & Signal Taxonomy `[STEP 9]`
+
+### A. Signal Categories (`SignalCategory`)
+- `LOCATION_SIGNAL`: MSME industrial density, proximity to registered clusters, and DIC support.
+- `SECTOR_SIGNAL`: Trade compatibility with district thrust sectors and local raw materials.
+- `BUSINESS_STAGE_SIGNAL`: Enterprise readiness (greenfield vs expansion).
+- `FINANCIAL_FEASIBILITY_SIGNAL`: Equity contribution ratio ($\ge 10-25\%$) and debt service capacity.
+- `DATA_COMPLETENESS_SIGNAL`: Profile completeness for computing verified signals.
+- `RISK_SIGNAL`: Adverse credit flags (loan default, high leverage, unsustainable debt service).
+
+### B. Feasibility Outcomes (`FeasibilityOutcome`)
+- `FAVOURABLE`: High cluster alignment, verified thrust sector match, healthy equity, and low leverage.
+- `CAUTION`: Viable concept with actionable caution flags (e.g. new trade, high initial debt service).
+- `HIGH_RISK`: Critical financial stress (e.g. default history, excessive leverage).
+- `INSUFFICIENT_DATA`: Returned whenever mandatory context is missing (never hallucinating fake stats).
+
+### C. Data Confidence Status (`DataConfidenceStatus`)
+- `VERIFIED`: Official government agency data (Ministry of MSME / MSE-CDP / Census).
+- `ESTIMATED`: Derived benchmark or standard empirical guideline.
+- `UNVERIFIED`: Self-reported applicant inputs.
+- `INSUFFICIENT_DATA`: Missing required attributes.
+
+---
+
+## 5. Planned / Future Conceptual Entities (Step 10+ Implementation)
+
+> [!IMPORTANT]
+> The following entities are **PLANNED CONCEPTUAL DESIGNS** for subsequent milestones.
+> They are intentionally **NOT** created in the database during Step 9.
+
+- **`grounded_guidelines_index`** `[PLANNED / STEP 10]`: Vector / text chunks of official scheme policy guidelines.
+- **`channel_partners`** `[PLANNED / STEP 11]`: CSC centers, bank branches, and verified facilitation partners.
+- **`applications`** `[PLANNED / STEP 11]`: Application drafts, submissions, and status timelines.
+- **`conversations` / `copilot_context`** `[PLANNED / STEP 12]`: Post-loan AI advisor chat sessions.
+
+---
+
+## 6. Data Integrity & Anti-Hallucination Principles
+
+1. **Strict Authoritative Grounding**: All scheme and cluster parameters must reference official ministry URLs and gazette citations.
+2. **Deterministic Computations**: Eligibility rules, financial formulas, matching scores, and feasibility signals are evaluated in pure code/SQL, never in LLMs.
+3. **Auditability**: Every scheme and cluster change preserves version metadata and `last_verified_at` timestamps.
+4. **Authoritative Dominance**: Mandatory rule failures strictly prevent false eligibility or viability recommendations.
+5. **Regulatory Disclaimers**: Non-guarantee disclaimers accompany all match score, financial, and feasibility views.
+

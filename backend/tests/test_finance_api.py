@@ -188,3 +188,73 @@ def test_api_compare_scenarios_root_shortcut(mock_client):
     response = mock_client.post("/finance/scenarios", json=payload)
     assert response.status_code == 200
     assert response.json()["scenario_count"] == 1
+
+
+def test_api_calculate_finance_invalid_negative_cost(mock_client):
+    """Negative project cost must fail with 422."""
+    payload = {
+        "project_cost": -500000,
+        "own_contribution": 50000,
+        "annual_interest_rate": 10.0,
+        "tenure_months": 60
+    }
+    response = mock_client.post("/finance/calculate", json=payload)
+    assert response.status_code == 422
+
+
+def test_api_calculate_finance_invalid_negative_rate(mock_client):
+    """Negative annual interest rate must fail with 422."""
+    payload = {
+        "project_cost": 500000,
+        "own_contribution": 50000,
+        "annual_interest_rate": -5.0,
+        "tenure_months": 60
+    }
+    response = mock_client.post("/finance/calculate", json=payload)
+    assert response.status_code == 422
+
+
+def test_api_calculate_finance_invalid_zero_tenure(mock_client):
+    """Zero tenure months must fail with 422."""
+    payload = {
+        "project_cost": 500000,
+        "own_contribution": 50000,
+        "annual_interest_rate": 10.0,
+        "tenure_months": 0
+    }
+    response = mock_client.post("/finance/calculate", json=payload)
+    assert response.status_code == 422
+
+
+def test_api_calculate_finance_invalid_loan_exceeds_gap(mock_client):
+    """Loan amount greater than financing gap must fail with 422."""
+    payload = {
+        "project_cost": 500000,
+        "own_contribution": 100000,
+        "loan_amount": 450000,  # Max allowed is 400000
+        "annual_interest_rate": 10.0,
+        "tenure_months": 60
+    }
+    response = mock_client.post("/finance/calculate", json=payload)
+    assert response.status_code == 422
+    assert "cannot exceed the financing gap" in response.text
+
+
+def test_api_compare_scenarios_validation_error_contrib(mock_client):
+    """Scenario with own contribution exceeding project cost must fail with 422."""
+    payload = {
+        "project_cost": 500000,
+        "base_own_contribution": 50000,
+        "scenarios": [
+            {
+                "scenario_name": "Invalid Scenario",
+                "own_contribution": 600000,
+                "annual_interest_rate": 10.0,
+                "tenure_months": 36
+            }
+        ]
+    }
+    response = mock_client.post("/finance/scenarios", json=payload)
+    assert response.status_code == 422
+    assert "exceeds project cost" in response.text
+

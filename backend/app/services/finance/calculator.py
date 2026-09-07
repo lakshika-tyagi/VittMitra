@@ -96,6 +96,9 @@ def calculate_repayment_summary(
     if principal_q == Decimal("0.00"):
         total_repayment = Decimal("0.00")
         total_interest = Decimal("0.00")
+    elif rate_q == Decimal("0.00"):
+        total_repayment = principal_q
+        total_interest = Decimal("0.00")
     else:
         total_repayment = _quantize_money(emi * Decimal(tenure_months))
         total_interest = _quantize_money(max(Decimal("0.00"), total_repayment - principal_q))

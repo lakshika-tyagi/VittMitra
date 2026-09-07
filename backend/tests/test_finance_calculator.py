@@ -142,6 +142,19 @@ def test_repayment_summary_zero_interest():
     assert summary.is_zero_interest is True
 
 
+def test_repayment_summary_zero_interest_repeating_fraction():
+    """100,000 / 18 = 5555.56; zero interest total interest must remain strictly 0.00 and total repayment 100,000.00"""
+    summary = calculate_repayment_summary(
+        principal=Decimal("100000.00"),
+        annual_interest_rate=Decimal("0.00"),
+        tenure_months=18
+    )
+    assert summary.estimated_emi == Decimal("5555.56")
+    assert summary.estimated_total_repayment == Decimal("100000.00")
+    assert summary.estimated_total_interest == Decimal("0.00")
+    assert summary.is_zero_interest is True
+
+
 # ---------------------------------------------------------------------------
 # 3. Affordability Indicator Tests
 # ---------------------------------------------------------------------------

@@ -62,38 +62,87 @@ The platform is developed methodically through structured, verified milestones.
 
 ---
 
-### ⏳ Milestone 6: Scheme Matching & Multi-Criteria Ranking Engine
-- [ ] Scoring and ranking algorithm for best-fit schemes across eligible matches.
-- [ ] Multi-scheme side-by-side comparison matrices.
-- [ ] Beneficiary prioritization and subsidy maximization engine.
+### 📍 Milestone 6: Explainable Scheme Matching & Ranking Engine `[COMPLETED]`
+- [x] Deterministic 6-dimension compatibility evaluation (Eligibility 35%, Financial Fit 20%, Sector Fit 15%, Business Stage Fit 10%, Target Beneficiary Fit 10%, Geographic Applicability 10%).
+- [x] Transparent centralized scoring configuration in `app/services/matching/config.py` summing to 100.0 points.
+- [x] Authoritative Step 4 Eligibility Engine reuse (mandatory rule failure dominates and prevents false eligibility recommendations).
+- [x] Authoritative Step 5 Financial Engine reuse (validates project cost ceilings, loan thresholds, and affordability).
+- [x] 3-tier recommendation categorization (`ELIGIBLE`, `POTENTIALLY_RELEVANT`, `NOT_ELIGIBLE`).
+- [x] Structured, deterministic explainability reason generator ("Why this scheme?", "Why not currently eligible?", "Unverified criteria").
+- [x] 5-tier deterministic tie-breaking & ranking engine ensuring stable, reproducible ordering.
+- [x] Public API endpoint: `POST /api/v1/matching/schemes` (and root shortcut `POST /matching/schemes`).
+- [x] Comprehensive test suite covering 15 core scenarios, unit tests, and API integration tests (138 passed tests total).
+- [x] Regulatory non-guarantee disclaimer attached to all responses.
+- [x] Strict zero-AI verification (100% deterministic code without LLM / embedding / ML dependencies).
 
 ---
 
-### ⏳ Milestone 7: Grounded AI & RAG Services (Gemini Integration)
+### 📍 Milestone 7: Entrepreneur Onboarding & Profile Foundation `[COMPLETED]`
+- [x] Relational database schema for `entrepreneurs`, `business_profiles`, and `financial_profiles` with Alembic migration `004_entrepreneur_profile_tables`.
+- [x] Pydantic schemas and DTOs with strict input validation for phone, pincode, and financial bounds.
+- [x] Deterministic profile completeness engine (section-by-section breakdown, missing fields list, completion percentage).
+- [x] Full RESTful CRUD endpoints under `/api/v1/profiles` and sub-resources for business and financial inputs.
+- [x] Integration adapters connecting stored profile entities to Step 4 Eligibility Engine, Step 5 Financial Engine, and Step 6 Scheme Matching Engine.
+- [x] Minimal 5-step frontend onboarding wizard shell in Next.js (`frontend/app/onboarding/page.tsx`).
+- [x] Zero sensitive PII policy (No Aadhaar, PAN, passwords, or bank account credentials stored).
+- [x] Zero AI/LLM model involvement in profile creation, categorization, or scoring.
+- [x] 160 passed automated tests across entire repository test suite.
+
+---
+
+### 📍 Milestone 8: Personalized Scheme Results, Details & Comparison `[COMPLETED]`
+- [x] Primary "Schemes For You" personalized discovery page (`frontend/app/schemes/page.tsx`).
+- [x] Detailed Scheme Profile & Grounding page (`frontend/app/schemes/[scheme_id]/page.tsx`).
+- [x] Side-by-Side Scheme Comparison Matrix (`frontend/app/schemes/compare/page.tsx`).
+- [x] Reusable explainability UI components:
+  - `MatchBadge.tsx`: `ELIGIBLE`, `POTENTIALLY_RELEVANT`, `NOT_ELIGIBLE` with context score tooltip.
+  - `WhyThisScheme.tsx`: Structured positive match reasons, negative disqualifiers, and unverified warnings.
+  - `EligibilityBreakdown.tsx`: Criterion-by-criterion rule evaluation table with source citations.
+  - `DocumentList.tsx`: Verified checklist of required documents (mandatory vs optional).
+  - `SourceCard.tsx`: Official policy sources, publishers, gazette notices, and external links.
+  - `ComparisonDrawer.tsx`: Sticky comparison dock enforcing 2-4 selected schemes limit.
+  - `SchemeCard.tsx`: Master responsive discovery card with explainability bullets and quick actions.
+  - `SchemeComparisonTable.tsx`: Side-by-side comparative table evaluating financial structures, eligibility, and benefits.
+- [x] Frontend API bindings in `frontend/services/api.ts` connecting Next.js client with backend endpoints.
+- [x] TypeScript compiler passes with 0 errors (`npx tsc --noEmit`).
+- [x] Full test suite passes with 162/162 automated tests (100% pass rate).
+- [x] Strict non-guarantee regulatory disclaimer attached to all discovery views.
+- [x] Zero AI/LLM participation in matching, scoring, ranking, or eligibility evaluation.
+
+---
+
+### 📍 Milestone 9: Business & Location Intelligence + Business Feasibility `[COMPLETED]`
+- [x] Relational and spatial database models for `district_msme_ecosystems` and `msme_clusters` using GeoAlchemy2 `Geometry(POINT, 4326)`.
+- [x] Alembic migration `005_location_intelligence_tables` establishing spatial intelligence schema.
+- [x] Controlled, verified MSME cluster & district profile seed dataset (`data/intelligence/clusters_seed.json`) with Ministry of MSME / MSE-CDP provenance.
+- [x] Deterministic Signal Generator evaluating 6 signal dimensions (`LOCATION_SIGNAL`, `SECTOR_SIGNAL`, `BUSINESS_STAGE_SIGNAL`, `FINANCIAL_FEASIBILITY_SIGNAL`, `DATA_COMPLETENESS_SIGNAL`, `RISK_SIGNAL`).
+- [x] Feasibility Engine synthesizing signals into structured outcomes (`FAVOURABLE`, `CAUTION`, `HIGH_RISK`, `INSUFFICIENT_DATA`), positive drivers, risk flags, missing fields, and actionable recommendations.
+- [x] PostGIS spatial proximity queries calculating distance in kilometers to registered MSME industrial clusters and District Industries Centres (DICs).
+- [x] RESTful API endpoints: `POST /api/v1/feasibility/analyze`, `GET /api/v1/profiles/{id}/feasibility`, `GET /api/v1/locations/intelligence`, `GET /api/v1/locations/nearby-clusters`.
+- [x] Frontend Business & Location Feasibility view (`frontend/app/feasibility/page.tsx`) with profile switcher and full signal discovery.
+- [x] Complete suite of UI components: `FeasibilitySummaryCard`, `SignalCard`, `SignalsList`, `RiskCautionSection`, `LocationIntelligenceCard`, `MissingInfoPrompt`.
+- [x] Data provenance tagging (`VERIFIED`, `ESTIMATED`, `UNVERIFIED`, `INSUFFICIENT_DATA`) and mandatory non-guarantee regulatory disclaimer.
+- [x] 100% deterministic code with ZERO AI / LLM / hallucinated demand scores.
+- [x] 178 passed automated tests across entire repository test suite (100% pass rate).
+
+---
+
+### ⏳ Milestone 10: Grounded AI & Multilingual RAG Services
 - [ ] Retrieval Augmented Generation (RAG) over verified scheme guidelines.
-- [ ] Natural-language explanation synthesizer for scheme eligibility.
-- [ ] Multilingual conversational query assistant.
-- [ ] Strict grounding filters to prevent hallucination.
+- [ ] Natural-language explanation synthesizer grounded strictly in verified rules.
+- [ ] Multilingual conversational query assistant via Bhashini.
+- [ ] Strict anti-hallucination filters.
 
 ---
 
-### ⏳ Milestone 8: Premium Frontend Experience & UI Modules
-- [ ] Fintech-grade Design System & Component Library.
-- [ ] Profile creation & Onboarding wizard.
-- [ ] Interactive Location & Business Feasibility visualizers.
-- [ ] Financial structure calculator & slider controls.
-- [ ] Scheme match results, comparison cards, and explanation views.
-
----
-
-### ⏳ Milestone 9: Application Assistance, Channel Partners & Tracking
+### ⏳ Milestone 11: Application Assistance, Channel Partners & Tracking
 - [ ] Document checklist generator tailored to user's scheme & category.
 - [ ] Channel partner / CSC locator & verification workflow.
 - [ ] Application submission & status timeline tracking.
 
 ---
 
-### ⏳ Milestone 10: Post-Loan AI Business Copilot & Platform Polish
+### ⏳ Milestone 12: Post-Loan AI Business Copilot & Platform Polish
 - [ ] Post-loan advisory copilot (Working capital management, compliance alerts, growth tips).
 - [ ] Multilingual voice integration (Bhashini).
 - [ ] Full end-to-end integration testing, security audit, and performance optimization.
