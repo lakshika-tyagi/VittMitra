@@ -461,8 +461,16 @@ export default function SchemeDetailPage() {
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <Link
-                href={profileId ? `/schemes/compare?ids=${scheme.id}&profile_id=${profileId}` : `/schemes/compare?ids=${scheme.id}`}
+                href={`/schemes/${scheme.id || scheme.scheme_code}/access${profileId ? `?profile_id=${profileId}` : ''}`}
                 className="btn-primary"
+                style={{ justifyContent: 'center', backgroundColor: '#10b981', borderColor: '#059669', color: '#022c22', fontWeight: 700 }}
+              >
+                <Building2 size={16} />
+                <span>How to Access & Channel Partners</span>
+              </Link>
+              <Link
+                href={profileId ? `/schemes/compare?ids=${scheme.id}&profile_id=${profileId}` : `/schemes/compare?ids=${scheme.id}`}
+                className="btn-secondary"
                 style={{ justifyContent: 'center' }}
               >
                 <Layers size={16} />

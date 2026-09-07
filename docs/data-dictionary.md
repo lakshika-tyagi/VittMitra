@@ -351,24 +351,116 @@ Registered industrial and artisan clusters under Micro and Small Enterprises Clu
 
 ---
 
-## 5. Planned / Future Conceptual Entities (Step 10+ Implementation)
+---
+
+## 5. Channel Partners & Application Tracking Entities `[STEP 10]`
+
+### A. `channel_partners`
+Stores verified financial institutions, government nodal agencies, DICs, and facilitation centres.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | PRIMARY KEY, Default: `gen_random_uuid()` | Unique partner ID |
+| `partner_name` | `VARCHAR(255)` | NOT NULL | Partner/institution name (e.g. `'District Industries Centre (DIC) Pune'`) |
+| `partner_type` | `VARCHAR(50)` | NOT NULL | Type (`GOVERNMENT_AGENCY`, `PUBLIC_SECTOR_BANK`, `PRIVATE_BANK`, `REGIONAL_RURAL_BANK`, `CSC_CENTER`, `NBFC_MFI`) |
+| `organization_name` | `VARCHAR(255)` | NOT NULL | Parent organization (e.g. `'Directorate of Industries, Maharashtra'`) |
+| `branch_code` | `VARCHAR(100)` | NULLABLE | Branch identifier / IFSC / office code |
+| `address` | `TEXT` | NOT NULL | Physical address |
+| `city` | `VARCHAR(100)` | NOT NULL | City |
+| `district` | `VARCHAR(100)` | NOT NULL, Indexed | District |
+| `state` | `VARCHAR(100)` | NOT NULL, Indexed | State |
+| `pincode` | `VARCHAR(10)` | NOT NULL | 6-digit postal code |
+| `latitude` | `NUMERIC(9,6)` | NOT NULL | Partner location latitude |
+| `longitude` | `NUMERIC(9,6)` | NOT NULL | Partner location longitude |
+| `location` | `GEOMETRY(POINT, 4326)` | Spatial Index (GIST) | PostGIS spatial point for proximity calculation |
+| `phone_number` | `VARCHAR(50)` | NULLABLE | Contact telephone / mobile |
+| `email` | `VARCHAR(255)` | NULLABLE | Official email address |
+| `website_url` | `VARCHAR(500)` | NULLABLE | Official portal URL |
+| `nodal_officer_name` | `VARCHAR(255)` | NULLABLE | Designated officer name |
+| `nodal_officer_designation`| `VARCHAR(255)` | NULLABLE | Officer designation |
+| `supported_services` | `JSONB` | NOT NULL, Default: `[]` | List of services provided (`DPR_ASSISTANCE`, `LOAN_PROCESSING`, etc.) |
+| `operating_hours` | `VARCHAR(255)` | NULLABLE | Working hours |
+| `verification_status` | `VARCHAR(50)` | NOT NULL, Default: `'VERIFIED'` | Verification status (`VERIFIED`, `PROVISIONAL`, `UNVERIFIED`) |
+| `is_active` | `BOOLEAN` | NOT NULL, Default: `true` | Active partner flag |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+### B. `scheme_channel_partners`
+Associates schemes with approved implementing agencies and lending banks.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | PRIMARY KEY, Default: `gen_random_uuid()` | Unique link ID |
+| `scheme_id` | `UUID` | NOT NULL, Foreign Key (`schemes.id`, CASCADE), Indexed | Associated scheme |
+| `channel_partner_id` | `UUID` | NOT NULL, Foreign Key (`channel_partners.id`, CASCADE), Indexed | Associated partner |
+| `partner_role` | `VARCHAR(50)` | NOT NULL, Default: `'IMPLEMENTING_AGENCY'` | Role (`IMPLEMENTING_AGENCY`, `LENDING_PARTNER`, `NODAL_AGENCY`, `APPLICATION_FACILITATOR`) |
+| `is_primary` | `BOOLEAN` | NOT NULL, Default: `false` | Primary nodal partner flag |
+| `priority_order` | `INTEGER` | NOT NULL, Default: `0` | Ordering priority (lower = higher priority) |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+
+### C. `applications`
+Tracks entrepreneur scheme loan applications.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | PRIMARY KEY, Default: `gen_random_uuid()` | Unique application tracking ID |
+| `profile_id` | `UUID` | NOT NULL, Foreign Key (`entrepreneurs.id`, CASCADE), Indexed | Applicant entrepreneur |
+| `scheme_id` | `UUID` | NOT NULL, Foreign Key (`schemes.id`, RESTRICT), Indexed | Target scheme |
+| `channel_partner_id` | `UUID` | NULLABLE, Foreign Key (`channel_partners.id`, SET NULL), Indexed | Assigned channel partner |
+| `status` | `VARCHAR(50)` | NOT NULL, Default: `'DRAFT'`, Indexed | Current status (`DRAFT`, `DOCUMENT_PREPARATION`, `PARTNER_ASSIGNED`, `APPLICATION_SUBMITTED`, `UNDER_REVIEW`, `SANCTIONED`, `DISBURSED`, `REJECTED`, `WITHDRAWN`) |
+| `sub_status` | `VARCHAR(100)` | NULLABLE | Detailed sub-status |
+| `portal_application_id` | `VARCHAR(100)` | NULLABLE | Portal acknowledgement number |
+| `loan_amount_requested` | `NUMERIC(14,2)` | NULLABLE | Requested loan principal |
+| `loan_amount_sanctioned`| `NUMERIC(14,2)` | NULLABLE | Approved loan amount |
+| `subsidy_amount_expected`| `NUMERIC(14,2)` | NULLABLE | Expected subsidy amount |
+| `subsidy_amount_sanctioned`| `NUMERIC(14,2)` | NULLABLE | Disbursed/credited subsidy |
+| `project_cost` | `NUMERIC(14,2)` | NULLABLE | Total project cost |
+| `own_contribution` | `NUMERIC(14,2)` | NULLABLE | Promoter equity contribution |
+| `target_bank_name` | `VARCHAR(255)` | NULLABLE | Target financing bank |
+| `target_branch` | `VARCHAR(255)` | NULLABLE | Bank branch |
+| `application_notes` | `TEXT` | NULLABLE | Applicant notes |
+| `submission_date` | `TIMESTAMPTZ` | NULLABLE | Date of formal portal submission |
+| `sanction_date` | `TIMESTAMPTZ` | NULLABLE | Date of loan sanction |
+| `disbursement_date` | `TIMESTAMPTZ` | NULLABLE | Date of fund disbursement |
+| `rejection_reason` | `TEXT` | NULLABLE | Reason if rejected |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Creation timestamp |
+| `updated_at` | `TIMESTAMPTZ` | NOT NULL, UTC | Last update timestamp |
+
+### D. `application_status_history`
+Maintains an immutable chronological audit trail of all application status transitions.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | PRIMARY KEY, Default: `gen_random_uuid()` | Unique history event ID |
+| `application_id` | `UUID` | NOT NULL, Foreign Key (`applications.id`, CASCADE), Indexed | Associated application |
+| `status` | `VARCHAR(50)` | NOT NULL | Milestone status |
+| `sub_status` | `VARCHAR(100)` | NULLABLE | Granular sub-status |
+| `remarks` | `TEXT` | NULLABLE | Progress remarks / milestone details |
+| `action_required` | `TEXT` | NULLABLE | Action needed by applicant |
+| `next_step` | `TEXT` | NULLABLE | Expected upcoming process |
+| `source_type` | `VARCHAR(50)` | NOT NULL, Default: `'USER_RECORDED'` | Source attribution (`USER_RECORDED`, `PARTNER_UPDATED`, `OFFICIAL_PORTAL`) |
+| `updated_by` | `VARCHAR(255)` | NULLABLE | Author of update |
+| `created_at` | `TIMESTAMPTZ` | NOT NULL, UTC, Indexed | Transition timestamp |
+
+---
+
+## 6. Planned / Future Conceptual Entities (Step 11+ Implementation)
 
 > [!IMPORTANT]
 > The following entities are **PLANNED CONCEPTUAL DESIGNS** for subsequent milestones.
-> They are intentionally **NOT** created in the database during Step 9.
+> They are intentionally **NOT** created in the database during Step 10.
 
-- **`grounded_guidelines_index`** `[PLANNED / STEP 10]`: Vector / text chunks of official scheme policy guidelines.
-- **`channel_partners`** `[PLANNED / STEP 11]`: CSC centers, bank branches, and verified facilitation partners.
-- **`applications`** `[PLANNED / STEP 11]`: Application drafts, submissions, and status timelines.
+- **`grounded_guidelines_index`** `[PLANNED / STEP 11]`: Vector / text chunks of official scheme policy guidelines.
 - **`conversations` / `copilot_context`** `[PLANNED / STEP 12]`: Post-loan AI advisor chat sessions.
 
 ---
 
-## 6. Data Integrity & Anti-Hallucination Principles
+## 7. Data Integrity & Anti-Hallucination Principles
 
-1. **Strict Authoritative Grounding**: All scheme and cluster parameters must reference official ministry URLs and gazette citations.
-2. **Deterministic Computations**: Eligibility rules, financial formulas, matching scores, and feasibility signals are evaluated in pure code/SQL, never in LLMs.
-3. **Auditability**: Every scheme and cluster change preserves version metadata and `last_verified_at` timestamps.
-4. **Authoritative Dominance**: Mandatory rule failures strictly prevent false eligibility or viability recommendations.
-5. **Regulatory Disclaimers**: Non-guarantee disclaimers accompany all match score, financial, and feasibility views.
+1. **Strict Authoritative Grounding**: All scheme, cluster, and partner parameters must reference official ministry URLs and gazette citations.
+2. **Deterministic Computations**: Eligibility rules, financial formulas, matching scores, feasibility signals, and partner matching are evaluated in pure code/SQL, never in LLMs.
+3. **Auditability**: Every scheme and cluster change preserves version metadata and `last_verified_at` timestamps; application status transitions are recorded in an immutable history ledger.
+4. **Anti-Fake Tracking Guarantee**: All application status entries explicitly identify `source_type` (`USER_RECORDED`), prohibiting simulated or fabricated government portal responses.
+5. **Regulatory Disclaimers**: Non-guarantee disclaimers accompany all match score, financial, feasibility, and application tracking views.
+
 

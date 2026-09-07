@@ -73,12 +73,15 @@ export default function Home() {
           <Link href="/feasibility" style={{ color: '#34d399', fontSize: '0.9rem', fontWeight: 600 }}>
             Location Feasibility
           </Link>
+          <Link href="/applications" style={{ color: '#a78bfa', fontSize: '0.9rem', fontWeight: 600 }}>
+            Application Tracker
+          </Link>
           <Link href="/onboarding" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
             Onboarding
           </Link>
           <div className="badge badge-emerald">
             <CircleDot size={12} />
-            <span>Step 9: Business & Location Feasibility Active</span>
+            <span>Step 10: Channel Partner & Application Tracking Active</span>
           </div>
         </div>
       </header>
@@ -164,7 +167,7 @@ export default function Home() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1rem' }}>
           {WORKFLOW_STAGES.map((stage, index) => {
-            const isCompleted = index <= 6; // Stages 1 to 7 are completed
+            const isCompleted = index <= 10; // Stages 1 to 11 are completed (Step 1-10)
             return (
               <div
                 key={index}

@@ -1,0 +1,282 @@
+[
+  {
+    "partner_code": "KVIC_STATE_MH",
+    "organization_name": "Khadi and Village Industries Commission (KVIC) State Office Maharashtra",
+    "partner_type": "NODAL_AGENCY",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "city": "Mumbai",
+    "pincode": "400056",
+    "address": "Gramodaya, 3 Irla Road, Vile Parle (West), Mumbai, Maharashtra 400056",
+    "latitude": 19.1023,
+    "longitude": 72.8385,
+    "services_offered": [
+      "APPLICATION_INTAKE",
+      "DOCUMENT_VERIFICATION",
+      "SUBSIDY_DISBURSEMENT",
+      "PHYSICAL_HANDHOLDING"
+    ],
+    "contact_person": "State Director (KVIC)",
+    "contact_phone": "022-26711002",
+    "contact_email": "statedirector.mh@kvic.gov.in",
+    "official_url": "https://www.kviconline.gov.in/pmegpeportal",
+    "verification_status": "VERIFIED",
+    "source_agency": "Ministry of Micro, Small and Medium Enterprises (MSME)",
+    "source_url": "https://www.kviconline.gov.in/pmegpeportal",
+    "notes": "State Nodal Agency for PMEGP implementation and margin money subsidy processing.",
+    "supported_schemes": [
+      {
+        "scheme_code": "PMEGP",
+        "role_type": "NODAL_AGENCY",
+        "service_scope": "State-level scheme administration, district task force coordination, and subsidy claim release.",
+        "is_primary_partner": true
+      }
+    ]
+  },
+  {
+    "partner_code": "DIC_PUNE",
+    "organization_name": "District Industries Centre (DIC) Pune",
+    "partner_type": "DISTRICT_INDUSTRIES_CENTRE",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "city": "Pune",
+    "pincode": "411001",
+    "address": "Agriculture College Compound, Shivajinagar, Pune, Maharashtra 411005",
+    "latitude": 18.5314,
+    "longitude": 73.8446,
+    "services_offered": [
+      "APPLICATION_INTAKE",
+      "DOCUMENT_VERIFICATION",
+      "PROJECT_REPORT_GUIDANCE",
+      "TASK_FORCE_SCRUTINY",
+      "ENTREPRENEURSHIP_TRAINING"
+    ],
+    "contact_person": "General Manager (DIC Pune)",
+    "contact_phone": "020-25537033",
+    "contact_email": "gmdic.pune@maharashtra.gov.in",
+    "official_url": "https://industry.maharashtra.gov.in",
+    "verification_status": "VERIFIED",
+    "source_agency": "Directorate of Industries, Government of Maharashtra",
+    "source_url": "https://industry.maharashtra.gov.in",
+    "notes": "District Implementation Agency for PMEGP, Stand-Up India facilitation, and PM Vishwakarma verification.",
+    "supported_schemes": [
+      {
+        "scheme_code": "PMEGP",
+        "role_type": "IMPLEMENTING_AGENCY",
+        "service_scope": "District Task Force Committee appraisal, physical interview, and bank forwarding.",
+        "is_primary_partner": true
+      },
+      {
+        "scheme_code": "STANDUP_INDIA",
+        "role_type": "LOCAL_FACILITATION",
+        "service_scope": "Pre-loan handholding, project preparation guidance, and SC/ST/Women enterprise support.",
+        "is_primary_partner": false
+      },
+      {
+        "scheme_code": "PM_VISHWAKARMA",
+        "role_type": "IMPLEMENTING_AGENCY",
+        "service_scope": "District Implementation Committee Stage-2 verification and skill center coordination.",
+        "is_primary_partner": true
+      }
+    ]
+  },
+  {
+    "partner_code": "SBI_SME_PUNE",
+    "organization_name": "State Bank of India (SBI) SME Branch Pune",
+    "partner_type": "PUBLIC_SECTOR_BANK",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "city": "Pune",
+    "pincode": "411001",
+    "address": "SBI Building, Ambedkar Road, Camp, Pune, Maharashtra 411001",
+    "latitude": 18.5167,
+    "longitude": 73.8755,
+    "services_offered": [
+      "LOAN_APPRAISAL",
+      "CREDIT_DISBURSEMENT",
+      "SUBSIDY_CLAIM_PROCESSING",
+      "WORKING_CAPITAL_FACILITY"
+    ],
+    "contact_person": "Chief Manager (SME Credit)",
+    "contact_phone": "020-26131415",
+    "contact_email": "sbi.sme.pune@sbi.co.in",
+    "official_url": "https://sbi.co.in/web/business/sme",
+    "verification_status": "VERIFIED",
+    "source_agency": "State Bank of India (PSU Banking Guidelines)",
+    "source_url": "https://sbi.co.in/web/business/sme/government-schemes",
+    "notes": "Designated Lending Bank for PMEGP term loans, Mudra loans (Shishu/Kishore/Tarun), Stand-Up India, and PM SVANidhi.",
+    "supported_schemes": [
+      {
+        "scheme_code": "PMEGP",
+        "role_type": "FINANCING_BANK",
+        "service_scope": "Term loan and working capital credit appraisal, sanction, and subsidy claiming.",
+        "is_primary_partner": true
+      },
+      {
+        "scheme_code": "MUDRA_PMMY",
+        "role_type": "FINANCING_BANK",
+        "service_scope": "Direct collateral-free lending under Shishu (up to ₹50k), Kishore (₹50k-5L), and Tarun (₹5L-10L).",
+        "is_primary_partner": true
+      },
+      {
+        "scheme_code": "STANDUP_INDIA",
+        "role_type": "FINANCING_BANK",
+        "service_scope": "Greenfield composite loan financing (₹10L to ₹1Cr) for SC/ST and Women entrepreneurs.",
+        "is_primary_partner": true
+      },
+      {
+        "scheme_code": "PM_SVANIDHI",
+        "role_type": "FINANCING_BANK",
+        "service_scope": "Micro working capital loan disbursement (1st, 2nd, 3rd tranches) and interest subsidy crediting.",
+        "is_primary_partner": true
+      }
+    ]
+  },
+  {
+    "partner_code": "SIDBI_NODAL_OFFICE",
+    "organization_name": "Small Industries Development Bank of India (SIDBI) Pune Office",
+    "partner_type": "NODAL_AGENCY",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "city": "Pune",
+    "pincode": "411005",
+    "address": "Ground Floor, Commerce House, Ganeshkhind Road, Pune, Maharashtra 411005",
+    "latitude": 18.5358,
+    "longitude": 73.8378,
+    "services_offered": [
+      "HANDHOLDING_FACILITATION",
+      "PORTAL_COORDINATION",
+      "CREDIT_GUARANTEE_SUPPORT"
+    ],
+    "contact_person": "Assistant General Manager (SIDBI)",
+    "contact_phone": "020-25651122",
+    "contact_email": "pune@sidbi.in",
+    "official_url": "https://www.standupmitra.in",
+    "verification_status": "VERIFIED",
+    "source_agency": "Small Industries Development Bank of India (SIDBI)",
+    "source_url": "https://www.standupmitra.in",
+    "notes": "Central Nodal Facilitation Agency managing the Stand-Up Mitra and Mudra Mitra platforms.",
+    "supported_schemes": [
+      {
+        "scheme_code": "STANDUP_INDIA",
+        "role_type": "NODAL_AGENCY",
+        "service_scope": "National portal management, handholding agency linkage, and institutional oversight.",
+        "is_primary_partner": true
+      },
+      {
+        "scheme_code": "MUDRA_PMMY",
+        "role_type": "NODAL_AGENCY",
+        "service_scope": "Refinance support and Micro Units Development and Refinance Agency policy administration.",
+        "is_primary_partner": false
+      }
+    ]
+  },
+  {
+    "partner_code": "PMC_URBAN_LIVELIHOOD_CELL",
+    "organization_name": "Pune Municipal Corporation (PMC) Urban Livelihood Cell",
+    "partner_type": "FACILITATION_CENTRE",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "city": "Pune",
+    "pincode": "411005",
+    "address": "PMC Main Building, Shivajinagar, Pune, Maharashtra 411005",
+    "latitude": 18.5284,
+    "longitude": 73.8541,
+    "services_offered": [
+      "VENDING_CERTIFICATE_ISSUANCE",
+      "LOR_RECOMMENDATION",
+      "APPLICATION_INTAKE",
+      "DIGITAL_ONBOARDING"
+    ],
+    "contact_person": "City Project Officer (NULM / PM SVANidhi)",
+    "contact_phone": "020-25501000",
+    "contact_email": "nulm@punecorporation.org",
+    "official_url": "https://pmsvanidhi.mohua.gov.in",
+    "verification_status": "VERIFIED",
+    "source_agency": "Ministry of Housing and Urban Affairs (MoHUA)",
+    "source_url": "https://pmsvanidhi.mohua.gov.in",
+    "notes": "Designated Urban Local Body (ULB) for PM SVANidhi vending identification and Letter of Recommendation (LoR).",
+    "supported_schemes": [
+      {
+        "scheme_code": "PM_SVANIDHI",
+        "role_type": "IMPLEMENTING_AGENCY",
+        "service_scope": "Street vendor identification, Certificate of Vending / Letter of Recommendation (LoR) endorsement.",
+        "is_primary_partner": true
+      }
+    ]
+  },
+  {
+    "partner_code": "MSME_DFO_MUMBAI",
+    "organization_name": "MSME Development and Facilitation Office (MSME-DFO) Mumbai",
+    "partner_type": "NODAL_AGENCY",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "city": "Mumbai",
+    "pincode": "400072",
+    "address": "Kurla-Andheri Road, Saki Naka, Mumbai, Maharashtra 400072",
+    "latitude": 19.1075,
+    "longitude": 72.8877,
+    "services_offered": [
+      "SKILL_ASSESSMENT_COORDINATION",
+      "TOOLKIT_INCENTIVE_VERIFICATION",
+      "CREDIT_FACILITATION",
+      "ENTERPRISE_DEVELOPMENT"
+    ],
+    "contact_person": "Joint Director (MSME-DFO)",
+    "contact_phone": "022-28576090",
+    "contact_email": "dfo-mumbai@dcmsme.gov.in",
+    "official_url": "https://pmvishwakarma.gov.in",
+    "verification_status": "VERIFIED",
+    "source_agency": "Office of Development Commissioner (MSME), Government of India",
+    "source_url": "https://pmvishwakarma.gov.in",
+    "notes": "State nodal technical facilitation office for PM Vishwakarma and PMEGP cluster support.",
+    "supported_schemes": [
+      {
+        "scheme_code": "PM_VISHWAKARMA",
+        "role_type": "NODAL_AGENCY",
+        "service_scope": "Stage-3 national screening, basic and advanced skill training center assignment, toolkit grant release.",
+        "is_primary_partner": true
+      }
+    ]
+  },
+  {
+    "partner_code": "DIC_VARANASI",
+    "organization_name": "District Industries Centre (DIC) Varanasi",
+    "partner_type": "DISTRICT_INDUSTRIES_CENTRE",
+    "state": "Uttar Pradesh",
+    "district": "Varanasi",
+    "city": "Varanasi",
+    "pincode": "221002",
+    "address": "Chowkaghat, Varanasi, Uttar Pradesh 221002",
+    "latitude": 25.3283,
+    "longitude": 82.9862,
+    "services_offered": [
+      "APPLICATION_INTAKE",
+      "ARTISAN_VERIFICATION",
+      "PMEGP_SCRUTINY",
+      "HANDICRAFT_FACILITATION"
+    ],
+    "contact_person": "Deputy Commissioner (Industries)",
+    "contact_phone": "0542-2204560",
+    "contact_email": "dic.varanasi@up.gov.in",
+    "official_url": "https://diupmsme.upsdc.gov.in",
+    "verification_status": "VERIFIED",
+    "source_agency": "Department of MSME and Export Promotion, Government of Uttar Pradesh",
+    "source_url": "https://diupmsme.upsdc.gov.in",
+    "notes": "District Nodal Agency for PMEGP, ODOP, and PM Vishwakarma handloom/handicraft verification.",
+    "supported_schemes": [
+      {
+        "scheme_code": "PMEGP",
+        "role_type": "IMPLEMENTING_AGENCY",
+        "service_scope": "District Task Force Committee appraisal and bank sponsorship.",
+        "is_primary_partner": true
+      },
+      {
+        "scheme_code": "PM_VISHWAKARMA",
+        "role_type": "IMPLEMENTING_AGENCY",
+        "service_scope": "Silk weaving, metal craft, and pottery artisan registration and verification.",
+        "is_primary_partner": true
+      }
+    ]
+  }
+]

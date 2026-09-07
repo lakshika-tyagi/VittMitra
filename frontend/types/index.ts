@@ -540,3 +540,190 @@ export interface NearbyCluster {
   source_name: string;
   source_url?: string | null;
 }
+
+// -------------------------------------------------------------
+// Step 10: Channel Partners & Application Tracking Types
+// -------------------------------------------------------------
+
+export type PartnerType =
+  | 'NODAL_AGENCY'
+  | 'IMPLEMENTING_AGENCY'
+  | 'DISTRICT_INDUSTRIES_CENTRE'
+  | 'PUBLIC_SECTOR_BANK'
+  | 'RRB'
+  | 'COOPERATIVE_BANK'
+  | 'FACILITATION_CENTRE';
+
+export type PartnerVerificationStatus = 'VERIFIED' | 'UNVERIFIED' | 'INACTIVE';
+
+export type PartnerRoleType =
+  | 'NODAL_AGENCY'
+  | 'IMPLEMENTING_AGENCY'
+  | 'FINANCING_BANK'
+  | 'LOCAL_FACILITATION';
+
+export interface ChannelPartner {
+  id: number;
+  partner_code: string;
+  organization_name: string;
+  partner_type: string;
+  state: string;
+  district: string;
+  city?: string | null;
+  pincode?: string | null;
+  address: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  distance_km?: number | null;
+  services_offered: string[];
+  contact_person?: string | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+  official_url?: string | null;
+  verification_status: string;
+  source_agency: string;
+  source_url?: string | null;
+  notes?: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  supported_schemes?: Array<{
+    scheme_id: number;
+    scheme_code: string;
+    scheme_name: string;
+    role_type: string;
+    service_scope?: string | null;
+    is_primary: boolean;
+  }>;
+}
+
+export interface SchemePartner {
+  id: number;
+  partner_code: string;
+  organization_name: string;
+  partner_type: string;
+  state: string;
+  district: string;
+  city?: string | null;
+  pincode?: string | null;
+  address: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  distance_km?: number | null;
+  services_offered: string[];
+  contact_person?: string | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+  official_url?: string | null;
+  verification_status: string;
+  source_agency: string;
+  source_url?: string | null;
+  role_type: string;
+  service_scope?: string | null;
+  is_primary_partner: boolean;
+  why_this_partner?: string | null;
+}
+
+export type ApplicationStatus =
+  | 'DRAFT'
+  | 'APPLICATION_STARTED'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'ADDITIONAL_INFORMATION_REQUIRED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'COMPLETED'
+  | 'UNKNOWN';
+
+export type StatusSourceType =
+  | 'USER_RECORDED'
+  | 'OFFICIAL_ACKNOWLEDGEMENT'
+  | 'PARTNER_VERIFIED'
+  | 'PORTAL_RECEIPT';
+
+export interface RequiredDocumentChecklist {
+  document_code: string;
+  document_name: string;
+  description?: string | null;
+  is_mandatory: boolean;
+  issuing_authority?: string | null;
+  purpose?: string | null;
+}
+
+export interface ApplicationAssistance {
+  scheme_id: number;
+  scheme_code: string;
+  scheme_name: string;
+  nodal_ministry?: string | null;
+  short_description?: string | null;
+  official_portal_url?: string | null;
+  eligibility_status: string;
+  eligibility_summary_message: string;
+  project_cost?: number | string | null;
+  own_contribution?: number | string | null;
+  loan_requirement?: number | string | null;
+  estimated_monthly_emi?: number | string | null;
+  estimated_subsidy_amount?: number | string | null;
+  required_documents: RequiredDocumentChecklist[];
+  recommended_partners: SchemePartner[];
+  application_steps: string[];
+  important_prerequisites: string[];
+  disclaimer: string;
+}
+
+export interface ApplicationStatusHistory {
+  id: number;
+  application_id: number;
+  status: ApplicationStatus;
+  status_note?: string | null;
+  recorded_at: string;
+  source_type: string;
+}
+
+export interface Application {
+  id: number;
+  entrepreneur_id: number;
+  scheme_id: number;
+  scheme_code: string;
+  scheme_name: string;
+  nodal_ministry?: string | null;
+  channel_partner_id?: number | null;
+  partner_name?: string | null;
+  partner_type?: string | null;
+  application_reference_number?: string | null;
+  application_date?: string | null;
+  current_status: ApplicationStatus;
+  status_explanation: string;
+  status_note?: string | null;
+  target_loan_amount?: number | string | null;
+  target_subsidy_amount?: number | string | null;
+  official_portal_url?: string | null;
+  source_type: string;
+  last_updated_at: string;
+  created_at: string;
+  is_active: boolean;
+  next_recommended_action?: string | null;
+  status_history?: ApplicationStatusHistory[];
+  channel_partner?: SchemePartner | null;
+  disclaimer: string;
+}
+
+export interface ApplicationCreatePayload {
+  entrepreneur_id: number;
+  scheme_id: number;
+  channel_partner_id?: number | null;
+  application_reference_number?: string | null;
+  application_date?: string | null;
+  initial_status?: ApplicationStatus;
+  status_note?: string | null;
+  target_loan_amount?: number | null;
+  target_subsidy_amount?: number | null;
+  official_portal_url?: string | null;
+}
+
+export interface ApplicationStatusUpdatePayload {
+  status: ApplicationStatus;
+  status_note?: string | null;
+  source_type?: StatusSourceType;
+}
+

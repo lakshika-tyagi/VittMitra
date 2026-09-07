@@ -419,22 +419,96 @@ Step 9 introduces an explainable, deterministic decision-support subsystem that 
 
 ---
 
-## 10. Database & Spatial Architecture (PostgreSQL + PostGIS)
+## 10. Channel Partner & Application Assistance Architecture `[STEP 10]`
+
+### A. Last-Mile Facilitation Flow
+VittMitra bridges scheme discovery with last-mile loan application execution through authoritative channel partners and transparent application tracking:
+
+```
+                  ┌────────────────────────────────────────────────────────┐
+                  │                 Scheme Discovery (Step 8)              │
+                  └───────────────────────────┬────────────────────────────┘
+                                              │
+                                              ▼
+                  ┌────────────────────────────────────────────────────────┐
+                  │            Application Assistance Synthesis            │
+                  │   - Personalized Document Checklist (Step 3)           │
+                  │   - Eligibility Evaluation Summary (Step 4)            │
+                  │   - Financial Structuring Breakdown (Step 5)           │
+                  │   - Official Portal Guidance & Steps                   │
+                  └───────────────────────────┬────────────────────────────┘
+                                              │
+                                              ▼
+                  ┌────────────────────────────────────────────────────────┐
+                  │              Verified Channel Partner Locator          │
+                  │   - Implementing Agencies (KVIC, DIC, SIDBI, DFO)      │
+                  │   - Lending Banks (SBI, PNB, Canara, BoB)              │
+                  │   - Spatial PostGIS Radius Filter (ST_DWithin)         │
+                  │   - Scheme Association & District Prioritization       │
+                  │   - "Why This Partner?" Deterministic Explanations     │
+                  └───────────────────────────┬────────────────────────────┘
+                                              │
+                                              ▼
+                  ┌────────────────────────────────────────────────────────┐
+                  │           Application Lifecycle & Status Timeline      │
+                  │   - States: DRAFT -> SUBMITTED -> UNDER_REVIEW -> ...  │
+                  │   - Status History (Immutable Audit Log)               │
+                  │   - Provenance: USER_RECORDED | PARTNER_UPDATED        │
+                  │   - Anti-Fake Tracking Statutory Disclaimer            │
+                  └────────────────────────────────────────────────────────┘
+```
+
+### B. Channel Partner Model & Spatial Discovery
+1. **Partner Types (`PartnerType`)**:
+   - `GOVERNMENT_AGENCY`: Official scheme implementing nodal offices (e.g. KVIC, DIC, SIDBI, MSME-DFO).
+   - `PUBLIC_SECTOR_BANK`: Public sector commercial banks (e.g. SBI, PNB, Bank of Baroda).
+   - `PRIVATE_BANK`: Private scheduled commercial banks (e.g. HDFC, ICICI, Axis).
+   - `REGIONAL_RURAL_BANK`: RRBs operating in rural and semi-urban jurisdictions.
+   - `CSC_CENTER`: Common Service Centres (VLEs) offering digital application assistance.
+   - `NBFC_MFI`: Microfinance institutions for micro-enterprise credit (e.g. MUDRA Shishu/Kishore).
+
+2. **Scheme-Partner Association (`SchemeChannelPartner`)**:
+   - Explicit many-to-many relationship linking schemes with approved channel partners.
+   - `partner_role`: `IMPLEMENTING_AGENCY`, `LENDING_PARTNER`, `NODAL_AGENCY`, `APPLICATION_FACILITATOR`.
+   - `priority_order`: Controls deterministic ordering of agencies and preferred banks.
+
+3. **Spatial Radius Querying**:
+   - Utilizing PostGIS spatial point coordinates (`POINT(lon, lat)` SRID 4326) with `ST_DWithin` and `ST_Distance`.
+   - Haversine fallback formula for non-spatial test configurations.
+
+### C. Application Assistance & Lifecycle Tracking
+1. **Assistance Package Synthesis (`ApplicationAssistanceResponse`)**:
+   - Connects Step 3 scheme documents (categorized into personal, business, financial, KYC), Step 4 eligibility verification, Step 5 financial structuring, and Step 10 verified partner discovery.
+   - Computes dynamic readiness score: `(available_docs / mandatory_docs) * 100`.
+
+2. **Application Lifecycle State Machine (`ApplicationStatus`)**:
+   - `DRAFT` -> `DOCUMENT_PREPARATION` -> `PARTNER_ASSIGNED` -> `APPLICATION_SUBMITTED` -> `UNDER_REVIEW` -> `SANCTIONED` / `DISBURSED` / `REJECTED` / `WITHDRAWN`.
+   - Full status history maintained in `application_status_history` table with timestamps, remarks, next steps, and user/partner source attribution.
+
+3. **Anti-Fake Tracking Guarantee**:
+   - VittMitra strictly refrains from faking live automated tracking against government portals (e.g. JanSamarth / PMEGP portal).
+   - All tracking events are marked with `source_type: "USER_RECORDED"` with explicit user notifications.
+
+---
+
+## 11. Database & Spatial Architecture (PostgreSQL + PostGIS)
 
 - **Database Engine**: PostgreSQL 15+ with PostGIS 3.3+ spatial extension.
 - **Spatial Tables**:
   - `district_msme_ecosystems`: District-level MSME density, thrust sectors, infrastructure, and DIC office points.
   - `msme_clusters`: Registered industrial/artisan clusters with spatial point coordinates (`POINT(lon, lat)` SRID 4326).
+  - `channel_partners`: Implementing agencies, bank branches, and facilitation centres with spatial point coordinates (`POINT(lon, lat)` SRID 4326).
 - **ORM & Dialect**: SQLAlchemy 2.0 (Asyncio) with GeoAlchemy2 and `asyncpg` driver.
 - **Connection Pooling**: Pre-ping enabled async connection pool (`pool_size=10`, `max_overflow=20`, `timeout=5s`).
 - **Migration Framework**: Alembic 1.13+ configured with async execution and PostGIS table isolation filters.
 
 ---
 
-## 11. Security & Data Protection
+## 12. Security & Data Protection
 
 - **Public Scheme Knowledge**: Government scheme and MSME cluster data is public and free of PII.
 - **Client Rule Isolation**: Clients cannot manipulate authoritative rule definitions or scoring weights in API requests.
 - **Environment Isolation**: Connection secrets managed strictly through `.env` with zero committed credentials.
 - **Sanitized API Responses**: Clear separation between public API responses and internal database columns.
+
 

@@ -1,5 +1,15 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, schemes, eligibility, finance, matching, profiles, feasibility
+from app.api.v1.endpoints import (
+    health,
+    schemes,
+    eligibility,
+    finance,
+    matching,
+    profiles,
+    feasibility,
+    partners,
+    applications,
+)
 
 api_router = APIRouter()
 
@@ -23,5 +33,11 @@ api_router.include_router(profiles.router, tags=["Profiles"])
 
 # Include business & location feasibility router under /api/v1
 api_router.include_router(feasibility.router, tags=["Feasibility"])
+
+# Include channel partner discovery router under /api/v1
+api_router.include_router(partners.router, tags=["Partners"])
+
+# Include application assistance & tracking router under /api/v1
+api_router.include_router(applications.router, tags=["Applications"])
 
 

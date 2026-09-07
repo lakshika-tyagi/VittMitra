@@ -38,6 +38,16 @@ import {
   SchemeMatchingResponse,
   EligibilityCheckResponse,
   FinancialCalculationResponse,
+  FeasibilityInputContext,
+  FeasibilityAnalysisResponse,
+  DistrictEcosystem,
+  NearbyCluster,
+  ChannelPartner,
+  SchemePartner,
+  ApplicationAssistance,
+  Application,
+  ApplicationCreatePayload,
+  ApplicationStatusUpdatePayload,
 } from '@/types';
 
 export async function createUnifiedProfile(payload: UnifiedProfileCreatePayload): Promise<UnifiedProfileResponse> {
@@ -155,13 +165,6 @@ export async function getProfileEligibility(
   return await res.json();
 }
 
-import {
-  FeasibilityInputContext,
-  FeasibilityAnalysisResponse,
-  DistrictEcosystem,
-  NearbyCluster,
-} from '@/types';
-
 export async function analyzeFeasibility(
   context: FeasibilityInputContext
 ): Promise<FeasibilityAnalysisResponse> {
@@ -219,3 +222,159 @@ export async function fetchNearbyClusters(
   }
   return await res.json();
 }
+
+// -------------------------------------------------------------
+// Step 10: Channel Partners & Application Tracking API Methods
+// -------------------------------------------------------------
+
+export async function fetchPartners(params?: {
+  state?: string;
+  district?: string;
+  partner_type?: string;
+  skip?: number;
+  limit?: number;
+}): Promise<ChannelPartner[]> {
+  const query = new URLSearchParams();
+  if (params?.state) query.append('state', params.state);
+  if (params?.district) query.append('district', params.district);
+  if (params?.partner_type) query.append('partner_type', params.partner_type);
+  if (params?.skip !== undefined) query.append('skip', params.skip.toString());
+  if (params?.limit !== undefined) query.append('limit', params.limit.toString());
+
+  const res = await fetch(`${API_BASE_URL}/partners?${query.toString()}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch channel partners (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function fetchSchemePartners(
+  schemeId: number | string,
+  params?: {
+    state?: string;
+    district?: string;
+    lat?: number;
+    lon?: number;
+    limit?: number;
+  }
+): Promise<SchemePartner[]> {
+  const query = new URLSearchParams();
+  if (params?.state) query.append('state', params.state);
+  if (params?.district) query.append('district', params.district);
+  if (params?.lat !== undefined) query.append('lat', params.lat.toString());
+  if (params?.lon !== undefined) query.append('lon', params.lon.toString());
+  if (params?.limit !== undefined) query.append('limit', params.limit.toString());
+
+  const res = await fetch(`${API_BASE_URL}/schemes/${schemeId}/partners?${query.toString()}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch partners for scheme ${schemeId} (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function fetchNearbyPartners(params: {
+  lat: number;
+  lon: number;
+  radius_km?: number;
+  scheme_id?: number;
+  partner_type?: string;
+}): Promise<SchemePartner[]> {
+  const query = new URLSearchParams({
+    lat: params.lat.toString(),
+    lon: params.lon.toString(),
+  });
+  if (params.radius_km !== undefined) query.append('radius_km', params.radius_km.toString());
+  if (params.scheme_id !== undefined) query.append('scheme_id', params.scheme_id.toString());
+  if (params.partner_type) query.append('partner_type', params.partner_type);
+
+  const res = await fetch(`${API_BASE_URL}/partners/nearby?${query.toString()}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch nearby partners (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function fetchPartnerDetail(partnerId: number): Promise<ChannelPartner> {
+  const res = await fetch(`${API_BASE_URL}/partners/${partnerId}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch channel partner ID ${partnerId} (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function fetchApplicationAssistance(
+  entrepreneurId: number,
+  schemeId: number
+): Promise<ApplicationAssistance> {
+  const query = new URLSearchParams({
+    entrepreneur_id: entrepreneurId.toString(),
+    scheme_id: schemeId.toString(),
+  });
+  const res = await fetch(`${API_BASE_URL}/applications/assistance?${query.toString()}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch application assistance package (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function createApplication(
+  payload: ApplicationCreatePayload
+): Promise<Application> {
+  const res = await fetch(`${API_BASE_URL}/applications`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to create application (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function listApplications(entrepreneurId: number): Promise<Application[]> {
+  const res = await fetch(`${API_BASE_URL}/applications?entrepreneur_id=${entrepreneurId}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to list applications for entrepreneur ${entrepreneurId} (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function getApplicationDetail(applicationId: number): Promise<Application> {
+  const res = await fetch(`${API_BASE_URL}/applications/${applicationId}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch application ID ${applicationId} (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function updateApplicationStatus(
+  applicationId: number,
+  payload: ApplicationStatusUpdatePayload
+): Promise<Application> {
+  const res = await fetch(`${API_BASE_URL}/applications/${applicationId}/status`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to update application status (Status: ${res.status})`);
+  }
+  return await res.json();
+}
+

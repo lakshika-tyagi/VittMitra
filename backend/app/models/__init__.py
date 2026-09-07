@@ -6,6 +6,7 @@ from app.models.infrastructure import InfrastructureHeartbeat
 from app.models.scheme import Scheme, SchemeSource, SchemeEligibilityRule, SchemeDocument
 from app.models.profile import Entrepreneur, BusinessProfile, FinancialProfile
 from app.models.intelligence import DistrictMSMEEcosystem, MSMECluster
+from app.models.access import ChannelPartner, SchemeChannelPartner, Application, ApplicationStatusHistory
 
 __all__ = [
     "Base",
@@ -19,4 +20,8 @@ __all__ = [
     "FinancialProfile",
     "DistrictMSMEEcosystem",
     "MSMECluster",
+    "ChannelPartner",
+    "SchemeChannelPartner",
+    "Application",
+    "ApplicationStatusHistory",
 ]

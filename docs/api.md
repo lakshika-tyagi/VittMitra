@@ -544,7 +544,90 @@ Executes feasibility evaluation for a stored entrepreneur profile record.
 Fetches verified district MSME ecosystem profile (tier, thrust sectors, industrial density score, DIC office contacts).
 
 #### `GET /api/v1/locations/nearby-clusters?district=Pune&state=Maharashtra&sector=manufacturing`
-Performs PostGIS spatial queries to return nearest registered MSME industrial and artisan clusters with distance in kilometers.
+Fetches nearest registered MSME industrial and artisan clusters with distance in kilometers.
+
+---
+
+### Channel Partners & Application Tracking `[STEP 10]`
+
+#### `GET /api/v1/partners`
+Retrieves a filtered list of channel partners (banks, DICs, KVIC offices, CSCs) by district, state, partner type, or verification status.
+
+**Query Parameters**:
+- `district` (string, optional)
+- `state` (string, optional)
+- `partner_type` (string, optional: `GOVERNMENT_AGENCY`, `PUBLIC_SECTOR_BANK`, `PRIVATE_BANK`, `REGIONAL_RURAL_BANK`, `CSC_CENTER`, `NBFC_MFI`)
+- `verification_status` (string, optional: `VERIFIED`, `PROVISIONAL`, `UNVERIFIED`)
+- `limit` (integer, default: 20)
+- `offset` (integer, default: 0)
+
+#### `GET /api/v1/partners/nearby`
+Finds channel partners within a geographic radius (km) using PostGIS spatial calculations.
+
+**Query Parameters**:
+- `latitude` (float, required)
+- `longitude` (float, required)
+- `radius_km` (float, default: 25.0)
+- `partner_type` (string, optional)
+- `limit` (integer, default: 20)
+
+#### `GET /api/v1/partners/{partner_id}`
+Retrieves detailed information for a specific channel partner, including contact details, nodal officers, supported services, and affiliated schemes.
+
+#### `GET /api/v1/schemes/{scheme_id_or_code}/partners`
+Retrieves verified implementing agencies and lending banks affiliated with a specific scheme, prioritized by the entrepreneur's district.
+
+**Query Parameters**:
+- `district` (string, optional)
+- `state` (string, optional)
+- `limit` (integer, default: 20)
+
+#### `GET /api/v1/applications/assistance`
+Synthesizes a personalized application assistance package combining Step 3 documents checklist, Step 4 eligibility evaluation, Step 5 financial structuring, and Step 10 verified channel partners.
+
+**Query Parameters**:
+- `profile_id` (UUID, required)
+- `scheme_code` (string, required)
+
+#### `POST /api/v1/applications`
+Creates a new tracked scheme loan application for an entrepreneur.
+
+**Request Payload (`ApplicationCreate`)**:
+```json
+{
+  "profile_id": "4261da24-814e-4f01-9f93-e40742f15033",
+  "scheme_id": "c1f7ca40-a15d-4f16-928d-c7bc41a99577",
+  "channel_partner_id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+  "loan_amount_requested": 1250000.0,
+  "project_cost": 1500000.0,
+  "own_contribution": 250000.0,
+  "target_bank_name": "State Bank of India",
+  "target_branch": "Pune SME City Credit Center",
+  "application_notes": "Applied for spice manufacturing unit machinery expansion."
+}
+```
+
+#### `GET /api/v1/applications`
+Lists tracked applications, optionally filtered by `profile_id` or `status`.
+
+#### `GET /api/v1/applications/{application_id}`
+Retrieves complete application details, current status, verified scheme and partner information, and full chronological status timeline.
+
+#### `POST /api/v1/applications/{application_id}/status`
+Appends a status transition event to the application timeline with immutable audit recording.
+
+**Request Payload (`ApplicationStatusUpdate`)**:
+```json
+{
+  "status": "APPLICATION_SUBMITTED",
+  "sub_status": "ONLINE_PORTAL_SUBMITTED",
+  "remarks": "Uploaded project report and Aadhaar Udyam certificate on PMEGP e-portal.",
+  "portal_acknowledgement_no": "PMEGP/2026/MH/PN/882194",
+  "source_type": "USER_RECORDED",
+  "action_required": "Visit DIC Pune with physical documents for verification.",
+  "next_step": "Physical verification by DIC Task Force Committee."
+}
+```
 
 ---
 
@@ -552,7 +635,8 @@ Performs PostGIS spatial queries to return nearest registered MSME industrial an
 
 | Domain | Method | Endpoint | Milestone |
 | :--- | :--- | :--- | :--- |
-| **Grounded AI / RAG** | `POST` | `/api/v1/ai/explain-scheme` | Step 10 (Grounded AI Explanations & Multilingual) |
-| **Applications & DPR** | `POST` | `/api/v1/applications` | Step 11 (Application Tracking & DPR Generator) |
-| **Channel Partner** | `GET` | `/api/v1/partners/nearest` | Step 11 (Channel Partner Matching) |
+| **Grounded AI / RAG** | `POST` | `/api/v1/ai/explain-scheme` | Step 11 (Grounded AI Explanations & Multilingual) |
+| **Bhashini Voice** | `POST` | `/api/v1/ai/voice-assist` | Step 11 (Bhashini Voice Integration) |
+| **Post-Loan Copilot** | `POST` | `/api/v1/copilot/chat` | Step 12 (Post-Loan Business Copilot) |
+
 
