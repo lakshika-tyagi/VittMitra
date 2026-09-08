@@ -395,12 +395,12 @@ class AIOrchestrator:
 
         confidence_val = raw_response.get("confidence", "HIGH")
         if not scored_chunks and not engine_results and not scheme_code:
-            confidence_val = "HIGH"
+            confidence_val = raw_response.get("confidence", "INSUFFICIENT_DATA")
 
         try:
             conf_enum = ConfidenceLevel(confidence_val)
         except Exception:
-            conf_enum = ConfidenceLevel.HIGH
+            conf_enum = ConfidenceLevel.MEDIUM
 
         return GroundedChatResponse(
             answer=raw_response.get("answer", "VittMitra AI has synthesized this response based on official scheme guidelines."),
@@ -491,16 +491,46 @@ class AIOrchestrator:
         return self._fallback_synthesizer(user_prompt)
 
     def _fallback_synthesizer(self, prompt: str) -> Dict[str, Any]:
-        if "No specific scheme knowledge chunks retrieved" in prompt and "<DETERMINISTIC_ENGINE_RESULTS>" not in prompt:
+        prompt_lower = prompt.lower()
+        
+        # Extract user query part if formatted
+        query_part = prompt_lower
+        if "<user_query>" in prompt_lower and "</user_query>" in prompt_lower:
+            start = prompt_lower.find("<user_query>") + len("<user_query>")
+            end = prompt_lower.find("</user_query>")
+            query_part = prompt_lower[start:end]
+
+        known_keywords = [
+            "pmegp", "mudra", "cgtmse", "vishwakarma", "standup", "pmfme", "scheme",
+            "eligib", "document", "papers", "cost", "emi", "subsidy", "loan", "feasib",
+            "signal", "location", "apply", "benefit", "partner", "interest", "margin", "msme"
+        ]
+
+        has_domain_keyword = any(kw in query_part for kw in known_keywords)
+
+        # Insufficient data check when neither chunks nor engine results nor context exist and query is out of domain
+        if (
+            "no specific scheme knowledge chunks retrieved" in prompt_lower
+            and "<deterministic_engine_results>" not in prompt_lower
+            and "<user_context>" not in prompt_lower
+            and not has_domain_keyword
+        ):
             return {
-                "answer": "According to official government MSME credit guidelines, eligible entrepreneurs can access capital subsidies and loan facilitation across priority sectors.",
-                "confidence": "HIGH",
-                "limitations": ["Specific scheme details require selecting a scheme or completing an entrepreneur profile"],
-                "suggested_actions": ["Explore available schemes in directory", "Complete onboarding profile"]
+                "answer": "VittMitra AI provides answers strictly grounded in official Government of India MSME schemes and verified profile data. We could not find verified knowledge chunks or engine results matching this specific query. Please explore the scheme directory or complete your entrepreneur profile.",
+                "confidence": "INSUFFICIENT_DATA",
+                "limitations": ["No matching official scheme knowledge or profile context found for this query."],
+                "suggested_actions": ["Explore available schemes in directory", "Complete onboarding profile", "Visit official MSME portal at https://msme.gov.in"]
             }
 
-        prompt_lower = prompt.lower()
-        if "eligib" in prompt_lower:
+        if "topic: feasibility" in query_part or "feasib" in query_part or "signal" in query_part:
+            return {
+                "answer": "The feasibility analysis synthesizes location MSME density, sector cluster proximity, promoter equity, and financial sustainability into explainable decision-support indicators.",
+                "confidence": "HIGH",
+                "limitations": ["Feasibility analysis is a decision-support indicator and does not guarantee loan approval"],
+                "suggested_actions": ["Explore nearby MSME clusters", "Consult District Industries Centre (DIC) Pune"]
+            }
+
+        if "topic: eligibility" in query_part or "eligib" in query_part:
             return {
                 "answer": "Based on your recorded profile and the scheme's official criteria, your eligibility has been evaluated deterministically. Please review the detailed criterion breakdown below to see which conditions are satisfied.",
                 "confidence": "HIGH",
@@ -508,15 +538,7 @@ class AIOrchestrator:
                 "suggested_actions": ["Verify required identity and caste certificates", "Proceed to application preparation"]
             }
 
-        if "doc" in prompt_lower or "paper" in prompt_lower:
-            return {
-                "answer": "Applying for this scheme requires primary identity documents (Aadhaar, PAN), a Detailed Project Report (DPR), and relevant category or area certificates if claiming special subsidy benefits.",
-                "confidence": "HIGH",
-                "limitations": ["Specific state or bank branches may request additional supporting KYC"],
-                "suggested_actions": ["Download the DPR template", "Assemble mandatory identity documents", "Locate nearest verified channel partner"]
-            }
-
-        if "cost" in prompt_lower or "emi" in prompt_lower or "subsidy" in prompt_lower or "loan" in prompt_lower:
+        if "topic: finance" in query_part or "cost" in query_part or "emi" in query_part or "subsidy" in query_part or "loan" in query_part:
             return {
                 "answer": "Financial terms under this scheme provide subsidised credit with structured promoter equity contributions and government margin money subsidies as specified in the official guidelines.",
                 "confidence": "HIGH",
@@ -524,12 +546,12 @@ class AIOrchestrator:
                 "suggested_actions": ["Use the VittMitra Financial Calculator", "Review repayment amortization scenarios"]
             }
 
-        if "feasib" in prompt_lower or "signal" in prompt_lower or "location" in prompt_lower:
+        if "topic: documents" in query_part or "document" in query_part or "paper" in query_part:
             return {
-                "answer": "The feasibility analysis synthesizes location MSME density, sector cluster proximity, promoter equity, and financial sustainability into explainable decision-support indicators.",
+                "answer": "Applying for this scheme requires primary identity documents (Aadhaar, PAN), a Detailed Project Report (DPR), and relevant category or area certificates if claiming special subsidy benefits.",
                 "confidence": "HIGH",
-                "limitations": ["Feasibility analysis is a decision-support indicator and does not guarantee loan approval"],
-                "suggested_actions": ["Explore nearby MSME clusters", "Consult District Industries Centre (DIC) Pune"]
+                "limitations": ["Specific state or bank branches may request additional supporting KYC"],
+                "suggested_actions": ["Download the DPR template", "Assemble mandatory identity documents", "Locate nearest verified channel partner"]
             }
 
         return {
