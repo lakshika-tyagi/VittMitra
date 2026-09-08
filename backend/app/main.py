@@ -26,9 +26,10 @@ from app.api.v1.endpoints.health import check_database_health, check_postgis_hea
 from app.api.v1.endpoints.schemes import list_schemes, get_scheme_by_identifier
 from app.api.v1.endpoints.eligibility import check_scheme_eligibility
 from app.api.v1.endpoints.finance import calculate_finance, compare_finance_scenarios
-from contextlib import asynccontextmanager
+from app.api.v1.endpoints.matching import match_schemes
 from app.api.v1.endpoints.feasibility import analyze_feasibility_endpoint
 from app.db.session import init_db_schema
+from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
