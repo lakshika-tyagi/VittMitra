@@ -142,16 +142,16 @@ export default function DashboardPage() {
           margin: '4rem auto',
           padding: '2.5rem 2rem',
           textAlign: 'center',
-          background: 'rgba(239, 68, 68, 0.08)',
-          border: '1px solid rgba(239, 68, 68, 0.25)',
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
           borderRadius: '16px',
         }}
       >
-        <AlertTriangle size={42} color="#f87171" style={{ margin: '0 auto 1rem auto' }} />
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.5rem' }}>
+        <AlertTriangle size={42} color="#dc2626" style={{ margin: '0 auto 1rem auto' }} />
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#991b1b', marginBottom: '0.5rem' }}>
           Unable to Load Dashboard Intelligence
         </h2>
-        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+        <p style={{ color: '#b91c1c', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
           {error}
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -201,19 +201,19 @@ export default function DashboardPage() {
             <span className="badge badge-emerald" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
               <CircleDot size={10} /> Active Session
             </span>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
               Profile ID #{profile?.id || '—'}
             </span>
           </div>
 
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.025em', color: '#f8fafc', margin: 0 }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.025em', color: '#0f172a', margin: 0 }}>
             {profile ? `Namaste, ${profile.full_name}` : 'Welcome to VittMitra'}
           </h1>
 
-          <p style={{ fontSize: '0.95rem', color: '#94a3b8', marginTop: '0.35rem', margin: 0 }}>
+          <p style={{ fontSize: '0.95rem', color: '#64748b', marginTop: '0.35rem', margin: 0 }}>
             {business?.business_name ? (
               <span>
-                <strong>{business.business_name}</strong> •{' '}
+                <strong style={{ color: '#0f172a' }}>{business.business_name}</strong> •{' '}
                 <span style={{ textTransform: 'capitalize' }}>{business.sector?.replace('_', ' ')}</span> •{' '}
                 {business.location_label || `${profile?.district}, ${profile?.state}`}
               </span>
@@ -228,26 +228,27 @@ export default function DashboardPage() {
           {profile && (
             <div
               style={{
-                background: 'rgba(17, 24, 39, 0.7)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '12px',
                 padding: '0.65rem 1rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1rem',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
               }}
             >
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '0.75rem', marginBottom: '0.25rem' }}>
-                  <span style={{ color: '#94a3b8' }}>Profile Completeness</span>
-                  <strong style={{ color: '#34d399' }}>{profile.completeness.completion_percentage}%</strong>
+                  <span style={{ color: '#64748b' }}>Profile Completeness</span>
+                  <strong style={{ color: '#059669' }}>{profile.completeness.completion_percentage}%</strong>
                 </div>
-                <div style={{ width: '120px', height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ width: '120px', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: `${profile.completeness.completion_percentage}%`,
                       height: '100%',
-                      background: 'linear-gradient(90deg, #38bdf8 0%, #10b981 100%)',
+                      background: 'linear-gradient(90deg, #0284c7 0%, #059669 100%)',
                       borderRadius: '3px',
                     }}
                   />
@@ -257,10 +258,10 @@ export default function DashboardPage() {
                 href="/onboarding"
                 style={{
                   fontSize: '0.78rem',
-                  color: '#38bdf8',
+                  color: '#2563eb',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderLeft: '1px solid #e2e8f0',
                   paddingLeft: '0.75rem',
                 }}
               >
@@ -280,10 +281,11 @@ export default function DashboardPage() {
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#94a3b8',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              color: '#64748b',
               cursor: 'pointer',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
             }}
           >
             <RefreshCw size={16} />
@@ -302,8 +304,8 @@ export default function DashboardPage() {
       >
         <div
           style={{
-            background: 'rgba(16, 185, 129, 0.06)',
-            border: '1px solid rgba(16, 185, 129, 0.2)',
+            background: '#ecfdf5',
+            border: '1px solid #a7f3d0',
             borderRadius: '10px',
             padding: '0.65rem 0.85rem',
             display: 'flex',
@@ -311,17 +313,17 @@ export default function DashboardPage() {
             gap: '0.6rem',
           }}
         >
-          <ShieldCheck size={18} color="#34d399" />
+          <ShieldCheck size={18} color="#059669" />
           <div style={{ fontSize: '0.78rem' }}>
-            <strong style={{ color: '#34d399', display: 'block' }}>Verified Govt Rules</strong>
-            <span style={{ color: '#94a3b8' }}>Deterministic match engine</span>
+            <strong style={{ color: '#047857', display: 'block' }}>Verified Govt Rules</strong>
+            <span style={{ color: '#065f46' }}>Deterministic match engine</span>
           </div>
         </div>
 
         <div
           style={{
-            background: 'rgba(56, 189, 248, 0.06)',
-            border: '1px solid rgba(56, 189, 248, 0.2)',
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
             borderRadius: '10px',
             padding: '0.65rem 0.85rem',
             display: 'flex',
@@ -329,17 +331,17 @@ export default function DashboardPage() {
             gap: '0.6rem',
           }}
         >
-          <DollarSign size={18} color="#38bdf8" />
+          <DollarSign size={18} color="#2563eb" />
           <div style={{ fontSize: '0.78rem' }}>
-            <strong style={{ color: '#38bdf8', display: 'block' }}>Mathematical Amortization</strong>
-            <span style={{ color: '#94a3b8' }}>Formulaic subsidy & EMI</span>
+            <strong style={{ color: '#1d4ed8', display: 'block' }}>Mathematical Amortization</strong>
+            <span style={{ color: '#1e40af' }}>Formulaic subsidy & EMI</span>
           </div>
         </div>
 
         <div
           style={{
-            background: 'rgba(129, 140, 248, 0.06)',
-            border: '1px solid rgba(129, 140, 248, 0.2)',
+            background: '#f5f3ff',
+            border: '1px solid #ddd6fe',
             borderRadius: '10px',
             padding: '0.65rem 0.85rem',
             display: 'flex',
@@ -347,17 +349,17 @@ export default function DashboardPage() {
             gap: '0.6rem',
           }}
         >
-          <MapPin size={18} color="#818cf8" />
+          <MapPin size={18} color="#7c3aed" />
           <div style={{ fontSize: '0.78rem' }}>
-            <strong style={{ color: '#818cf8', display: 'block' }}>PostGIS Spatial Feasibility</strong>
-            <span style={{ color: '#94a3b8' }}>District & cluster intelligence</span>
+            <strong style={{ color: '#6d28d9', display: 'block' }}>PostGIS Spatial Feasibility</strong>
+            <span style={{ color: '#5b21b6' }}>District & cluster intelligence</span>
           </div>
         </div>
 
         <div
           style={{
-            background: 'rgba(192, 132, 252, 0.06)',
-            border: '1px solid rgba(192, 132, 252, 0.2)',
+            background: '#faf5ff',
+            border: '1px solid #e9d5ff',
             borderRadius: '10px',
             padding: '0.65rem 0.85rem',
             display: 'flex',
@@ -365,10 +367,10 @@ export default function DashboardPage() {
             gap: '0.6rem',
           }}
         >
-          <Bot size={18} color="#c084fc" />
+          <Bot size={18} color="#9333ea" />
           <div style={{ fontSize: '0.78rem' }}>
-            <strong style={{ color: '#c084fc', display: 'block' }}>Grounded Decision Support</strong>
-            <span style={{ color: '#94a3b8' }}>Gemini RAG plain-language AI</span>
+            <strong style={{ color: '#7e22ce', display: 'block' }}>Grounded Decision Support</strong>
+            <span style={{ color: '#6b21a8' }}>Gemini RAG plain-language AI</span>
           </div>
         </div>
       </div>
@@ -395,14 +397,14 @@ export default function DashboardPage() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <Layers size={18} color="#38bdf8" />
-              <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+              <Layers size={18} color="#0284c7" />
+              <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
                 Your Entrepreneurship Journey
               </h2>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-                Current Stage: <strong style={{ color: '#38bdf8' }}>{journey.current_stage_title}</strong>
+              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                Current Stage: <strong style={{ color: '#2563eb' }}>{journey.current_stage_title}</strong>
               </span>
               <span className="badge badge-blue" style={{ fontSize: '0.78rem' }}>
                 {Math.round(journey.completion_percentage)}% Overall Progress
@@ -427,15 +429,15 @@ export default function DashboardPage() {
                   href={stage.target_url}
                   style={{
                     backgroundColor: isCurrent
-                      ? 'rgba(56, 189, 248, 0.12)'
+                      ? '#eff6ff'
                       : isCompleted
-                      ? 'rgba(16, 185, 129, 0.08)'
-                      : 'rgba(255, 255, 255, 0.02)',
+                      ? '#f0fdf4'
+                      : '#ffffff',
                     border: isCurrent
-                      ? '1px solid rgba(56, 189, 248, 0.4)'
+                      ? '1px solid #93c5fd'
                       : isCompleted
-                      ? '1px solid rgba(16, 185, 129, 0.25)'
-                      : '1px solid rgba(255, 255, 255, 0.05)',
+                      ? '1px solid #bbf7d0'
+                      : '1px solid #e2e8f0',
                     borderRadius: '10px',
                     padding: '0.85rem 0.65rem',
                     textDecoration: 'none',
@@ -444,6 +446,7 @@ export default function DashboardPage() {
                     justifyContent: 'space-between',
                     minHeight: '100px',
                     transition: 'all 0.15s ease',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
@@ -460,15 +463,15 @@ export default function DashboardPage() {
                         backgroundColor: isCurrent
                           ? '#2563eb'
                           : isCompleted
-                          ? 'rgba(16, 185, 129, 0.25)'
-                          : 'rgba(255, 255, 255, 0.06)',
-                        color: isCurrent ? '#ffffff' : isCompleted ? '#34d399' : '#64748b',
+                          ? '#dcfce7'
+                          : '#f1f5f9',
+                        color: isCurrent ? '#ffffff' : isCompleted ? '#059669' : '#64748b',
                       }}
                     >
                       {isCompleted ? '✓' : idx + 1}
                     </div>
                     {isCurrent && (
-                      <span className="pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#38bdf8' }} />
+                      <span className="pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#0284c7' }} />
                     )}
                   </div>
                   <div>
@@ -476,14 +479,14 @@ export default function DashboardPage() {
                       style={{
                         fontSize: '0.78rem',
                         fontWeight: isCurrent ? 700 : 600,
-                        color: isCurrent ? '#38bdf8' : isCompleted ? '#e2e8f0' : '#64748b',
+                        color: isCurrent ? '#2563eb' : isCompleted ? '#0f172a' : '#64748b',
                         lineHeight: 1.25,
                         marginBottom: '0.2rem',
                       }}
                     >
                       {stage.title}
                     </div>
-                    <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
                       {isCurrent ? 'In Progress →' : isCompleted ? 'Completed' : 'Pending'}
                     </div>
                   </div>
@@ -498,11 +501,11 @@ export default function DashboardPage() {
       {nextActions.length > 0 && (
         <section style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
-            <Zap size={18} color="#fbbf24" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+            <Zap size={18} color="#d97706" />
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
               Recommended Next Best Actions
             </h2>
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
               (Deterministic & State-Aware)
             </span>
           </div>
@@ -533,7 +536,7 @@ export default function DashboardPage() {
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: '1px solid #e2e8f0',
                   }}
                 >
                   <div>
@@ -541,15 +544,15 @@ export default function DashboardPage() {
                       <span className={`badge ${badgeClass}`} style={{ fontSize: '0.72rem', fontWeight: 600 }}>
                         {action.badge_label}
                       </span>
-                      <span style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase' }}>
                         Priority #{action.priority}
                       </span>
                     </div>
 
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.4rem' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.4rem' }}>
                       {action.title}
                     </h3>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.45, marginBottom: '1.25rem' }}>
+                    <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.45, marginBottom: '1.25rem' }}>
                       {action.description}
                     </p>
                   </div>
@@ -577,8 +580,8 @@ export default function DashboardPage() {
       {/* 5. Key Metrics Snapshot (4 Cards Grid) */}
       <section style={{ marginBottom: '2.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
-          <TrendingUp size={18} color="#38bdf8" />
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+          <TrendingUp size={18} color="#0284c7" />
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
             Executive Snapshot
           </h2>
         </div>
@@ -593,23 +596,23 @@ export default function DashboardPage() {
           {/* Card 1: Top Scheme Match */}
           <div className="metric-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>TOP MATCH SCHEME</span>
-              <Award size={18} color="#38bdf8" />
+              <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>TOP MATCH SCHEME</span>
+              <Award size={18} color="#0284c7" />
             </div>
             {topSchemes.length > 0 ? (
               <>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0284c7', marginBottom: '0.2rem' }}>
                   {topSchemes[0].match_score}/100
                 </div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem' }}>
                   {topSchemes[0].scheme_name}
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   {topSchemes[0].nodal_ministry} • <span className="badge badge-emerald" style={{ fontSize: '0.68rem' }}>{topSchemes[0].match_category}</span>
                 </div>
               </>
             ) : (
-              <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
                 Complete onboarding to view scheme matches.
               </div>
             )}
@@ -618,8 +621,8 @@ export default function DashboardPage() {
           {/* Card 2: Location Feasibility */}
           <div className="metric-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>LOCATION FEASIBILITY</span>
-              <MapPin size={18} color="#34d399" />
+              <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>LOCATION FEASIBILITY</span>
+              <MapPin size={18} color="#059669" />
             </div>
             {feasibility ? (
               <>
@@ -627,21 +630,21 @@ export default function DashboardPage() {
                   style={{
                     fontSize: '1.4rem',
                     fontWeight: 800,
-                    color: feasibility.status === 'FAVOURABLE' ? '#34d399' : feasibility.status === 'CAUTION' ? '#fbbf24' : '#f87171',
+                    color: feasibility.status === 'FAVOURABLE' ? '#059669' : feasibility.status === 'CAUTION' ? '#d97706' : '#dc2626',
                     marginBottom: '0.2rem',
                   }}
                 >
                   {feasibility.status_label}
                 </div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.35rem' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0f172a', marginBottom: '0.35rem' }}>
                   {feasibility.district ? `${feasibility.district}, ${feasibility.state || ''}` : 'Location Analyzed'}
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   {feasibility.positive_signals_count} Positive • {feasibility.caution_signals_count} Caution • {feasibility.nearby_clusters_count} MSME Clusters
                 </div>
               </>
             ) : (
-              <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
                 Location intelligence pending profile district.
               </div>
             )}
@@ -650,23 +653,23 @@ export default function DashboardPage() {
           {/* Card 3: Financial Structure */}
           <div className="metric-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>FINANCIAL STRUCTURING</span>
-              <DollarSign size={18} color="#fbbf24" />
+              <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>FINANCIAL STRUCTURING</span>
+              <DollarSign size={18} color="#d97706" />
             </div>
             {financial ? (
               <>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fbbf24', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#d97706', marginBottom: '0.2rem' }}>
                   {formatINR(financial.project_cost)}
                 </div>
-                <div style={{ fontSize: '0.82rem', color: '#f8fafc', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.82rem', color: '#0f172a', marginBottom: '0.25rem' }}>
                   Own Equity: <strong>{formatINR(financial.own_contribution_amount)}</strong> ({financial.own_contribution_percentage}%)
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   Est. EMI: <strong>{formatINR(financial.estimated_monthly_emi)}/mo</strong> @ {financial.interest_rate_applied}%
                 </div>
               </>
             ) : (
-              <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
                 Set project cost in profile to calculate loan & subsidy.
               </div>
             )}
@@ -675,27 +678,27 @@ export default function DashboardPage() {
           {/* Card 4: Active Application Tracking */}
           <div className="metric-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>APPLICATION TRACKING</span>
-              <FileText size={18} color="#c084fc" />
+              <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>APPLICATION TRACKING</span>
+              <FileText size={18} color="#7c3aed" />
             </div>
             {activeApps.length > 0 ? (
               <>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#c084fc', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#7c3aed', marginBottom: '0.2rem' }}>
                   {activeApps[0].status_display}
                 </div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0f172a', marginBottom: '0.25rem' }}>
                   {activeApps[0].scheme_name}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
                   Ref: {activeApps[0].application_reference_number || 'Pending Ref'} • User-Recorded
                 </div>
               </>
             ) : (
               <div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
                   No Active Submissions
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
                   Ready to apply for your top matched scheme.
                 </p>
               </div>
@@ -717,8 +720,8 @@ export default function DashboardPage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <Compass size={18} color="#38bdf8" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+            <Compass size={18} color="#0284c7" />
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
               Recommended Schemes For You
             </h2>
           </div>
@@ -726,7 +729,7 @@ export default function DashboardPage() {
             href="/schemes"
             style={{
               fontSize: '0.85rem',
-              color: '#38bdf8',
+              color: '#2563eb',
               fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
@@ -754,8 +757,8 @@ export default function DashboardPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                border: scheme.rank === 1 ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
-                boxShadow: scheme.rank === 1 ? '0 8px 24px -6px rgba(37, 99, 235, 0.3)' : 'none',
+                border: scheme.rank === 1 ? '1px solid #bfdbfe' : '1px solid #e2e8f0',
+                boxShadow: scheme.rank === 1 ? '0 4px 20px -2px rgba(37, 99, 235, 0.15)' : 'none',
               }}
             >
               <div>
@@ -766,13 +769,13 @@ export default function DashboardPage() {
                         width: '26px',
                         height: '26px',
                         borderRadius: '50%',
-                        backgroundColor: scheme.rank === 1 ? '#2563eb' : 'rgba(255,255,255,0.1)',
+                        backgroundColor: scheme.rank === 1 ? '#2563eb' : '#e2e8f0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '0.75rem',
                         fontWeight: 700,
-                        color: '#ffffff',
+                        color: scheme.rank === 1 ? '#ffffff' : '#475569',
                       }}
                     >
                       #{scheme.rank}
@@ -782,31 +785,31 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8' }}>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0284c7' }}>
                       {scheme.match_score}
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>/100</span>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/100</span>
                   </div>
                 </div>
 
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.35rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem' }}>
                   {scheme.scheme_name}
                 </h3>
-                <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '0.75rem' }}>
                   {scheme.nodal_ministry}
                 </div>
 
                 {scheme.primary_reason && (
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
+                      background: '#f8fafc',
                       borderRadius: '8px',
                       padding: '0.65rem 0.75rem',
                       fontSize: '0.8rem',
-                      color: '#cbd5e1',
+                      color: '#334155',
                       lineHeight: 1.4,
                       marginBottom: '1rem',
-                      borderLeft: '3px solid #38bdf8',
+                      borderLeft: '3px solid #2563eb',
                     }}
                   >
                     {scheme.primary_reason}
@@ -821,17 +824,17 @@ export default function DashboardPage() {
                     fontSize: '0.78rem',
                     marginBottom: '1.25rem',
                     padding: '0.65rem',
-                    background: 'rgba(15, 23, 42, 0.5)',
+                    background: '#f1f5f9',
                     borderRadius: '8px',
                   }}
                 >
                   <div>
-                    <span style={{ color: '#94a3b8', display: 'block' }}>Max Loan</span>
-                    <strong style={{ color: '#f8fafc' }}>{scheme.max_loan_display || 'N/A'}</strong>
+                    <span style={{ color: '#64748b', display: 'block' }}>Max Loan</span>
+                    <strong style={{ color: '#0f172a' }}>{scheme.max_loan_display || 'N/A'}</strong>
                   </div>
                   <div>
-                    <span style={{ color: '#94a3b8', display: 'block' }}>Subsidy Assistance</span>
-                    <strong style={{ color: '#34d399' }}>{scheme.subsidy_display || 'N/A'}</strong>
+                    <span style={{ color: '#64748b', display: 'block' }}>Subsidy Assistance</span>
+                    <strong style={{ color: '#059669' }}>{scheme.subsidy_display || 'N/A'}</strong>
                   </div>
                 </div>
               </div>
@@ -859,17 +862,17 @@ export default function DashboardPage() {
 
       {/* 7. Grounded AI Decision Support Copilot Quick Prompts */}
       <section style={{ marginBottom: '2.5rem' }}>
-        <div className="glass-panel" style={{ padding: '1.75rem', border: '1px solid rgba(192, 132, 252, 0.3)' }}>
+        <div className="glass-panel" style={{ padding: '1.75rem', border: '1px solid #e9d5ff' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Sparkles size={20} color="#c084fc" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+            <Sparkles size={20} color="#7c3aed" />
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
               VittMitra AI Copilot (Grounded Decision Support)
             </h2>
             <span className="badge badge-purple" style={{ fontSize: '0.72rem' }}>
               Google Gemini Powered
             </span>
           </div>
-          <p style={{ fontSize: '0.88rem', color: '#94a3b8', maxWidth: '750px', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+          <p style={{ fontSize: '0.88rem', color: '#64748b', maxWidth: '750px', lineHeight: 1.5, marginBottom: '1.25rem' }}>
             Ask plain-language questions grounded strictly in official government scheme guidelines, verified feasibility signals, and your financial profile.
           </p>
 
@@ -886,21 +889,21 @@ export default function DashboardPage() {
               disabled={aiLoading}
               type="button"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: '10px',
                 padding: '0.85rem',
-                color: '#f8fafc',
+                color: '#0f172a',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s ease',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                <ShieldCheck size={16} color="#34d399" />
+                <ShieldCheck size={16} color="#059669" />
                 <strong style={{ fontSize: '0.85rem' }}>Explain My Eligibility</strong>
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                 Why did I match or fail specific scheme rules?
               </div>
             </button>
@@ -910,21 +913,21 @@ export default function DashboardPage() {
               disabled={aiLoading}
               type="button"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: '10px',
                 padding: '0.85rem',
-                color: '#f8fafc',
+                color: '#0f172a',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s ease',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                <MapPin size={16} color="#818cf8" />
+                <MapPin size={16} color="#7c3aed" />
                 <strong style={{ fontSize: '0.85rem' }}>Analyze Location Feasibility</strong>
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                 What are the industrial risks in my district?
               </div>
             </button>
@@ -934,21 +937,21 @@ export default function DashboardPage() {
               disabled={aiLoading}
               type="button"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: '10px',
                 padding: '0.85rem',
-                color: '#f8fafc',
+                color: '#0f172a',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s ease',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                <DollarSign size={16} color="#fbbf24" />
+                <DollarSign size={16} color="#d97706" />
                 <strong style={{ fontSize: '0.85rem' }}>Explain Loan & Subsidy EMI</strong>
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                 How is my margin money & amortization calculated?
               </div>
             </button>
@@ -957,21 +960,21 @@ export default function DashboardPage() {
               onClick={() => openCopilotChat('What documents do I need to prepare before visiting a bank or CSC partner?')}
               type="button"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: '10px',
                 padding: '0.85rem',
-                color: '#f8fafc',
+                color: '#0f172a',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s ease',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                <Bot size={16} color="#c084fc" />
+                <Bot size={16} color="#7c3aed" />
                 <strong style={{ fontSize: '0.85rem' }}>Ask Custom Question</strong>
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                 Open interactive multilingual grounded assistant →
               </div>
             </button>
@@ -979,7 +982,7 @@ export default function DashboardPage() {
 
           {/* AI Loading indicator */}
           {aiLoading && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '1rem', color: '#c084fc', fontSize: '0.88rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '1rem', color: '#7c3aed', fontSize: '0.88rem' }}>
               <Loader2 size={18} className="pulse-dot" />
               <span>Synthesizing grounded explanation from verified government gazettes and profile state...</span>
             </div>
@@ -987,7 +990,7 @@ export default function DashboardPage() {
 
           {/* AI Error message */}
           {aiError && (
-            <div style={{ padding: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#f87171', fontSize: '0.85rem', marginTop: '1rem' }}>
+            <div style={{ padding: '0.85rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#dc2626', fontSize: '0.85rem', marginTop: '1rem' }}>
               {aiError}
             </div>
           )}

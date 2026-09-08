@@ -31,23 +31,23 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
   const getStatusBadge = (status: ApplicationStatus) => {
     switch (status) {
       case 'DRAFT':
-        return { label: 'Draft', bg: 'bg-slate-800 text-slate-300 border-slate-700' };
+        return { label: 'Draft', bg: 'bg-slate-100 text-slate-700 border-slate-300' };
       case 'APPLICATION_STARTED':
-        return { label: 'In Progress', bg: 'bg-blue-950/60 text-blue-300 border-blue-800/60' };
+        return { label: 'In Progress', bg: 'bg-blue-50 text-blue-800 border-blue-200' };
       case 'SUBMITTED':
-        return { label: 'Submitted', bg: 'bg-indigo-950/60 text-indigo-300 border-indigo-800/60' };
+        return { label: 'Submitted', bg: 'bg-indigo-50 text-indigo-800 border-indigo-200' };
       case 'UNDER_REVIEW':
-        return { label: 'Under Review', bg: 'bg-amber-950/60 text-amber-300 border-amber-800/60' };
+        return { label: 'Under Review', bg: 'bg-amber-50 text-amber-800 border-amber-200' };
       case 'ADDITIONAL_INFORMATION_REQUIRED':
-        return { label: 'Action Required', bg: 'bg-orange-950/60 text-orange-300 border-orange-800/60' };
+        return { label: 'Action Required', bg: 'bg-orange-50 text-orange-800 border-orange-200' };
       case 'APPROVED':
-        return { label: 'Approved', bg: 'bg-emerald-950/60 text-emerald-300 border-emerald-600/60' };
+        return { label: 'Approved', bg: 'bg-emerald-50 text-emerald-800 border-emerald-200' };
       case 'REJECTED':
-        return { label: 'Rejected', bg: 'bg-rose-950/60 text-rose-300 border-rose-800/60' };
+        return { label: 'Rejected', bg: 'bg-rose-50 text-rose-800 border-rose-200' };
       case 'COMPLETED':
-        return { label: 'Disbursed', bg: 'bg-emerald-900/60 text-emerald-200 border-emerald-500/60' };
+        return { label: 'Disbursed', bg: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
       default:
-        return { label: status, bg: 'bg-slate-800 text-slate-300 border-slate-700' };
+        return { label: status, bg: 'bg-slate-100 text-slate-700 border-slate-300' };
     }
   };
 
@@ -68,33 +68,33 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
 
   return (
     <div
-      className={`rounded-xl border transition-all duration-200 p-5 space-y-4 ${
+      className={`rounded-xl border transition-all duration-200 p-5 space-y-4 bg-white ${
         isSelected
-          ? 'border-emerald-500 bg-slate-900/90 shadow-lg shadow-emerald-950/20'
-          : 'border-slate-800 bg-slate-900/60 hover:border-slate-700 hover:bg-slate-900/80'
+          ? 'border-emerald-600 shadow-md shadow-emerald-500/10'
+          : 'border-slate-200 hover:border-slate-300 shadow-xs'
       }`}
     >
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${badge.bg}`}>
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${badge.bg}`}>
               {badge.label}
             </span>
             {application.application_reference_number && (
-              <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+              <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
                 Ref: {application.application_reference_number}
               </span>
             )}
-            <span className="text-[11px] text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded">
+            <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded font-medium">
               {application.source_type || 'USER_RECORDED'}
             </span>
           </div>
 
-          <h4 className="text-base font-bold text-slate-100">
+          <h4 className="text-base font-bold text-slate-900">
             {application.scheme_name}
           </h4>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 font-medium">
             {application.nodal_ministry || 'Government Scheme'}
           </p>
         </div>
@@ -104,7 +104,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
             <button
               type="button"
               onClick={() => onOpenStatusModal(application)}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-colors shadow-xs cursor-pointer"
             >
               Update Status
             </button>
@@ -113,7 +113,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
             <button
               type="button"
               onClick={() => onViewDetail(application)}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
             >
               Timeline
               <ChevronRight className="w-3.5 h-3.5" />
@@ -123,24 +123,24 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
       </div>
 
       {/* Financial & Partner Snapshot */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
         <div>
-          <span className="text-[11px] text-slate-500 block">Target Loan</span>
-          <span className="font-bold text-slate-200">
+          <span className="text-[11px] text-slate-500 font-bold block">Target Loan</span>
+          <span className="font-extrabold text-slate-900">
             {application.target_loan_amount
               ? `₹${Number(application.target_loan_amount).toLocaleString('en-IN')}`
               : 'Not specified'}
           </span>
         </div>
         <div>
-          <span className="text-[11px] text-slate-500 block">Channel Partner</span>
-          <span className="font-semibold text-slate-300 truncate block">
+          <span className="text-[11px] text-slate-500 font-bold block">Channel Partner</span>
+          <span className="font-semibold text-slate-800 truncate block">
             {application.partner_name || 'Direct / Portal'}
           </span>
         </div>
         <div>
-          <span className="text-[11px] text-slate-500 block">Initiated Date</span>
-          <span className="font-mono text-slate-400">
+          <span className="text-[11px] text-slate-500 font-bold block">Initiated Date</span>
+          <span className="font-mono text-slate-700 font-semibold">
             {formatDate(application.application_date || application.created_at)}
           </span>
         </div>
@@ -148,23 +148,18 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
 
       {/* Next Recommended Action */}
       {application.next_recommended_action && (
-        <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-3 space-y-1">
-          <span className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
-            <ArrowRight className="w-3 h-3" />
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-3 space-y-1">
+          <span className="text-[11px] font-bold text-emerald-800 flex items-center gap-1">
+            <ArrowRight className="w-3 h-3 text-emerald-600" />
             Next Recommended Action
           </span>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-800 leading-relaxed font-medium">
             {application.next_recommended_action}
           </p>
         </div>
       )}
-
-      {/* Status Note */}
-      {application.status_note && (
-        <p className="text-xs text-slate-400 italic">
-          "{application.status_note}"
-        </p>
-      )}
     </div>
   );
 };
+
+export default ApplicationCard;

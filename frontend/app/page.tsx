@@ -101,20 +101,20 @@ export default function Home() {
 
         {/* System Health Indicators */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
-              <Server size={15} color="#38bdf8" />
+          <div style={{ background: '#ffffff', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', color: '#64748b', fontSize: '0.82rem' }}>
+              <Server size={15} color="#0284c7" />
               <span>Next.js 14 Frontend</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981' }} />
-              <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>App Router Active</strong>
+              <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>App Router Active</strong>
             </div>
           </div>
 
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
-              <Cpu size={15} color="#34d399" />
+          <div style={{ background: '#ffffff', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', color: '#64748b', fontSize: '0.82rem' }}>
+              <Cpu size={15} color="#059669" />
               <span>FastAPI Backend Services</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -126,20 +126,20 @@ export default function Home() {
                   backgroundColor: loading ? '#f59e0b' : health?.status === 'healthy' ? '#10b981' : '#ef4444',
                 }}
               />
-              <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>
+              <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>
                 {loading ? 'Connecting...' : health?.status === 'healthy' ? 'Engines Ready (Port 8000)' : 'Service Offline'}
               </strong>
             </div>
           </div>
 
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
-              <Database size={15} color="#818cf8" />
+          <div style={{ background: '#ffffff', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', color: '#64748b', fontSize: '0.82rem' }}>
+              <Database size={15} color="#6366f1" />
               <span>Spatial Database</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#38bdf8' }} />
-              <strong style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>PostgreSQL + PostGIS</strong>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#0284c7' }} />
+              <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>PostgreSQL + PostGIS</strong>
             </div>
           </div>
         </div>
@@ -149,8 +149,8 @@ export default function Home() {
       {availableProfiles.length > 0 && (
         <section style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-            <UserPlus size={18} color="#34d399" />
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+            <UserPlus size={18} color="#059669" />
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
               Launch Experience as Seeded Entrepreneur Profile
             </h2>
           </div>
@@ -164,7 +164,7 @@ export default function Home() {
                   className="glass-panel"
                   style={{
                     padding: '1.25rem',
-                    border: isCurrent ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid var(--border-subtle)',
+                    border: isCurrent ? '1px solid #93c5fd' : '1px solid #e2e8f0',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -181,10 +181,10 @@ export default function Home() {
                         </span>
                       )}
                     </div>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.25rem' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.25rem' }}>
                       {prof.full_name}
                     </h3>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '1rem' }}>
+                    <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '1rem' }}>
                       {prof.category || 'General'} • {prof.district || 'District N/A'}, {prof.state || ''}
                     </p>
                   </div>
@@ -213,8 +213,8 @@ export default function Home() {
       {/* Core Entrepreneur Workflow Map (8 Stages) */}
       <section style={{ marginBottom: '3rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-          <Layers size={20} color="#38bdf8" />
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#f8fafc' }}>
+          <Layers size={20} color="#0284c7" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#0f172a' }}>
             Integrated End-to-End Entrepreneur Journey
           </h2>
         </div>
@@ -230,8 +230,8 @@ export default function Home() {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.85rem',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
-                backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                border: '1px solid #bbf7d0',
+                backgroundColor: '#f0fdf4',
                 textDecoration: 'none',
                 transition: 'all 0.2s ease',
               }}
@@ -241,24 +241,24 @@ export default function Home() {
                   width: '30px',
                   height: '30px',
                   borderRadius: '50%',
-                  background: 'rgba(16, 185, 129, 0.2)',
-                  color: '#34d399',
+                  background: '#dcfce7',
+                  color: '#059669',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   flexShrink: 0,
-                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  border: '1px solid #86efac',
                 }}
               >
                 {index + 1}
               </div>
               <div>
-                <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>
                   {stage.title}
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: 1.4 }}>
                   {stage.desc}
                 </div>
               </div>
@@ -269,7 +269,7 @@ export default function Home() {
 
       {/* Architectural Separation Principles */}
       <section className="glass-panel" style={{ padding: '2.25rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#f8fafc' }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#0f172a' }}>
           System Architectural Trust & Separation
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>

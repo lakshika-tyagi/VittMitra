@@ -12,25 +12,33 @@ interface SourceCitationCardProps {
 export const SourceCitationCard: React.FC<SourceCitationCardProps> = ({ source, className = '' }) => {
   return (
     <div
-      className={`p-3 bg-white border border-slate-200 rounded-lg shadow-xs hover:border-indigo-300 transition-colors ${className}`}
+      className={className}
+      style={{
+        padding: '0.75rem',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        transition: 'all 0.2s ease',
+      }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start gap-2">
-          <BookOpen className="w-4 h-4 text-indigo-600 mt-0.5 shrink-0" />
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+          <BookOpen size={16} color="#0284c7" style={{ marginTop: '2px', flexShrink: 0 }} />
           <div>
-            <h5 className="text-xs font-bold text-slate-800 leading-tight">
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>
               {source.source_name}
-            </h5>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[11px] text-slate-500">
-              <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
-                <ShieldCheck className="w-3 h-3" />
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem', fontSize: '0.72rem', color: '#64748b' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#34d399', fontWeight: 600 }}>
+                <ShieldCheck size={12} />
                 {source.source_type || 'OFFICIAL_GUIDELINE'}
               </span>
               {source.section_type && (
-                <span className="text-slate-400">• Section: {source.section_type.replace('_', ' ')}</span>
+                <span style={{ color: '#64748b' }}>• Section: {source.section_type.replace(/_/g, ' ')}</span>
               )}
               {source.last_verified_at && (
-                <span className="text-slate-400">
+                <span style={{ color: '#64748b' }}>
                   • Verified: {new Date(source.last_verified_at).toLocaleDateString()}
                 </span>
               )}
@@ -43,11 +51,25 @@ export const SourceCitationCard: React.FC<SourceCitationCardProps> = ({ source, 
             href={source.official_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-md transition-colors shrink-0"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              padding: '0.25rem 0.5rem',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              color: '#38bdf8',
+              backgroundColor: 'rgba(56, 189, 248, 0.1)',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              flexShrink: 0,
+              transition: 'all 0.15s ease',
+            }}
             title="Open official government source"
           >
             <span>View Source</span>
-            <ExternalLink className="w-3 h-3" />
+            <ExternalLink size={12} />
           </a>
         )}
       </div>

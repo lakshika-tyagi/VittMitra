@@ -1,34 +1,80 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, MessageSquare } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { GroundedChatDrawer } from './GroundedChatDrawer';
+import { useProfile } from '@/hooks/useProfile';
 
 export const GlobalAITrigger: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { activeProfileId } = useProfile();
 
   return (
     <>
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          zIndex: 900,
+        }}
+      >
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="group flex items-center gap-2.5 px-4 py-3 bg-linear-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border border-white/20"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.625rem',
+            padding: '0.65rem 1.15rem',
+            background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)',
+            color: '#ffffff',
+            borderRadius: '9999px',
+            boxShadow: '0 10px 25px -5px rgba(79, 70, 229, 0.5), 0 8px 10px -6px rgba(79, 70, 229, 0.5)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
           title="Open VittMitra AI Assistant"
         >
-          <div className="p-1 bg-white/20 rounded-full">
-            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+          <div
+            style={{
+              padding: '0.25rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Sparkles size={16} color="#fde047" className="pulse-dot" />
           </div>
-          <span className="text-xs font-bold tracking-wide">Ask VittMitra AI</span>
-          <span className="px-1.5 py-0.5 text-[9px] font-extrabold bg-emerald-400 text-emerald-950 rounded-full">
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.025em' }}>
+            Ask VittMitra AI
+          </span>
+          <span
+            style={{
+              padding: '0.125rem 0.4rem',
+              fontSize: '0.6rem',
+              fontWeight: 800,
+              backgroundColor: '#34d399',
+              color: '#022c22',
+              borderRadius: '9999px',
+            }}
+          >
             LIVE
           </span>
         </button>
       </div>
 
-      {/* Slide-Out AI Assistant Drawer */}
-      <GroundedChatDrawer isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {/* Slide-Out AI Assistant Sidebar Drawer */}
+      <GroundedChatDrawer
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        activeProfileId={activeProfileId ? String(activeProfileId) : null}
+      />
     </>
   );
 };
+

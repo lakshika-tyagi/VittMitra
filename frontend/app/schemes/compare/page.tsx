@@ -180,23 +180,23 @@ function CompareSchemesContent() {
   const backHref = profileId ? `/schemes?profile_id=${profileId}` : '/schemes';
 
   return (
-    <main style={{ maxWidth: '1380px', margin: '0 auto', padding: '2.5rem 1.5rem 6rem 1.5rem' }}>
+    <main style={{ maxWidth: '1380px', margin: '0 auto', padding: '2rem 1.5rem 6rem 1.5rem' }}>
       {/* Breadcrumb Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-        <Link href="/" style={{ color: 'var(--text-secondary)' }}>Dashboard</Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem' }}>
+        <Link href="/" style={{ color: '#64748b', textDecoration: 'none' }}>Dashboard</Link>
         <span>/</span>
-        <Link href={backHref} style={{ color: 'var(--text-secondary)' }}>Schemes For You</Link>
+        <Link href={backHref} style={{ color: '#64748b', textDecoration: 'none' }}>Schemes For You</Link>
         <span>/</span>
-        <span style={{ color: '#38bdf8', fontWeight: 600 }}>Compare Schemes</span>
+        <span style={{ color: '#2563eb', fontWeight: 700 }}>Compare Schemes</span>
       </div>
 
       {/* Header Bar */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.35rem 0', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '2.1rem', fontWeight: 800, margin: '0 0 0.35rem 0', letterSpacing: '-0.025em', color: '#0f172a' }}>
             Side-by-Side <span className="gradient-text">Scheme Comparison</span>
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
+          <p style={{ color: '#475569', fontSize: '0.95rem', margin: 0 }}>
             Compare benefits, subsidies, eligibility criteria, and document requirements across 2 to 4 government schemes.
           </p>
         </div>
@@ -207,14 +207,14 @@ function CompareSchemesContent() {
               type="button"
               onClick={() => setIsAddModalOpen(true)}
               className="btn-primary"
-              style={{ padding: '0.55rem 1rem', fontSize: '0.85rem' }}
+              style={{ padding: '0.55rem 1.1rem', fontSize: '0.85rem', fontWeight: 700 }}
             >
               <Plus size={15} />
               <span>Add Scheme to Compare ({comparedSchemes.length}/4)</span>
             </button>
           )}
 
-          <Link href={backHref} className="btn-secondary" style={{ padding: '0.55rem 1rem', fontSize: '0.85rem' }}>
+          <Link href={backHref} className="btn-secondary" style={{ padding: '0.55rem 1.1rem', fontSize: '0.85rem', fontWeight: 700 }}>
             <ArrowLeft size={15} />
             <span>Back to Schemes</span>
           </Link>
@@ -225,9 +225,9 @@ function CompareSchemesContent() {
       {profile && (
         <section
           style={{
-            background: 'rgba(56, 189, 248, 0.05)',
-            border: '1px solid rgba(56, 189, 248, 0.2)',
-            borderRadius: 'var(--radius-md)',
+            backgroundColor: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '12px',
             padding: '0.875rem 1.25rem',
             marginBottom: '1.75rem',
             display: 'flex',
@@ -235,16 +235,16 @@ function CompareSchemesContent() {
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '0.75rem',
-            fontSize: '0.85rem',
+            fontSize: '0.875rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#38bdf8' }}>
-            <CheckCircle2 size={16} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#1d4ed8', fontWeight: 600 }}>
+            <CheckCircle2 size={16} color="#2563eb" />
             <span>
               Comparing for <strong>{profile.entrepreneur.full_name}</strong> ({profile.entrepreneur.gender}, {profile.entrepreneur.category} • {profile.entrepreneur.district}, {profile.entrepreneur.state})
             </span>
           </div>
-          <Link href="/onboarding" style={{ color: '#94a3b8', fontSize: '0.8rem', textDecoration: 'none' }}>
+          <Link href="/onboarding" style={{ color: '#2563eb', fontSize: '0.825rem', fontWeight: 700, textDecoration: 'none' }}>
             Edit Profile →
           </Link>
         </section>
@@ -252,9 +252,9 @@ function CompareSchemesContent() {
 
       {/* Loading State */}
       {loading && (
-        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-          <RefreshCw size={36} color="#38bdf8" className="animate-spin" style={{ margin: '0 auto 1.25rem auto' }} />
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)' }}>
+          <RefreshCw size={36} color="#2563eb" className="animate-spin" style={{ margin: '0 auto 1.25rem auto' }} />
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
             Loading Side-by-Side Scheme Matrix...
           </h3>
         </div>
@@ -265,15 +265,15 @@ function CompareSchemesContent() {
         <div
           style={{
             padding: '1.5rem',
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            borderRadius: 'var(--radius-lg)',
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '12px',
             marginBottom: '2rem',
-            color: '#f87171',
+            color: '#991b1b',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '1rem', marginBottom: '0.5rem' }}>
-            <AlertTriangle size={18} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, fontSize: '1rem', marginBottom: '0.5rem' }}>
+            <AlertTriangle size={18} color="#dc2626" />
             <span>Comparison Error</span>
           </div>
           <p style={{ fontSize: '0.9rem', margin: 0 }}>{error}</p>
@@ -282,7 +282,7 @@ function CompareSchemesContent() {
 
       {/* Main Comparison Table */}
       {!loading && !error && (
-        <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2.5rem' }}>
+        <div style={{ marginBottom: '2.5rem' }}>
           <SchemeComparisonTable
             schemes={comparedSchemes}
             matchingResults={matchingResultsMap}
@@ -299,8 +299,8 @@ function CompareSchemesContent() {
             position: 'fixed',
             inset: 0,
             zIndex: 100,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(15, 23, 42, 0.4)',
+            backdropFilter: 'blur(4px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -308,18 +308,18 @@ function CompareSchemesContent() {
           }}
         >
           <div
-            className="glass-panel"
             style={{
               width: '100%',
               maxWidth: '540px',
               padding: '1.75rem',
-              background: '#0f172a',
-              border: '1px solid var(--border-focus)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
+              backgroundColor: '#ffffff',
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
                 Select Scheme to Add
               </h3>
               <button
@@ -328,9 +328,10 @@ function CompareSchemesContent() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: 'var(--text-muted)',
+                  color: '#64748b',
                   fontSize: '1.25rem',
                   cursor: 'pointer',
+                  padding: '4px',
                 }}
               >
                 ✕
@@ -346,9 +347,9 @@ function CompareSchemesContent() {
                     type="button"
                     onClick={() => handleAddScheme(s.id)}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: 'var(--radius-md)',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '10px',
                       padding: '0.875rem 1rem',
                       textAlign: 'left',
                       cursor: 'pointer',
@@ -359,23 +360,23 @@ function CompareSchemesContent() {
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
-                      e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+                      e.currentTarget.style.backgroundColor = '#eff6ff';
+                      e.currentTarget.style.borderColor = '#bfdbfe';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
-                      e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.borderColor = '#e2e8f0';
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a' }}>
                         {s.scheme_name}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.2rem' }}>
                         {s.scheme_code} • {s.nodal_ministry}
                       </div>
                     </div>
-                    <span className="btn-primary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}>
+                    <span className="btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', fontWeight: 700 }}>
                       Select
                     </span>
                   </button>
@@ -389,20 +390,20 @@ function CompareSchemesContent() {
       <section
         style={{
           padding: '1.25rem',
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-md)',
-          fontSize: '0.8rem',
-          color: 'var(--text-muted)',
-          lineHeight: 1.5,
+          backgroundColor: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: '12px',
+          fontSize: '0.825rem',
+          color: '#475569',
+          lineHeight: 1.6,
           display: 'flex',
           alignItems: 'flex-start',
           gap: '0.75rem',
         }}
       >
-        <ShieldCheck size={18} color="#38bdf8" style={{ flexShrink: 0, marginTop: '2px' }} />
+        <ShieldCheck size={18} color="#2563eb" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
-          <strong>Comparison Disclaimer: </strong>
+          <strong style={{ color: '#0f172a', fontWeight: 700 }}>Comparison Disclaimer: </strong>
           Parameters and criteria compared above reflect operational guidelines published by relevant Government of India ministries. Margin requirements and interest subventions are subject to bank credit policy and verified applicant credentials.
         </div>
       </section>
@@ -414,8 +415,8 @@ export default function CompareSchemesPage() {
   return (
     <React.Suspense
       fallback={
-        <main className="max-w-7xl mx-auto px-4 py-12 text-center text-slate-400">
-          <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-3" />
+        <main className="max-w-7xl mx-auto px-4 py-12 text-center text-slate-500">
+          <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-3" />
           <p>Loading Scheme Comparison Matrix...</p>
         </main>
       }

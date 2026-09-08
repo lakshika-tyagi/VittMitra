@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { GlobalAITrigger } from '@/components/ai';
-import { Navbar } from '@/components/ui';
+import { AppLayout } from '@/components/ui';
 import { ProfileProvider } from '@/hooks/useProfile';
 
 export const metadata: Metadata = {
@@ -24,15 +24,17 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body style={{ backgroundColor: '#f8fafc', color: '#0f172a', minHeight: '100vh', margin: 0, padding: 0 }}>
         <ProfileProvider>
-          <Navbar />
-          {children}
+          <AppLayout>
+            {children}
+          </AppLayout>
           <GlobalAITrigger />
         </ProfileProvider>
       </body>
     </html>
   );
 }
+
 
 

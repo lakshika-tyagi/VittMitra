@@ -26,23 +26,23 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
   const getStatusMeta = (status: string) => {
     switch (status) {
       case 'DRAFT':
-        return { label: 'Draft Prepared', color: 'text-slate-400', bg: 'bg-slate-800', border: 'border-slate-700' };
+        return { label: 'Draft Prepared', color: 'text-slate-700', bg: 'bg-slate-100', border: 'border-slate-300' };
       case 'APPLICATION_STARTED':
-        return { label: 'Application Initiated', color: 'text-blue-400', bg: 'bg-blue-950/60', border: 'border-blue-700' };
+        return { label: 'Application Initiated', color: 'text-blue-800', bg: 'bg-blue-50', border: 'border-blue-200' };
       case 'SUBMITTED':
-        return { label: 'Submitted to Portal / Bank', color: 'text-indigo-400', bg: 'bg-indigo-950/60', border: 'border-indigo-700' };
+        return { label: 'Submitted to Portal / Bank', color: 'text-indigo-800', bg: 'bg-indigo-50', border: 'border-indigo-200' };
       case 'UNDER_REVIEW':
-        return { label: 'Under Review / Appraisal', color: 'text-amber-400', bg: 'bg-amber-950/60', border: 'border-amber-700' };
+        return { label: 'Under Review / Appraisal', color: 'text-amber-800', bg: 'bg-amber-50', border: 'border-amber-200' };
       case 'ADDITIONAL_INFORMATION_REQUIRED':
-        return { label: 'Additional Info Requested', color: 'text-orange-400', bg: 'bg-orange-950/60', border: 'border-orange-700' };
+        return { label: 'Additional Info Requested', color: 'text-orange-800', bg: 'bg-orange-50', border: 'border-orange-200' };
       case 'APPROVED':
-        return { label: 'Approved / Sanctioned', color: 'text-emerald-400', bg: 'bg-emerald-950/60', border: 'border-emerald-600' };
+        return { label: 'Approved / Sanctioned', color: 'text-emerald-800', bg: 'bg-emerald-50', border: 'border-emerald-200' };
       case 'REJECTED':
-        return { label: 'Application Rejected', color: 'text-rose-400', bg: 'bg-rose-950/60', border: 'border-rose-700' };
+        return { label: 'Application Rejected', color: 'text-rose-800', bg: 'bg-rose-50', border: 'border-rose-200' };
       case 'COMPLETED':
-        return { label: 'Disbursed & Completed', color: 'text-emerald-300', bg: 'bg-emerald-900/60', border: 'border-emerald-500' };
+        return { label: 'Disbursed & Completed', color: 'text-emerald-900', bg: 'bg-emerald-100', border: 'border-emerald-300' };
       default:
-        return { label: status, color: 'text-slate-300', bg: 'bg-slate-800', border: 'border-slate-700' };
+        return { label: status, color: 'text-slate-800', bg: 'bg-slate-100', border: 'border-slate-300' };
     }
   };
 
@@ -63,19 +63,19 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
-        <Clock className="w-5 h-5 text-emerald-400" />
-        <h4 className="text-sm font-semibold text-slate-100">
+      <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+        <Clock className="w-5 h-5 text-emerald-600" />
+        <h4 className="text-sm font-bold text-slate-900">
           Application Timeline & Status History
         </h4>
       </div>
 
       {history.length === 0 ? (
-        <p className="text-xs text-slate-400 text-center py-4">
+        <p className="text-xs text-slate-500 text-center py-4 font-medium">
           No timeline events recorded yet.
         </p>
       ) : (
-        <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+        <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
           {history.map((item, idx) => {
             const meta = getStatusMeta(item.status);
             const isFirst = idx === 0;
@@ -86,30 +86,30 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
                 <div
                   className={`absolute -left-6 top-0.5 w-5 h-5 rounded-full border flex items-center justify-center ${
                     meta.bg
-                  } ${meta.border} ${isFirst ? 'ring-2 ring-emerald-500/30' : ''}`}
+                  } ${meta.border} ${isFirst ? 'ring-2 ring-emerald-500/40' : ''}`}
                 >
                   <div className={`w-2 h-2 rounded-full ${meta.color.replace('text-', 'bg-')}`} />
                 </div>
 
                 {/* Event card */}
-                <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3.5 space-y-1.5 ml-1">
+                <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-1.5 ml-1 shadow-xs">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className={`text-xs font-bold ${meta.color}`}>
                       {meta.label}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-[11px] font-mono text-slate-500 font-semibold">
                       {formatDate(item.recorded_at)}
                     </span>
                   </div>
 
                   {item.status_note && (
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
                       {item.status_note}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-400">
-                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono border border-slate-700">
+                  <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-500">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-mono border border-slate-200 font-medium">
                       Source: {item.source_type || 'USER_RECORDED'}
                     </span>
                   </div>
@@ -122,3 +122,5 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
     </div>
   );
 };
+
+export default ApplicationTimeline;

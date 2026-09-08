@@ -43,12 +43,12 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
         width: 'calc(100% - 2rem)',
         maxWidth: '960px',
         zIndex: 50,
-        background: 'rgba(15, 23, 42, 0.95)',
+        backgroundColor: 'rgba(255, 255, 255, 0.96)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(56, 189, 248, 0.3)',
-        borderRadius: 'var(--radius-lg)',
-        boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.2)',
+        border: '1px solid #cbd5e1',
+        borderRadius: '16px',
+        boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 0 25px rgba(37, 99, 235, 0.12)',
         padding: '1rem 1.5rem',
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
@@ -67,22 +67,23 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                backgroundColor: '#eff6ff',
+                border: '1px solid #bfdbfe',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Layers size={18} color="#38bdf8" />
+              <Layers size={18} color="#2563eb" />
             </div>
             <div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0f172a' }}>
                 Compare Schemes ({count}/4)
               </div>
-              <div style={{ fontSize: '0.75rem', color: isReadyToCompare ? '#34d399' : '#f59e0b' }}>
+              <div style={{ fontSize: '0.75rem', color: isReadyToCompare ? '#059669' : '#d97706', fontWeight: 600 }}>
                 {count < 2 ? 'Select at least 1 more scheme to compare' : `${count} schemes ready for side-by-side comparison`}
               </div>
             </div>
@@ -99,33 +100,35 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.4rem',
+                    backgroundColor: '#f1f5f9',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
                     padding: '0.3rem 0.6rem',
-                    borderRadius: '9999px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
                     fontSize: '0.8rem',
-                    color: 'var(--text-primary)',
-                    fontWeight: 500,
+                    color: '#0f172a',
+                    fontWeight: 600,
                   }}
                 >
-                  <span>{s.scheme_code || s.scheme_name}</span>
+                  <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {s.scheme_name}
+                  </span>
                   <button
                     type="button"
                     onClick={() => onRemove(sid)}
-                    aria-label={`Remove ${s.scheme_name} from comparison`}
+                    aria-label={`Remove ${s.scheme_name} from compare`}
                     style={{
                       background: 'none',
                       border: 'none',
-                      padding: 0,
+                      color: '#64748b',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      color: 'var(--text-muted)',
+                      padding: '1px',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#dc2626')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 </div>
               );
@@ -139,19 +142,20 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
             type="button"
             onClick={onClear}
             style={{
-              background: 'transparent',
+              background: 'none',
               border: 'none',
-              color: 'var(--text-muted)',
+              color: '#64748b',
               fontSize: '0.8rem',
+              fontWeight: 600,
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
               gap: '0.3rem',
-              padding: '0.5rem 0.75rem',
-              borderRadius: 'var(--radius-sm)',
+              padding: '0.4rem 0.6rem',
+              borderRadius: '6px',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#f87171')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#dc2626')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
           >
             <Trash2 size={13} />
             <span>Clear</span>
@@ -162,32 +166,33 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
               href={compareHref}
               className="btn-primary"
               style={{
-                padding: '0.55rem 1.25rem',
-                fontSize: '0.875rem',
-                gap: '0.4rem',
+                padding: '0.5rem 1.25rem',
+                fontSize: '0.85rem',
+                fontWeight: 700,
               }}
             >
-              <span>Compare Now ({count})</span>
-              <ArrowRight size={15} />
+              <span>Compare Now</span>
+              <ArrowRight size={14} />
             </Link>
           ) : (
             <button
               type="button"
               disabled
               style={{
-                padding: '0.55rem 1.25rem',
-                fontSize: '0.875rem',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                color: 'var(--text-muted)',
-                border: '1px solid var(--border-subtle)',
+                padding: '0.5rem 1.25rem',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                backgroundColor: '#f1f5f9',
+                color: '#94a3b8',
+                border: '1px solid #cbd5e1',
+                borderRadius: '8px',
                 cursor: 'not-allowed',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
               }}
             >
-              <span>Compare (Min 2)</span>
+              <span>Select 2-4 Schemes</span>
             </button>
           )}
         </div>

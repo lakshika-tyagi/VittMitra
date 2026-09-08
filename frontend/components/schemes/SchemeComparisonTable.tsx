@@ -31,14 +31,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
         style={{
           padding: '3rem',
           textAlign: 'center',
-          color: 'var(--text-secondary)',
+          color: '#64748b',
+          backgroundColor: '#ffffff',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
         }}
       >
-        <Layers size={40} color="#38bdf8" style={{ margin: '0 auto 1rem auto' }} />
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+        <Layers size={40} color="#2563eb" style={{ margin: '0 auto 1rem auto' }} />
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>
           No Schemes Selected for Comparison
         </h3>
-        <p style={{ maxWidth: '500px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem' }}>
+        <p style={{ maxWidth: '500px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem', color: '#475569' }}>
           Select 2 to 4 government schemes from the results list to view a detailed side-by-side comparison of benefits, eligibility, subsidies, and requirements.
         </p>
         <Link href="/schemes" className="btn-primary">
@@ -59,6 +63,11 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           borderCollapse: 'separate',
           borderSpacing: '0',
           fontSize: '0.875rem',
+          backgroundColor: '#ffffff',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
         }}
       >
         <thead>
@@ -68,16 +77,16 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                 position: 'sticky',
                 left: 0,
                 zIndex: 10,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
-                backdropFilter: 'blur(10px)',
+                backgroundColor: '#f8fafc',
                 padding: '1.25rem',
                 textAlign: 'left',
-                borderBottom: '2px solid var(--border-subtle)',
+                borderBottom: '2px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
                 width: '220px',
                 verticalAlign: 'top',
               }}
             >
-              <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b' }}>
                 Comparison Dimension
               </div>
             </th>
@@ -90,9 +99,9 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   style={{
                     padding: '1.25rem',
                     textAlign: 'left',
-                    backgroundColor: 'rgba(17, 24, 39, 0.85)',
-                    borderBottom: '2px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
+                    backgroundColor: '#ffffff',
+                    borderBottom: '2px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
                     verticalAlign: 'top',
                     minWidth: '280px',
                   }}
@@ -104,10 +113,11 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                           fontFamily: 'monospace',
                           fontSize: '0.75rem',
                           fontWeight: 700,
-                          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                          backgroundColor: '#eff6ff',
                           padding: '0.2rem 0.5rem',
-                          borderRadius: '4px',
-                          color: '#38bdf8',
+                          borderRadius: '6px',
+                          color: '#1d4ed8',
+                          border: '1px solid #bfdbfe',
                         }}
                       >
                         {s.scheme_code}
@@ -120,21 +130,23 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                           style={{
                             background: 'none',
                             border: 'none',
-                            color: 'var(--text-muted)',
+                            color: '#94a3b8',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            padding: '2px',
+                            padding: '3px',
+                            borderRadius: '4px',
+                            transition: 'color 0.15s ease',
                           }}
                           onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
                         >
                           <X size={16} />
                         </button>
                       )}
                     </div>
 
-                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                    <h4 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#0f172a', lineHeight: 1.3 }}>
                       {s.scheme_name}
                     </h4>
 
@@ -150,10 +162,11 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                       href={profileId ? `/schemes/${s.id}?profile_id=${profileId}` : `/schemes/${s.id}`}
                       className="btn-secondary"
                       style={{
-                        padding: '0.35rem 0.75rem',
-                        fontSize: '0.75rem',
+                        padding: '0.4rem 0.75rem',
+                        fontSize: '0.78rem',
                         justifyContent: 'center',
                         gap: '0.3rem',
+                        fontWeight: 600,
                       }}
                     >
                       <span>Full Details</span>
@@ -168,17 +181,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
 
         <tbody>
           {/* Section: Sponsoring Ministry */}
-          <tr style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+          <tr style={{ backgroundColor: '#ffffff' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#ffffff',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Nodal Ministry
@@ -188,10 +202,10 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                 key={s.id}
                 style={{
                   padding: '0.875rem 1.25rem',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  borderLeft: '1px solid var(--border-subtle)',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.825rem',
+                  borderBottom: '1px solid #e2e8f0',
+                  borderLeft: '1px solid #e2e8f0',
+                  color: '#0f172a',
+                  fontSize: '0.85rem',
                 }}
               >
                 {s.nodal_ministry || 'Government of India'}
@@ -200,17 +214,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Match Category & Score */}
-          <tr>
+          <tr style={{ backgroundColor: '#f8fafc' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#f8fafc',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Match Status & Score
@@ -222,21 +237,21 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   key={s.id}
                   style={{
                     padding: '0.875rem 1.25rem',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
+                    borderBottom: '1px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
                   }}
                 >
                   {match ? (
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem', color: match.match_category === 'ELIGIBLE' ? '#34d399' : match.match_category === 'POTENTIALLY_RELEVANT' ? '#fbbf24' : '#f87171' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.875rem', color: match.match_category === 'ELIGIBLE' ? '#059669' : match.match_category === 'POTENTIALLY_RELEVANT' ? '#d97706' : '#dc2626' }}>
                         {match.match_category === 'ELIGIBLE' ? '✓ Eligible / Strong Match' : match.match_category === 'POTENTIALLY_RELEVANT' ? '⚠ Needs Verification' : '✕ Not Eligible'}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                        Score: {Math.round(match.match_score)}/100
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.2rem' }}>
+                        Score: <strong>{Math.round(match.match_score)}/100</strong>
                       </div>
                     </div>
                   ) : (
-                    <span style={{ color: 'var(--text-muted)' }}>Evaluate via Profile</span>
+                    <span style={{ color: '#94a3b8' }}>Evaluate via Profile</span>
                   )}
                 </td>
               );
@@ -244,17 +259,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Max Subsidy % */}
-          <tr style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+          <tr style={{ backgroundColor: '#ffffff' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#ffffff',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Government Subsidy Rate
@@ -266,16 +282,16 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   key={s.id}
                   style={{
                     padding: '0.875rem 1.25rem',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
+                    borderBottom: '1px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
                   }}
                 >
                   {maxSub ? (
-                    <strong style={{ color: '#34d399', fontSize: '1rem' }}>
+                    <strong style={{ color: '#059669', fontSize: '1rem', fontWeight: 800 }}>
                       Up to {maxSub}%
                     </strong>
                   ) : (
-                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
+                    <span style={{ color: '#64748b', fontSize: '0.825rem' }}>
                       Interest Subvention / Collateral Guarantee
                     </span>
                   )}
@@ -285,17 +301,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Max Loan Amount */}
-          <tr>
+          <tr style={{ backgroundColor: '#f8fafc' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#f8fafc',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Max Loan / Project Cap
@@ -307,16 +324,16 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   key={s.id}
                   style={{
                     padding: '0.875rem 1.25rem',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
+                    borderBottom: '1px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
                   }}
                 >
                   {maxLoan ? (
-                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                    <strong style={{ color: '#0f172a', fontSize: '0.95rem', fontWeight: 800 }}>
                       ₹{(maxLoan / 100000).toLocaleString('en-IN')} Lakh
                     </strong>
                   ) : (
-                    <span style={{ color: 'var(--text-muted)' }}>Project specific</span>
+                    <span style={{ color: '#64748b' }}>Project specific</span>
                   )}
                 </td>
               );
@@ -324,17 +341,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Margin Money Requirement */}
-          <tr style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+          <tr style={{ backgroundColor: '#ffffff' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#ffffff',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Own Margin Money Required
@@ -346,9 +364,9 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   key={s.id}
                   style={{
                     padding: '0.875rem 1.25rem',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
-                    color: 'var(--text-primary)',
+                    borderBottom: '1px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
+                    color: '#0f172a',
                     fontWeight: 600,
                   }}
                 >
@@ -359,17 +377,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Eligible Sectors */}
-          <tr>
+          <tr style={{ backgroundColor: '#f8fafc' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#f8fafc',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Eligible Sectors
@@ -379,8 +398,8 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                 key={s.id}
                 style={{
                   padding: '0.875rem 1.25rem',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  borderLeft: '1px solid var(--border-subtle)',
+                  borderBottom: '1px solid #e2e8f0',
+                  borderLeft: '1px solid #e2e8f0',
                 }}
               >
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
@@ -389,10 +408,12 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                       key={i}
                       style={{
                         fontSize: '0.75rem',
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '4px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #cbd5e1',
+                        color: '#334155',
+                        fontWeight: 500,
                         textTransform: 'capitalize',
                       }}
                     >
@@ -405,17 +426,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Target Beneficiaries */}
-          <tr style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+          <tr style={{ backgroundColor: '#ffffff' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#ffffff',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Target Beneficiaries
@@ -425,8 +447,8 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                 key={s.id}
                 style={{
                   padding: '0.875rem 1.25rem',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  borderLeft: '1px solid var(--border-subtle)',
+                  borderBottom: '1px solid #e2e8f0',
+                  borderLeft: '1px solid #e2e8f0',
                 }}
               >
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
@@ -435,11 +457,12 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                       key={i}
                       style={{
                         fontSize: '0.75rem',
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '4px',
-                        backgroundColor: 'rgba(56, 189, 248, 0.08)',
-                        border: '1px solid rgba(56, 189, 248, 0.2)',
-                        color: '#38bdf8',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#eff6ff',
+                        border: '1px solid #bfdbfe',
+                        color: '#1d4ed8',
+                        fontWeight: 600,
                       }}
                     >
                       {ben}
@@ -451,17 +474,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Required Documents Count */}
-          <tr>
+          <tr style={{ backgroundColor: '#f8fafc' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#f8fafc',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Documentation Required
@@ -474,15 +498,15 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   key={s.id}
                   style={{
                     padding: '0.875rem 1.25rem',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
-                    fontSize: '0.825rem',
+                    borderBottom: '1px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
+                    fontSize: '0.85rem',
                   }}
                 >
                   <div>
-                    <strong style={{ color: 'var(--text-primary)' }}>{docCount} Documents Total</strong>
+                    <strong style={{ color: '#0f172a' }}>{docCount} Documents Total</strong>
                   </div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '0.2rem' }}>
+                  <div style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '0.2rem' }}>
                     ({mandatoryCount} Mandatory, {docCount - mandatoryCount} Conditional)
                   </div>
                 </td>
@@ -491,17 +515,18 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
           </tr>
 
           {/* Section: Official Source / Policy Link */}
-          <tr style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+          <tr style={{ backgroundColor: '#ffffff' }}>
             <td
               style={{
                 position: 'sticky',
                 left: 0,
                 zIndex: 5,
-                backgroundColor: 'rgba(10, 15, 29, 0.95)',
+                backgroundColor: '#ffffff',
                 padding: '0.875rem 1.25rem',
-                fontWeight: 600,
-                color: 'var(--text-secondary)',
-                borderBottom: '1px solid var(--border-subtle)',
+                fontWeight: 700,
+                color: '#475569',
+                borderBottom: '1px solid #e2e8f0',
+                borderRight: '1px solid #e2e8f0',
               }}
             >
               Policy Source & Link
@@ -515,8 +540,8 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                   key={s.id}
                   style={{
                     padding: '0.875rem 1.25rem',
-                    borderBottom: '1px solid var(--border-subtle)',
-                    borderLeft: '1px solid var(--border-subtle)',
+                    borderBottom: '1px solid #e2e8f0',
+                    borderLeft: '1px solid #e2e8f0',
                   }}
                 >
                   {url ? (
@@ -529,16 +554,16 @@ export const SchemeComparisonTable: React.FC<SchemeComparisonTableProps> = ({
                         alignItems: 'center',
                         gap: '0.35rem',
                         fontSize: '0.8rem',
-                        color: '#38bdf8',
+                        color: '#2563eb',
                         textDecoration: 'none',
-                        fontWeight: 500,
+                        fontWeight: 600,
                       }}
                     >
                       <span>Official Portal</span>
                       <ExternalLink size={12} />
                     </a>
                   ) : (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                       Ministry Guidelines
                     </span>
                   )}

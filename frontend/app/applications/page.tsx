@@ -2,228 +2,186 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   FileText,
-  Clock,
-  PlusCircle,
   Building2,
-  CheckCircle2,
-  AlertCircle,
-  RefreshCw,
+  Clock,
+  ArrowRight,
+  ShieldCheck,
   Search,
   Filter,
-  Layers,
-  ArrowRight,
-  ExternalLink,
-  ShieldAlert,
+  PlusCircle,
+  RefreshCw,
   User,
+  ShieldAlert,
 } from 'lucide-react';
-import {
-  listProfiles,
-  listApplications,
-  getApplicationDetail,
-  updateApplicationStatus,
-} from '@/services/api';
-import {
-  Entrepreneur,
-  Application,
-  ApplicationStatus,
-  StatusSourceType,
-} from '@/types';
 import {
   ApplicationCard,
   ApplicationTimeline,
   StatusUpdateModal,
 } from '@/components/applications';
 import { PartnerCard } from '@/components/partners';
+import {
+  listApplications,
+  getApplicationDetail,
+  updateApplicationStatus,
+} from '@/services/api';
+import {
+  Application,
+  ApplicationStatus,
+} from '@/types';
+import { useProfile } from '@/hooks/useProfile';
 
-export default function ApplicationsTrackerPage() {
-  const [profiles, setProfiles] = useState<Entrepreneur[]>([]);
-  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(null);
+function ApplicationsContent() {
+  const searchParams = useSearchParams();
+  const profileIdParam = searchParams.get('profile_id');
+
+  const { activeProfileId, availableProfiles, setActiveProfileId } = useProfile();
+
   const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Filter & Search state
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+
+  // Selected application for detail timeline view
   const [selectedAppId, setSelectedAppId] = useState<number | null>(null);
   const [selectedAppDetail, setSelectedAppDetail] = useState<Application | null>(null);
-
-  const [loading, setLoading] = useState<boolean>(true);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
-  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Modal State
-  const [modalApp, setModalApp] = useState<Application | null>(null);
+  // Status update modal state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalApp, setModalApp] = useState<Application | null>(null);
 
-  // 1. Initial Load: Profiles
-  useEffect(() => {
-    async function loadInitial() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const profileList = await listProfiles();
-        setProfiles(profileList);
-
-        let activeId: number | null = null;
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('vittmitra_active_profile_id');
-          if (stored && !isNaN(Number(stored))) {
-            activeId = Number(stored);
-          }
-        }
-
-        if (!activeId && profileList.length > 0) {
-          activeId = profileList[0].id;
-        }
-
-        if (activeId) {
-          setSelectedProfileId(activeId);
-        }
-      } catch (err: any) {
-        console.error('Failed to load profiles:', err);
-        setError(err.message || 'Profiles could not be loaded.');
-      } finally {
-        setLoading(false);
-      }
+  // Load applications for current profile
+  const loadApps = async () => {
+    if (!activeProfileId) {
+      setApplications([]);
+      setSelectedAppId(null);
+      setSelectedAppDetail(null);
+      setLoading(false);
+      return;
     }
+    try {
+      setLoading(true);
+      setError(null);
+      const apps = await listApplications(activeProfileId);
+      setApplications(apps);
 
-    loadInitial();
-  }, []);
-
-  // 2. Load Applications when selectedProfileId changes
-  useEffect(() => {
-    if (!selectedProfileId) return;
-
-    async function loadApps() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const apps = await listApplications(selectedProfileId!);
-        setApplications(apps);
-
-        if (apps.length > 0) {
-          setSelectedAppId(apps[0].id);
-        } else {
-          setSelectedAppId(null);
-          setSelectedAppDetail(null);
-        }
-      } catch (err: any) {
-        console.error('Failed to load applications:', err);
-        setError(err.message || 'Applications could not be loaded.');
-      } finally {
-        setLoading(false);
+      if (apps.length > 0 && (!selectedAppId || !apps.some((a) => a.id === selectedAppId))) {
+        setSelectedAppId(apps[0].id);
+      } else if (apps.length === 0) {
+        setSelectedAppId(null);
+        setSelectedAppDetail(null);
       }
+    } catch (err: any) {
+      console.error('Failed to load applications:', err);
+      setError(err?.message || 'Could not load your applications.');
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     loadApps();
-  }, [selectedProfileId]);
+  }, [activeProfileId]);
 
-  // 3. Load Application Detail when selectedAppId changes
+  // Load detailed timeline whenever selectedAppId changes
   useEffect(() => {
     if (!selectedAppId) {
       setSelectedAppDetail(null);
       return;
     }
 
-    async function loadDetail() {
+    const loadDetail = async () => {
       try {
         setDetailLoading(true);
-        const detail = await getApplicationDetail(selectedAppId!);
+        const detail = await getApplicationDetail(selectedAppId);
         setSelectedAppDetail(detail);
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to load application detail:', err);
       } finally {
         setDetailLoading(false);
       }
-    }
+    };
 
     loadDetail();
   }, [selectedAppId]);
 
-  const handleProfileChange = (id: number) => {
-    setSelectedProfileId(id);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('vittmitra_active_profile_id', id.toString());
-    }
-  };
-
   const handleStatusUpdate = async (newStatus: ApplicationStatus, note?: string) => {
     if (!modalApp) return;
-
     await updateApplicationStatus(modalApp.id, {
       status: newStatus,
       status_note: note,
-      source_type: 'USER_RECORDED' as StatusSourceType,
+      source_type: 'USER_RECORDED',
     });
-
-    // Refresh application list & active detail
-    if (selectedProfileId) {
-      const updatedList = await listApplications(selectedProfileId);
-      setApplications(updatedList);
-    }
-    if (selectedAppId) {
-      const updatedDetail = await getApplicationDetail(selectedAppId);
-      setSelectedAppDetail(updatedDetail);
+    await loadApps();
+    if (selectedAppId === modalApp.id) {
+      const refreshed = await getApplicationDetail(modalApp.id);
+      setSelectedAppDetail(refreshed);
     }
   };
 
-  // Filtered Applications
-  const filteredApps = applications.filter((app) => {
-    const matchesStatus = statusFilter === 'ALL' || app.current_status === statusFilter;
-    const query = searchQuery.toLowerCase().trim();
-    const matchesQuery =
-      !query ||
-      app.scheme_name.toLowerCase().includes(query) ||
-      app.scheme_code.toLowerCase().includes(query) ||
-      (app.application_reference_number &&
-        app.application_reference_number.toLowerCase().includes(query)) ||
-      (app.partner_name && app.partner_name.toLowerCase().includes(query));
+  const handleProfileChange = (pId: number) => {
+    setActiveProfileId(pId);
+  };
 
-    return matchesStatus && matchesQuery;
+  // Filtered applications
+  const filteredApps = applications.filter((app) => {
+    if (statusFilter !== 'ALL' && app.current_status !== statusFilter) {
+      return false;
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchScheme = app.scheme_name.toLowerCase().includes(q);
+      const matchRef = app.application_reference_number?.toLowerCase().includes(q);
+      const matchPartner = app.partner_name?.toLowerCase().includes(q);
+      if (!matchScheme && !matchRef && !matchPartner) return false;
+    }
+    return true;
   });
 
   // Metrics
   const totalCount = applications.length;
   const startedCount = applications.filter((a) => a.current_status === 'APPLICATION_STARTED').length;
-  const inReviewCount = applications.filter(
-    (a) => a.current_status === 'SUBMITTED' || a.current_status === 'UNDER_REVIEW'
-  ).length;
-  const approvedCount = applications.filter(
-    (a) => a.current_status === 'APPROVED' || a.current_status === 'COMPLETED'
-  ).length;
+  const inReviewCount = applications.filter((a) => ['SUBMITTED', 'UNDER_REVIEW', 'ADDITIONAL_INFORMATION_REQUIRED'].includes(a.current_status)).length;
+  const approvedCount = applications.filter((a) => ['APPROVED', 'COMPLETED'].includes(a.current_status)).length;
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-      {/* Top Header & Breadcrumb */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Top Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
-          <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
-            <Link href="/" className="hover:text-slate-200">Dashboard</Link>
-            <span>/</span>
-            <span className="text-emerald-400 font-medium">Application Tracker</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+            <Link href="/" style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: 500 }}>
+              ← Dashboard
+            </Link>
+            <span style={{ color: '#cbd5e1' }}>/</span>
+            <span style={{ color: '#2563eb', fontSize: '0.85rem', fontWeight: 700 }}>Applications</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-100 flex items-center gap-2.5">
-            <Clock className="w-7 h-7 text-emerald-400" />
-            <span>Scheme Application Tracker & Timeline</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Scheme Applications & Tracking
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
             Audit-grade lifecycle tracking with verified channel partner guidance and status history.
           </p>
         </div>
 
         {/* Profile Switcher & New App CTA */}
         <div className="flex items-center gap-3 flex-wrap">
-          {profiles.length > 0 && (
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200">
+          {availableProfiles.length > 0 && (
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 shadow-xs">
               <User className="w-3.5 h-3.5 text-slate-400" />
               <select
-                value={selectedProfileId || ''}
+                value={activeProfileId || ''}
                 onChange={(e) => handleProfileChange(Number(e.target.value))}
-                className="bg-transparent border-none text-xs text-slate-200 focus:outline-none cursor-pointer"
+                className="bg-transparent border-none text-xs text-slate-800 font-bold focus:outline-none cursor-pointer"
               >
-                {profiles.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-slate-900 text-slate-200">
+                {availableProfiles.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-white text-slate-900">
                     {p.full_name} ({p.district || 'All Districts'})
                   </option>
                 ))}
@@ -233,7 +191,7 @@ export default function ApplicationsTrackerPage() {
 
           <Link
             href="/schemes"
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center gap-1.5 shadow-sm"
           >
             <PlusCircle className="w-4 h-4" />
             Track New Scheme
@@ -243,43 +201,43 @@ export default function ApplicationsTrackerPage() {
 
       {/* Metrics Banner */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-          <span className="text-xs text-slate-400 block font-medium">Total Applications</span>
-          <span className="text-2xl font-extrabold text-slate-100 mt-1 block">{totalCount}</span>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+          <span className="text-xs text-slate-500 block font-bold">Total Applications</span>
+          <span className="text-2xl font-extrabold text-slate-900 mt-1 block">{totalCount}</span>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-          <span className="text-xs text-slate-400 block font-medium">In Preparation</span>
-          <span className="text-2xl font-extrabold text-blue-400 mt-1 block">{startedCount}</span>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+          <span className="text-xs text-slate-500 block font-bold">In Preparation</span>
+          <span className="text-2xl font-extrabold text-blue-600 mt-1 block">{startedCount}</span>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-          <span className="text-xs text-slate-400 block font-medium">Submitted / Under Review</span>
-          <span className="text-2xl font-extrabold text-amber-400 mt-1 block">{inReviewCount}</span>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+          <span className="text-xs text-slate-500 block font-bold">Submitted / Under Review</span>
+          <span className="text-2xl font-extrabold text-amber-600 mt-1 block">{inReviewCount}</span>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-          <span className="text-xs text-slate-400 block font-medium">Approved / Sanctioned</span>
-          <span className="text-2xl font-extrabold text-emerald-400 mt-1 block">{approvedCount}</span>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+          <span className="text-xs text-slate-500 block font-bold">Approved / Sanctioned</span>
+          <span className="text-2xl font-extrabold text-emerald-600 mt-1 block">{approvedCount}</span>
         </div>
       </div>
 
       {/* Main Content Layout */}
       {loading ? (
-        <div className="p-12 rounded-2xl border border-slate-800 bg-slate-900/40 text-center space-y-3">
-          <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto" />
-          <p className="text-xs text-slate-400">Loading your recorded applications...</p>
+        <div className="p-12 rounded-2xl border border-slate-200 bg-white text-center space-y-3 shadow-xs">
+          <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto" />
+          <p className="text-xs text-slate-500 font-medium">Loading your recorded applications...</p>
         </div>
       ) : applications.length === 0 ? (
-        <div className="p-12 rounded-2xl border border-slate-800 bg-slate-900/40 text-center space-y-4">
-          <FileText className="w-12 h-12 text-slate-500 mx-auto" />
+        <div className="p-12 rounded-2xl border border-slate-200 bg-white text-center space-y-4 shadow-xs">
+          <FileText className="w-12 h-12 text-slate-400 mx-auto" />
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-slate-100">No Applications Recorded Yet</h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
+            <h3 className="text-base font-bold text-slate-900">No Applications Recorded Yet</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto font-medium">
               Explore best-fit government schemes matched to your profile, generate your pre-application guidance package, and start tracking your journey.
             </p>
           </div>
           <div className="pt-2">
             <Link
               href="/schemes"
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 inline-flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white inline-flex items-center gap-2 shadow-sm"
             >
               Explore Schemes For You
               <ArrowRight className="w-4 h-4" />
@@ -299,14 +257,14 @@ export default function ApplicationsTrackerPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search scheme or reference..."
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 font-medium"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-2.5 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-slate-200 focus:outline-none focus:border-emerald-500"
+                className="px-2.5 py-2 text-xs rounded-xl bg-white border border-slate-300 text-slate-800 font-bold focus:outline-none focus:border-emerald-600"
               >
                 <option value="ALL">All Stages</option>
                 <option value="APPLICATION_STARTED">In Progress</option>
@@ -338,30 +296,30 @@ export default function ApplicationsTrackerPage() {
           {/* Right Column (7 Cols): Selected Application Timeline & Channel Partner */}
           <div className="lg:col-span-7 space-y-5">
             {detailLoading ? (
-              <div className="p-8 rounded-xl border border-slate-800 bg-slate-900/60 text-center space-y-2">
-                <RefreshCw className="w-6 h-6 text-emerald-400 animate-spin mx-auto" />
-                <p className="text-xs text-slate-400">Loading timeline...</p>
+              <div className="p-8 rounded-xl border border-slate-200 bg-white text-center space-y-2 shadow-xs">
+                <RefreshCw className="w-6 h-6 text-blue-600 animate-spin mx-auto" />
+                <p className="text-xs text-slate-500 font-medium">Loading timeline...</p>
               </div>
             ) : selectedAppDetail ? (
               <div className="space-y-5">
                 {/* Header Card with Quick Update */}
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 space-y-4">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 shadow-xs">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 font-bold">
+                        <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold">
                           {selectedAppDetail.scheme_code}
                         </span>
                         {selectedAppDetail.application_reference_number && (
-                          <span className="font-mono text-xs text-slate-400">
+                          <span className="font-mono text-xs text-slate-500 font-semibold">
                             Ref: {selectedAppDetail.application_reference_number}
                           </span>
                         )}
                       </div>
-                      <h3 className="text-lg font-bold text-slate-100">
+                      <h3 className="text-lg font-bold text-slate-900">
                         {selectedAppDetail.scheme_name}
                       </h3>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-500 font-medium">
                         {selectedAppDetail.nodal_ministry || 'Nodal Ministry'}
                       </p>
                     </div>
@@ -372,30 +330,30 @@ export default function ApplicationsTrackerPage() {
                         setModalApp(selectedAppDetail);
                         setIsModalOpen(true);
                       }}
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors shrink-0"
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shrink-0 shadow-sm cursor-pointer"
                     >
                       Update Status
                     </button>
                   </div>
 
                   {/* Stage Explanation & Next Action */}
-                  <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2 text-xs">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
                     <div>
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
                         Current Status Explanation
                       </span>
-                      <p className="text-slate-200 mt-0.5">
+                      <p className="text-slate-800 mt-0.5 font-medium">
                         {selectedAppDetail.status_explanation}
                       </p>
                     </div>
 
                     {selectedAppDetail.next_recommended_action && (
-                      <div className="pt-2 border-t border-slate-800/80">
-                        <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
-                          <ArrowRight className="w-3 h-3" />
+                      <div className="pt-2 border-t border-slate-200">
+                        <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1">
+                          <ArrowRight className="w-3 h-3 text-emerald-600" />
                           Recommended Next Action
                         </span>
-                        <p className="text-slate-300 mt-0.5">
+                        <p className="text-slate-700 mt-0.5 font-medium">
                           {selectedAppDetail.next_recommended_action}
                         </p>
                       </div>
@@ -406,7 +364,7 @@ export default function ApplicationsTrackerPage() {
                 {/* Channel Partner Card */}
                 {selectedAppDetail.channel_partner && (
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                       Assigned Channel Partner / Branch
                     </h4>
                     <PartnerCard partner={selectedAppDetail.channel_partner} />
@@ -414,7 +372,7 @@ export default function ApplicationsTrackerPage() {
                 )}
 
                 {/* Timeline History */}
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
                   <ApplicationTimeline
                     history={selectedAppDetail.status_history || []}
                     currentStatus={selectedAppDetail.current_status}
@@ -422,7 +380,7 @@ export default function ApplicationsTrackerPage() {
                 </div>
               </div>
             ) : (
-              <div className="p-8 rounded-xl border border-slate-800 bg-slate-900/40 text-center text-xs text-slate-400">
+              <div className="p-8 rounded-xl border border-slate-200 bg-white text-center text-xs text-slate-500 font-medium shadow-xs">
                 Select an application from the list to view its complete timeline.
               </div>
             )}
@@ -431,12 +389,12 @@ export default function ApplicationsTrackerPage() {
       )}
 
       {/* Non-guarantee Disclaimer */}
-      <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-1.5 text-xs text-slate-400">
-        <div className="flex items-center gap-2 text-amber-400 font-bold">
-          <ShieldAlert className="w-4 h-4" />
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-1.5 text-xs text-slate-600">
+        <div className="flex items-center gap-2 text-amber-700 font-bold">
+          <ShieldAlert className="w-4 h-4 text-amber-600" />
           <span>Statutory Provenance Notice</span>
         </div>
-        <p className="text-[11px] leading-relaxed">
+        <p className="text-[11px] leading-relaxed font-medium">
           Application records in VittMitra represent applicant self-recorded timeline progress and facilitation milestones. VittMitra does not perform automated portal submissions or guarantee loan sanctions. Always refer to official government sanction letters and physical bank appraisal for authoritative status.
         </p>
       </div>
@@ -454,5 +412,22 @@ export default function ApplicationsTrackerPage() {
         />
       )}
     </main>
+  );
+}
+
+export default function ApplicationsPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] flex items-center justify-center p-8">
+          <div className="text-center space-y-3">
+            <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin mx-auto" />
+            <p className="text-xs text-slate-500 font-medium">Loading Applications Dashboard...</p>
+          </div>
+        </div>
+      }
+    >
+      <ApplicationsContent />
+    </React.Suspense>
   );
 }

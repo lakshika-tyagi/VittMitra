@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { createUnifiedProfile } from '@/services/api';
 import { UnifiedProfileCreatePayload, UnifiedProfileResponse } from '@/types';
+import { useProfile } from '@/hooks/useProfile';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -25,6 +26,7 @@ const SECTORS = [
 ];
 
 export default function OnboardingPage() {
+  const { setActiveProfileId, refreshProfiles } = useProfile();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -106,8 +108,9 @@ export default function OnboardingPage() {
     try {
       const response = await createUnifiedProfile(formData);
       setCreatedProfile(response);
-      if (typeof window !== 'undefined' && response.entrepreneur?.id) {
-        localStorage.setItem('vittmitra_active_profile_id', String(response.entrepreneur.id));
+      if (response.entrepreneur?.id) {
+        setActiveProfileId(response.entrepreneur.id);
+        await refreshProfiles();
       }
       setCurrentStep(5);
     } catch (err: any) {
@@ -121,13 +124,13 @@ export default function OnboardingPage() {
     <div style={{ maxWidth: '960px', margin: '0 auto', padding: '2.5rem 1.5rem 4rem 1.5rem' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-        <Link href="/" style={{ fontSize: '0.875rem', color: '#94a3b8', display: 'inline-block', marginBottom: '0.75rem' }}>
+        <Link href="/dashboard" style={{ fontSize: '0.875rem', color: '#64748b', display: 'inline-block', marginBottom: '0.75rem' }}>
           ← Back to Dashboard
         </Link>
-        <h1 style={{ fontSize: '2.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+        <h1 style={{ fontSize: '2.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#0f172a' }}>
           Entrepreneur <span className="gradient-text">Onboarding</span>
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '1rem', maxWidth: '640px', margin: '0 auto' }}>
+        <p style={{ color: '#64748b', fontSize: '1rem', maxWidth: '640px', margin: '0 auto' }}>
           Step-by-step profile creation to unlock explainable government credit & subsidy matching.
         </p>
       </div>
@@ -152,10 +155,10 @@ export default function OnboardingPage() {
                 }}
                 style={{
                   cursor: (s.step < currentStep || createdProfile) ? 'pointer' : 'default',
-                  borderBottom: isActive ? '3px solid #38bdf8' : isDone ? '3px solid #10b981' : '3px solid rgba(255,255,255,0.1)',
+                  borderBottom: isActive ? '3px solid #2563eb' : isDone ? '3px solid #059669' : '3px solid #e2e8f0',
                   paddingBottom: '0.5rem',
-                  color: isActive ? '#38bdf8' : isDone ? '#34d399' : '#64748b',
-                  fontWeight: isActive || isDone ? 600 : 400,
+                  color: isActive ? '#2563eb' : isDone ? '#059669' : '#64748b',
+                  fontWeight: isActive || isDone ? 700 : 500,
                   fontSize: '0.875rem',
                   transition: 'all 0.2s',
                 }}
@@ -169,8 +172,8 @@ export default function OnboardingPage() {
 
       {/* Privacy Notice Banner */}
       <div style={{
-        background: 'rgba(30, 41, 59, 0.7)',
-        border: '1px solid rgba(56, 189, 248, 0.2)',
+        background: '#eff6ff',
+        border: '1px solid #bfdbfe',
         borderRadius: '0.5rem',
         padding: '0.75rem 1rem',
         marginBottom: '1.5rem',
@@ -178,7 +181,7 @@ export default function OnboardingPage() {
         alignItems: 'center',
         gap: '0.75rem',
         fontSize: '0.85rem',
-        color: '#cbd5e1'
+        color: '#1e3a8a'
       }}>
         <span style={{ fontSize: '1.2rem' }}>🔒</span>
         <span>
@@ -188,12 +191,12 @@ export default function OnboardingPage() {
 
       {errorMessage && (
         <div style={{
-          background: 'rgba(239, 68, 68, 0.15)',
-          border: '1px solid rgba(239, 68, 68, 0.4)',
+          background: '#fef2f2',
+          border: '1px solid #fecaca',
           borderRadius: '0.5rem',
           padding: '1rem',
           marginBottom: '1.5rem',
-          color: '#fca5a5',
+          color: '#991b1b',
           fontSize: '0.9rem'
         }}>
           ⚠️ {errorMessage}
@@ -207,12 +210,12 @@ export default function OnboardingPage() {
           {/* STEP 1: Personal & Demographics */}
           {currentStep === 1 && (
             <div>
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 600, marginBottom: '1.5rem', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '1.5rem', color: '#0f172a' }}>
                 Step 1: Personal & Demographic Information
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Full Name *
                   </label>
                   <input
@@ -224,17 +227,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Age (Years) *
                   </label>
                   <input
@@ -248,17 +251,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Gender *
                   </label>
                   <select
@@ -267,10 +270,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -282,7 +285,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Social Category *
                   </label>
                   <select
@@ -291,10 +294,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -307,7 +310,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Preferred Language
                   </label>
                   <select
@@ -316,10 +319,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -332,7 +335,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Contact Phone (Optional)
                   </label>
                   <input
@@ -343,10 +346,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
@@ -369,12 +372,12 @@ export default function OnboardingPage() {
           {/* STEP 2: Geographic Location */}
           {currentStep === 2 && (
             <div>
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 600, marginBottom: '1.5rem', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '1.5rem', color: '#0f172a' }}>
                 Step 2: Location & Geographic Details
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     State / UT *
                   </label>
                   <select
@@ -383,10 +386,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -397,7 +400,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     District
                   </label>
                   <input
@@ -408,17 +411,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     City / Town / Village
                   </label>
                   <input
@@ -429,17 +432,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Area Type *
                   </label>
                   <select
@@ -448,10 +451,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -462,7 +465,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     PIN Code
                   </label>
                   <input
@@ -474,10 +477,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
@@ -498,12 +501,12 @@ export default function OnboardingPage() {
           {/* STEP 3: Business Details */}
           {currentStep === 3 && (
             <div>
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 600, marginBottom: '1.5rem', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '1.5rem', color: '#0f172a' }}>
                 Step 3: Enterprise & Business Activity
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Business / Trade Name
                   </label>
                   <input
@@ -514,17 +517,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Industry Sector *
                   </label>
                   <select
@@ -533,10 +536,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -547,7 +550,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Business Stage *
                   </label>
                   <select
@@ -556,10 +559,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -570,7 +573,7 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Constitution Type
                   </label>
                   <select
@@ -579,10 +582,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   >
@@ -596,7 +599,7 @@ export default function OnboardingPage() {
 
               {/* Specific Qualification Checkboxes */}
               <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#cbd5e1', fontSize: '0.875rem', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', fontSize: '0.875rem', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.business?.is_greenfield ?? true}
@@ -605,7 +608,7 @@ export default function OnboardingPage() {
                   Greenfield (New Business) Project
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#cbd5e1', fontSize: '0.875rem', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', fontSize: '0.875rem', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.business?.has_vending_proof ?? false}
@@ -614,7 +617,7 @@ export default function OnboardingPage() {
                   Has Street Vending ID / ULB Certificate (PM SVANidhi)
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#cbd5e1', fontSize: '0.875rem', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', fontSize: '0.875rem', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.business?.is_notified_trade ?? false}
@@ -623,7 +626,7 @@ export default function OnboardingPage() {
                   Artisan / Traditional Craft Trade (PM Vishwakarma)
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#cbd5e1', fontSize: '0.875rem', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155', fontSize: '0.875rem', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={formData.business?.is_defaulter ?? false}
@@ -647,12 +650,12 @@ export default function OnboardingPage() {
           {/* STEP 4: Financial Inputs */}
           {currentStep === 4 && (
             <div>
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 600, marginBottom: '1.5rem', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '1.5rem', color: '#0f172a' }}>
                 Step 4: Financial & Investment Parameters
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Total Project Cost (₹) *
                   </label>
                   <input
@@ -666,17 +669,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Own Equity Contribution (₹)
                   </label>
                   <input
@@ -689,17 +692,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Net Monthly Income (₹)
                   </label>
                   <input
@@ -712,17 +715,17 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.875rem', color: '#334155', fontWeight: 600, marginBottom: '0.35rem' }}>
                     Existing Monthly Loan EMIs (₹)
                   </label>
                   <input
@@ -735,10 +738,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       padding: '0.75rem',
-                      borderRadius: '0.375rem',
-                      background: 'rgba(15, 23, 42, 0.8)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      color: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: '#0f172a',
                       fontSize: '0.95rem',
                     }}
                   />
@@ -765,24 +768,25 @@ export default function OnboardingPage() {
             <div>
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎉</div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#34d399', marginBottom: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#059669', marginBottom: '0.25rem' }}>
                   Profile Created Successfully!
                 </h2>
-                <p style={{ color: '#94a3b8' }}>
+                <p style={{ color: '#64748b' }}>
                   Profile ID: #{createdProfile.entrepreneur.id} • {createdProfile.entrepreneur.full_name}
                 </p>
               </div>
 
               {/* Completeness Card */}
               <div style={{
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '0.75rem',
                 padding: '1.5rem',
-                marginBottom: '2rem'
+                marginBottom: '2rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <span style={{ fontWeight: 600, fontSize: '1.1rem', color: '#f8fafc' }}>
+                  <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#0f172a' }}>
                     Profile Completeness
                   </span>
                   <span className="badge badge-emerald" style={{ fontSize: '0.9rem', padding: '0.35rem 0.85rem' }}>
@@ -793,7 +797,7 @@ export default function OnboardingPage() {
                 <div style={{
                   width: '100%',
                   height: '8px',
-                  background: 'rgba(255,255,255,0.1)',
+                  background: '#e2e8f0',
                   borderRadius: '4px',
                   overflow: 'hidden',
                   marginBottom: '1rem'
@@ -801,7 +805,7 @@ export default function OnboardingPage() {
                   <div style={{
                     width: `${createdProfile.completeness.completion_percentage}%`,
                     height: '100%',
-                    background: 'linear-gradient(90deg, #38bdf8 0%, #10b981 100%)',
+                    background: 'linear-gradient(90deg, #0284c7 0%, #059669 100%)',
                     borderRadius: '4px',
                     transition: 'width 0.5s ease-out',
                   }} />
@@ -812,10 +816,10 @@ export default function OnboardingPage() {
                     <div key={sectionName} style={{
                       padding: '0.75rem',
                       borderRadius: '0.5rem',
-                      background: sec.is_complete ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                      border: `1px solid ${sec.is_complete ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                      background: sec.is_complete ? '#ecfdf5' : '#fef2f2',
+                      border: `1px solid ${sec.is_complete ? '#a7f3d0' : '#fecaca'}`,
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600, textTransform: 'capitalize' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600, textTransform: 'capitalize', color: sec.is_complete ? '#047857' : '#991b1b' }}>
                         <span>{sectionName}</span>
                         <span>{sec.is_complete ? '✅ Complete' : '⚠️ Missing Data'}</span>
                       </div>

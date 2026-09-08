@@ -55,46 +55,46 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
           <div>
-            <h3 className="text-base font-bold text-slate-100">
+            <h3 className="text-base font-bold text-slate-900">
               Update Application Status
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
               {application.scheme_name} ({application.application_reference_number || 'No Ref'})
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 font-medium">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300">
+            <label className="text-xs font-bold text-slate-800">
               New Status Stage
             </label>
             <div className="grid grid-cols-1 gap-2 max-h-56 overflow-y-auto pr-1">
               {statuses.map((st) => (
                 <label
                   key={st.value}
-                  className={`flex items-start gap-3 p-2.5 rounded-lg border cursor-pointer transition-all ${
+                  className={`flex items-start gap-3 p-2.5 rounded-xl border cursor-pointer transition-all ${
                     selectedStatus === st.value
-                      ? 'border-emerald-500 bg-emerald-950/20 text-slate-100'
-                      : 'border-slate-800 bg-slate-900/40 hover:bg-slate-800/60 text-slate-300'
+                      ? 'border-emerald-600 bg-emerald-50 text-slate-900'
+                      : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
                   }`}
                 >
                   <input
@@ -103,11 +103,11 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
                     value={st.value}
                     checked={selectedStatus === st.value}
                     onChange={() => setSelectedStatus(st.value)}
-                    className="mt-1 text-emerald-500 focus:ring-emerald-500"
+                    className="mt-1 text-emerald-600 focus:ring-emerald-500"
                   />
                   <div>
-                    <div className="text-xs font-bold">{st.label}</div>
-                    <div className="text-[11px] text-slate-400">{st.desc}</div>
+                    <div className="text-xs font-bold text-slate-900">{st.label}</div>
+                    <div className="text-[11px] text-slate-500 font-medium">{st.desc}</div>
                   </div>
                 </label>
               ))}
@@ -115,7 +115,7 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300">
+            <label className="text-xs font-bold text-slate-800">
               Status Notes / Action Remarks (Optional)
             </label>
             <textarea
@@ -123,13 +123,13 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. Received acknowledgement email from DIC Pune; interview scheduled on Monday."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-slate-950 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 resize-none font-medium"
             />
           </div>
 
           {/* Non-guarantee note */}
-          <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 flex items-start gap-2 font-medium">
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
             <span>
               All status updates are recorded by you for workflow tracking. Official sanctions are issued solely by the government authority or bank.
             </span>
@@ -140,24 +140,24 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              className="px-4 py-2 text-xs font-bold rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              className="px-4 py-2 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
               {isSubmitting ? (
                 <>
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  Saving...
+                  <span>Updating...</span>
                 </>
               ) : (
                 <>
                   <Send className="w-3.5 h-3.5" />
-                  Save Status
+                  <span>Record Update</span>
                 </>
               )}
             </button>
@@ -167,3 +167,5 @@ export const StatusUpdateModal: React.FC<StatusUpdateModalProps> = ({
     </div>
   );
 };
+
+export default StatusUpdateModal;

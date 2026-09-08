@@ -46,20 +46,23 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({
         flexDirection: 'column',
         justifyContent: 'space-between',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
-        borderColor: isSelectedForCompare ? '#38bdf8' : 'var(--border-subtle)',
+        backgroundColor: '#ffffff',
+        border: `1px solid ${isSelectedForCompare ? '#2563eb' : '#e2e8f0'}`,
         boxShadow: isSelectedForCompare
-          ? '0 0 20px rgba(56, 189, 248, 0.25)'
-          : 'var(--shadow-card)',
+          ? '0 0 20px rgba(37, 99, 235, 0.18), 0 4px 12px rgba(0, 0, 0, 0.05)'
+          : '0 4px 16px -2px rgba(0, 0, 0, 0.05)',
         position: 'relative',
-        borderRadius: 'var(--radius-lg)',
+        borderRadius: '16px',
       }}
     >
       {/* Top Bar: Ministry / Code + Compare Checkbox */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#38bdf8', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#2563eb', fontSize: '0.8rem', fontWeight: 700 }}>
             <Building2 size={14} />
-            <span>{scheme.nodal_ministry || 'Government of India'}</span>
+            <span style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {scheme.nodal_ministry || 'Government of India'}
+            </span>
           </div>
 
           {/* Compare Checkbox */}
@@ -72,24 +75,24 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
-              background: isSelectedForCompare ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.04)',
-              border: `1px solid ${isSelectedForCompare ? '#38bdf8' : 'var(--border-subtle)'}`,
-              borderRadius: 'var(--radius-sm)',
+              backgroundColor: isSelectedForCompare ? '#eff6ff' : '#ffffff',
+              border: `1px solid ${isSelectedForCompare ? '#2563eb' : '#cbd5e1'}`,
+              borderRadius: '6px',
               padding: '0.3rem 0.55rem',
-              color: isSelectedForCompare ? '#38bdf8' : disableCompareSelect ? 'var(--text-muted)' : 'var(--text-secondary)',
+              color: isSelectedForCompare ? '#1d4ed8' : disableCompareSelect ? '#94a3b8' : '#475569',
               fontSize: '0.75rem',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: (!isSelectedForCompare && disableCompareSelect) ? 'not-allowed' : 'pointer',
               transition: 'all 0.15s ease',
             }}
           >
-            {isSelectedForCompare ? <CheckSquare size={14} color="#38bdf8" /> : <Square size={14} />}
+            {isSelectedForCompare ? <CheckSquare size={14} color="#2563eb" /> : <Square size={14} />}
             <span>Compare</span>
           </button>
         </div>
 
         {/* Scheme Name & Code */}
-        <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--text-primary)', lineHeight: 1.3 }}>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#0f172a', lineHeight: 1.35 }}>
           <Link
             href={detailUrl}
             style={{
@@ -97,8 +100,8 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({
               textDecoration: 'none',
               transition: 'color 0.15s ease',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#38bdf8')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#2563eb')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#0f172a')}
           >
             {scheme.scheme_name}
           </Link>
@@ -111,17 +114,17 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({
               fontFamily: 'monospace',
               fontSize: '0.75rem',
               fontWeight: 700,
-              backgroundColor: 'rgba(255, 255, 255, 0.06)',
+              backgroundColor: '#f1f5f9',
               padding: '0.15rem 0.45rem',
               borderRadius: '4px',
-              color: '#94a3b8',
-              border: '1px solid var(--border-subtle)',
+              color: '#475569',
+              border: '1px solid #e2e8f0',
             }}
           >
             {scheme.scheme_code}
           </span>
           {scheme.geography_level && (
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>
               • {scheme.geography_level.toUpperCase()}
             </span>
           )}
@@ -140,9 +143,9 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({
         {/* Key Scheme Benefits Card */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.02)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-md)',
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '10px',
             padding: '0.875rem',
             marginBottom: '1rem',
             display: 'grid',
@@ -150,116 +153,117 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({
             gap: '0.75rem',
           }}
         >
-          {maxSubsidyPct ? (
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <Percent size={12} color="#10b981" />
-                <span>Max Subsidy</span>
-              </div>
-              <strong style={{ fontSize: '0.95rem', color: '#34d399', fontWeight: 700 }}>
-                Up to {maxSubsidyPct}%
-              </strong>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.2rem' }}>
+              <Percent size={13} color="#059669" />
+              <span>Max Subsidy</span>
             </div>
-          ) : (
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <Percent size={12} color="#38bdf8" />
-                <span>Financial Assistance</span>
-              </div>
-              <strong style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                Interest Subvention
-              </strong>
+            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: maxSubsidyPct ? '#059669' : '#0f172a' }}>
+              {maxSubsidyPct ? `Up to ${maxSubsidyPct}%` : 'Subvention / Guarantee'}
             </div>
-          )}
+          </div>
 
-          {maxLoanAmount ? (
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <IndianRupee size={12} color="#38bdf8" />
-                <span>Max Project / Loan</span>
-              </div>
-              <strong style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 700 }}>
-                ₹{(maxLoanAmount / 100000).toLocaleString('en-IN')} Lakh
-              </strong>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.2rem' }}>
+              <IndianRupee size={13} color="#2563eb" />
+              <span>Max Project Cap</span>
             </div>
-          ) : (
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                Margin Money
-              </div>
-              <strong style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                5% - 15%
-              </strong>
+            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a' }}>
+              {maxLoanAmount ? `₹${(maxLoanAmount / 100000).toLocaleString('en-IN')} Lakh` : 'Project Specific'}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Explainability Snippets */}
-        <div style={{ marginBottom: '1.25rem' }}>
-          {scheme.match_category === 'ELIGIBLE' && topPositiveReasons.length > 0 && (
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <span style={{ color: '#34d399', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Key Match Factors:
-              </span>
-              {topPositiveReasons.map((r: string, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', lineHeight: 1.35 }}>
-                  <span style={{ color: '#10b981', flexShrink: 0 }}>✓</span>
-                  <span>{r}</span>
-                </div>
-              ))}
+        {/* Deterministic Evaluation Reasons */}
+        <div style={{ marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          {topPositiveReasons.map((reason, i) => (
+            <div
+              key={i}
+              style={{
+                fontSize: '0.8rem',
+                color: '#065f46',
+                backgroundColor: '#ecfdf5',
+                border: '1px solid #a7f3d0',
+                padding: '0.35rem 0.6rem',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.4rem',
+                lineHeight: 1.35,
+              }}
+            >
+              <span style={{ color: '#059669', fontWeight: 700 }}>✓</span>
+              <span>{reason}</span>
             </div>
-          )}
+          ))}
 
-          {scheme.match_category === 'POTENTIALLY_RELEVANT' && (
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <span style={{ color: '#fbbf24', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Verification Needed:
-              </span>
-              {unverifiedList.length > 0 ? (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', lineHeight: 1.35 }}>
-                  <span style={{ color: '#f59e0b', flexShrink: 0 }}>⚠</span>
-                  <span>{unverifiedList[0]}</span>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', lineHeight: 1.35 }}>
-                  <span style={{ color: '#f59e0b', flexShrink: 0 }}>⚠</span>
-                  <span>Requires {unverifiedCount} profile data / document verification check(s).</span>
-                </div>
-              )}
+          {topNegativeReasons.map((reason, i) => (
+            <div
+              key={i}
+              style={{
+                fontSize: '0.8rem',
+                color: '#991b1b',
+                backgroundColor: '#fef2f2',
+                border: '1px solid #fecaca',
+                padding: '0.35rem 0.6rem',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.4rem',
+                lineHeight: 1.35,
+              }}
+            >
+              <span style={{ color: '#dc2626', fontWeight: 700 }}>✕</span>
+              <span>{reason}</span>
             </div>
-          )}
+          ))}
 
-          {scheme.match_category === 'NOT_ELIGIBLE' && topNegativeReasons.length > 0 && (
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <span style={{ color: '#f87171', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Unmet Criteria:
-              </span>
-              {topNegativeReasons.map((r: string, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', lineHeight: 1.35 }}>
-                  <span style={{ color: '#ef4444', flexShrink: 0 }}>✕</span>
-                  <span>{r}</span>
-                </div>
-              ))}
+          {unverifiedCount > 0 && topPositiveReasons.length === 0 && topNegativeReasons.length === 0 && (
+            <div
+              style={{
+                fontSize: '0.8rem',
+                color: '#92400e',
+                backgroundColor: '#fffbeb',
+                border: '1px solid #fde68a',
+                padding: '0.35rem 0.6rem',
+                borderRadius: '6px',
+                lineHeight: 1.35,
+              }}
+            >
+              ⚠ {unverifiedCount} conditions require verified document checks
             </div>
           )}
         </div>
       </div>
 
-      {/* Card Footer: View Details CTA */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+      {/* Card Action Footer */}
+      <div
+        style={{
+          borderTop: '1px solid #e2e8f0',
+          paddingTop: '1rem',
+          marginTop: 'auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '0.5rem',
+        }}
+      >
+        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+          Official Gov Scheme
+        </span>
+
         <Link
           href={detailUrl}
           className="btn-secondary"
           style={{
-            width: '100%',
-            justifyContent: 'center',
-            padding: '0.65rem 1rem',
-            fontSize: '0.875rem',
-            fontWeight: 600,
+            padding: '0.45rem 0.95rem',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            gap: '0.4rem',
           }}
         >
-          <span>View Scheme Details & Rules</span>
-          <ArrowRight size={15} />
+          <span>View Guidelines</span>
+          <ArrowRight size={13} />
         </Link>
       </div>
     </div>

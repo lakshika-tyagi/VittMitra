@@ -16,7 +16,6 @@ import {
   Loader2,
   RefreshCw,
   BookOpen,
-  ShieldAlert,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
@@ -75,7 +74,7 @@ export const GroundedChatDrawer: React.FC<GroundedChatDrawerProps> = ({
         id: 'welcome',
         sender: 'ai',
         text: activeSchemeCode
-          ? `Hello! I am VittMitra AI. I can explain eligibility requirements, financial structures, document checklists, and application procedures for ${activeSchemeCode} grounded in official guidelines. What would you like to know?`
+          ? `Hello! I am VittMitra AI. I can explain eligibility requirements, financial structures, document checklists, and application procedures for ${activeSchemeCode} grounded strictly in official government guidelines. What would you like to know?`
           : 'Hello! I am VittMitra AI, your decision-support assistant. Ask me questions about central & state MSME credit schemes, eligibility criteria, subsidy structures, or document requirements.',
         confidence: 'HIGH',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -89,6 +88,17 @@ export const GroundedChatDrawer: React.FC<GroundedChatDrawerProps> = ({
   }, [isOpen, activeSchemeCode, initialQuery]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
@@ -99,131 +109,254 @@ export const GroundedChatDrawer: React.FC<GroundedChatDrawerProps> = ({
     setError(null);
     setInputQuery('');
 
-    const userMsg: ChatMessage = {
+    const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
       text: textToSend,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
     try {
       const payload: GroundedChatRequest = {
         message: textToSend,
-        profile_id: activeProfileId,
-        scheme_id: activeSchemeCode,
-        topic: 'general',
+        profile_id: activeProfileId || undefined,
+        scheme_id: activeSchemeCode || undefined,
       };
 
-      const resp: GroundedChatResponse = await sendChatMessage(payload);
+      const response: GroundedChatResponse = await sendChatMessage(payload);
 
-      const aiMsg: ChatMessage = {
+      const aiMessage: ChatMessage = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: resp.answer,
-        confidence: resp.confidence,
-        sources: resp.sources,
-        limitations: resp.limitations,
-        suggestedActions: resp.suggested_actions,
+        text: response.answer,
+        confidence: response.confidence || 'HIGH',
+        sources: response.sources,
+        limitations: response.limitations,
+        suggestedActions: response.suggested_actions,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
-      setMessages((prev) => [...prev, aiMsg]);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (err: any) {
-      console.error('Chat error:', err);
-      setError(err.message || 'Failed to generate AI response. Please try again.');
+      console.error('Failed to get AI response:', err);
+      setError(err.message || 'Unable to retrieve answer. Please verify backend connection.');
     } finally {
       setLoading(false);
     }
   };
 
+  const toggleSources = (msgId: string) => {
+    setExpandedSourcesMessageId((prev) => (prev === msgId ? null : msgId));
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col border-l border-slate-200">
-        {/* Drawer Header */}
-        <div className="p-4 bg-linear-to-r from-indigo-700 via-indigo-600 to-indigo-800 text-white flex items-center justify-between shadow-xs shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-white/10 rounded-lg backdrop-blur-xs border border-white/20">
-              <Sparkles className="w-5 h-5 text-amber-300" />
+    <>
+      {/* Backdrop */}
+      <div
+        className="copilot-backdrop"
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+          zIndex: 9998,
+        }}
+      />
+
+      {/* Slide-out Sidebar Drawer Panel */}
+      <div
+        className="copilot-drawer"
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          maxWidth: '480px',
+          height: '100vh',
+          maxHeight: '100vh',
+          backgroundColor: '#ffffff',
+          borderLeft: '1px solid #e2e8f0',
+          boxShadow: '-8px 0 35px rgba(0, 0, 0, 0.12)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: '1rem 1.25rem',
+            background: '#ffffff',
+            borderBottom: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #10b981 0%, #2563eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              <Sparkles size={18} color="#ffffff" />
             </div>
             <div>
-              <h3 className="text-base font-bold flex items-center gap-1.5">
-                <span>Ask VittMitra AI</span>
-                <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 rounded-md">
-                  Grounded
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <span>VittMitra AI Copilot</span>
+                <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0' }}>
+                  GROUNDED
                 </span>
-              </h3>
-              <p className="text-xs text-indigo-100">
-                {activeSchemeCode ? `Grounded in ${activeSchemeCode} Official Guidelines` : 'Verified Scheme Decision Support'}
-              </p>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                {activeSchemeCode ? `Grounded in ${activeSchemeCode} Guidelines` : 'Verified Scheme Decision Support'}
+              </div>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            style={{
+              padding: '0.4rem',
+              borderRadius: '8px',
+              color: '#64748b',
+              backgroundColor: '#f1f5f9',
+              border: '1px solid #e2e8f0',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s ease',
+            }}
             title="Close Assistant"
           >
-            <X className="w-5 h-5" />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Active Context Bar */}
+        {/* Context Bar */}
         {(activeSchemeCode || activeProfileId) && (
-          <div className="px-4 py-2 bg-indigo-50 border-b border-indigo-100 flex items-center justify-between text-xs text-indigo-900 shrink-0">
-            <span className="font-medium flex items-center gap-1">
-              <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-              Active Context: {activeSchemeCode ? `Scheme ${activeSchemeCode}` : 'Entrepreneur Profile'}
+          <div
+            style={{
+              padding: '0.5rem 1.25rem',
+              backgroundColor: '#eff6ff',
+              borderBottom: '1px solid #bfdbfe',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '0.75rem',
+              color: '#2563eb',
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
+              <BookOpen size={14} />
+              Context: {activeSchemeCode ? `Scheme ${activeSchemeCode}` : 'Entrepreneur Profile'}
             </span>
-            <span className="text-[11px] text-indigo-600 font-semibold">Deterministic Grounding Active</span>
+            <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+              Deterministic Rule Grounding
+            </span>
           </div>
         )}
 
-        {/* Message Thread */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+        {/* Chat Thread */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '1rem 1.25rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+            background: '#f8fafc',
+          }}
+        >
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+              }}
             >
               <div
-                className={`max-w-[88%] rounded-2xl p-4 shadow-xs ${
-                  msg.sender === 'user'
-                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                    : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none'
-                }`}
+                style={{
+                  maxWidth: '90%',
+                  borderRadius: '14px',
+                  padding: '0.85rem 1rem',
+                  backgroundColor: msg.sender === 'user' ? '#2563eb' : '#ffffff',
+                  border: msg.sender === 'user' ? '1px solid #1d4ed8' : '1px solid #e2e8f0',
+                  color: msg.sender === 'user' ? '#ffffff' : '#0f172a',
+                  borderTopRightRadius: msg.sender === 'user' ? '2px' : '14px',
+                  borderTopLeftRadius: msg.sender === 'ai' ? '2px' : '14px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                }}
               >
-                {/* AI Header with Confidence */}
+                {/* AI Message Header */}
                 {msg.sender === 'ai' && (
-                  <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-700">
-                      <Bot className="w-3.5 h-3.5" />
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.5rem',
+                      marginBottom: '0.5rem',
+                      paddingBottom: '0.4rem',
+                      borderBottom: '1px solid #f1f5f9',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', fontWeight: 700, color: '#2563eb' }}>
+                      <Bot size={14} />
                       <span>VittMitra AI</span>
                     </div>
                     {msg.confidence && <ConfidenceBadge confidence={msg.confidence} />}
                   </div>
                 )}
 
-                {/* Message Body */}
-                <div className="text-xs leading-relaxed whitespace-pre-line">{msg.text}</div>
+                {/* Message Text */}
+                <div style={{ fontSize: '0.82rem', lineHeight: 1.55, whiteSpace: 'pre-line' }}>
+                  {msg.text}
+                </div>
 
                 {/* Suggested Actions */}
                 {msg.suggestedActions && msg.suggestedActions.length > 0 && (
-                  <div className="mt-3 p-2.5 bg-emerald-50/80 border border-emerald-100 rounded-lg text-emerald-900 text-[11px]">
-                    <div className="font-bold mb-1 flex items-center gap-1">
-                      <span>Suggested Next Steps:</span>
+                  <div
+                    style={{
+                      marginTop: '0.75rem',
+                      padding: '0.6rem 0.75rem',
+                      backgroundColor: '#ecfdf5',
+                      border: '1px solid #a7f3d0',
+                      borderRadius: '8px',
+                      fontSize: '0.75rem',
+                      color: '#065f46',
+                    }}
+                  >
+                    <div style={{ fontWeight: 700, marginBottom: '0.3rem', color: '#059669' }}>
+                      Suggested Next Steps:
                     </div>
-                    <ul className="space-y-1">
+                    <ul style={{ paddingLeft: '1rem', margin: 0 }}>
                       {msg.suggestedActions.map((act, i) => (
-                        <li key={i} className="flex items-start gap-1">
-                          <span className="text-emerald-500 font-bold">•</span>
-                          <span>{act}</span>
-                        </li>
+                        <li key={i} style={{ marginBottom: '0.2rem' }}>{act}</li>
                       ))}
                     </ul>
                   </div>
@@ -231,54 +364,67 @@ export const GroundedChatDrawer: React.FC<GroundedChatDrawerProps> = ({
 
                 {/* Limitations */}
                 {msg.limitations && msg.limitations.length > 0 && (
-                  <div className="mt-2.5 p-2 bg-amber-50/80 border border-amber-100 rounded-lg text-amber-900 text-[11px]">
-                    <div className="font-bold mb-0.5 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3 text-amber-600" />
+                  <div
+                    style={{
+                      marginTop: '0.6rem',
+                      padding: '0.5rem 0.75rem',
+                      backgroundColor: '#fffbeb',
+                      border: '1px solid #fde68a',
+                      borderRadius: '8px',
+                      fontSize: '0.73rem',
+                      color: '#92400e',
+                    }}
+                  >
+                    <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.2rem', color: '#d97706' }}>
+                      <AlertCircle size={12} />
                       <span>Context Note:</span>
                     </div>
-                    <ul className="space-y-0.5">
+                    <ul style={{ paddingLeft: '1rem', margin: 0 }}>
                       {msg.limitations.map((lim, i) => (
-                        <li key={i}>• {lim}</li>
+                        <li key={i}>{lim}</li>
                       ))}
                     </ul>
                   </div>
                 )}
 
-                {/* Sources Toggle */}
+                {/* Sources Section */}
                 {msg.sources && msg.sources.length > 0 && (
-                  <div className="mt-3 pt-2 border-t border-slate-100">
+                  <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
                     <button
                       type="button"
-                      onClick={() =>
-                        setExpandedSourcesMessageId(
-                          expandedSourcesMessageId === msg.id ? null : msg.id
-                        )
-                      }
-                      className="flex items-center justify-between w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800"
+                      onClick={() => toggleSources(msg.id)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        fontSize: '0.72rem',
+                        color: '#64748b',
+                        cursor: 'pointer',
+                        padding: '0.2rem 0',
+                        background: 'transparent',
+                        border: 'none',
+                      }}
                     >
-                      <span>Verified Sources ({msg.sources.length})</span>
-                      {expandedSourcesMessageId === msg.id ? (
-                        <ChevronUp className="w-3.5 h-3.5" />
-                      ) : (
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      )}
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#2563eb', fontWeight: 600 }}>
+                        <BookOpen size={12} />
+                        {msg.sources.length} Official Grounding Source{msg.sources.length > 1 ? 's' : ''}
+                      </span>
+                      {expandedSourcesMessageId === msg.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                     </button>
 
                     {expandedSourcesMessageId === msg.id && (
-                      <div className="mt-2 space-y-1.5">
-                        {msg.sources.map((s, idx) => (
-                          <SourceCitationCard key={idx} source={s} />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.5rem' }}>
+                        {msg.sources.map((src, i) => (
+                          <SourceCitationCard key={i} source={src} />
                         ))}
                       </div>
                     )}
                   </div>
                 )}
 
-                <div
-                  className={`mt-2 text-[10px] text-right ${
-                    msg.sender === 'user' ? 'text-indigo-200' : 'text-slate-400'
-                  }`}
-                >
+                {/* Timestamp */}
+                <div style={{ textAlign: 'right', marginTop: '0.4rem', fontSize: '0.65rem', color: '#94a3b8' }}>
                   {msg.timestamp}
                 </div>
               </div>
@@ -286,80 +432,81 @@ export const GroundedChatDrawer: React.FC<GroundedChatDrawerProps> = ({
           ))}
 
           {loading && (
-            <div className="flex items-center gap-2 p-3 bg-white border border-slate-200 rounded-2xl w-fit shadow-xs animate-pulse">
-              <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
-              <span className="text-xs font-medium text-slate-600">Retrieving verified knowledge & synthesizing...</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', backgroundColor: '#eff6ff', borderRadius: '10px', color: '#2563eb', fontSize: '0.8rem' }}>
+              <Loader2 size={16} className="pulse-dot" />
+              <span>Synthesizing grounded answer from official scheme criteria...</span>
             </div>
           )}
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-start justify-between gap-2">
-              <div className="flex items-start gap-1.5">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleSendMessage()}
-                className="text-red-700 font-bold hover:underline shrink-0"
-              >
-                Retry
-              </button>
+            <div style={{ padding: '0.75rem', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#b91c1c', fontSize: '0.8rem' }}>
+              ⚠️ {error}
             </div>
           )}
 
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick Suggestion Prompts */}
-        <div className="px-4 py-2.5 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
-          <HelpCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          {quickPrompts.map((prompt, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleSendMessage(prompt)}
-              className="text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 px-2.5 py-1 rounded-full whitespace-nowrap transition-colors"
-            >
-              {prompt}
-            </button>
-          ))}
+        {/* Quick Prompts */}
+        <div style={{ padding: '0.6rem 1.25rem', backgroundColor: '#ffffff', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600, marginBottom: '0.35rem' }}>
+            QUICK QUESTIONS:
+          </div>
+          <div style={{ display: 'flex', gap: '0.4rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+            {quickPrompts.map((prompt, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSendMessage(prompt)}
+                disabled={loading}
+                style={{
+                  whiteSpace: 'nowrap',
+                  padding: '0.35rem 0.65rem',
+                  borderRadius: '9999px',
+                  backgroundColor: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  color: '#334155',
+                  fontSize: '0.72rem',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 bg-white border-t border-slate-200 shrink-0">
+        <div style={{ padding: '0.85rem 1.25rem', backgroundColor: '#ffffff', borderTop: '1px solid #e2e8f0' }}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="flex items-center gap-2"
+            style={{ display: 'flex', gap: '0.5rem' }}
           >
             <input
               type="text"
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
-              placeholder={activeSchemeCode ? `Ask anything about ${activeSchemeCode}...` : 'Ask a scheme, eligibility, or loan question...'}
-              className="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+              placeholder="Ask about subsidies, eligibility, documents..."
               disabled={loading}
+              className="form-input"
+              style={{ fontSize: '0.82rem' }}
             />
             <button
               type="submit"
-              disabled={!inputQuery.trim() || loading}
-              className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl shadow-xs transition-colors"
-              title="Send Query"
+              disabled={loading || !inputQuery.trim()}
+              className="btn-primary"
+              style={{ padding: '0.65rem 1rem', flexShrink: 0 }}
             >
-              <Send className="w-4 h-4" />
+              {loading ? <Loader2 size={16} className="pulse-dot" /> : <Send size={16} />}
             </button>
           </form>
-
-          {/* Statutory Note */}
-          <div className="mt-2 flex items-center justify-center gap-1 text-[10px] text-slate-400 text-center">
-            <ShieldAlert className="w-3 h-3 text-slate-400" />
-            <span>AI responses are decision-support indicators grounded in verified government guidelines.</span>
-          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
