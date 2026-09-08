@@ -52,13 +52,31 @@ import {
 } from '@/types';
 
 export async function createUnifiedProfile(payload: UnifiedProfileCreatePayload): Promise<UnifiedProfileResponse> {
-  const res = await fetch(`${API_BASE_URL}/profiles`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/profiles`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (netErr: any) {
+    throw new Error(
+      `Unable to connect to the backend server (${API_BASE_URL}). Please verify that the backend is running.`
+    );
+  }
+
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
+    if (res.status === 422) {
+      if (Array.isArray(errorData.detail)) {
+        const fields = errorData.detail.map((e: any) => e.loc?.slice(1).join('.') || e.msg).join(', ');
+        throw new Error(`Validation error: Please check the highlighted profile fields (${fields}).`);
+      }
+      throw new Error(errorData.detail || 'Validation error: Please check the highlighted profile fields.');
+    }
+    if (res.status === 500) {
+      throw new Error('Something went wrong on the server while saving your profile. Please try again.');
+    }
     throw new Error(errorData.detail || `Failed to create profile (Status: ${res.status})`);
   }
   return await res.json();

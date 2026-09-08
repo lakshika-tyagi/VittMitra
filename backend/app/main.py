@@ -26,8 +26,18 @@ from app.api.v1.endpoints.health import check_database_health, check_postgis_hea
 from app.api.v1.endpoints.schemes import list_schemes, get_scheme_by_identifier
 from app.api.v1.endpoints.eligibility import check_scheme_eligibility
 from app.api.v1.endpoints.finance import calculate_finance, compare_finance_scenarios
-from app.api.v1.endpoints.matching import match_schemes
+from contextlib import asynccontextmanager
 from app.api.v1.endpoints.feasibility import analyze_feasibility_endpoint
+from app.db.session import init_db_schema
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Auto-initialize database schema and seeds on startup if SQLite or local dev
+    try:
+        await init_db_schema()
+    except Exception as e:
+        print(f"[STARTUP] Database schema init notice: {e}")
+    yield
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -36,7 +46,8 @@ def create_application() -> FastAPI:
         version="1.0.0",
         docs_url="/docs",
         redoc_url="/redoc",
-        openapi_url="/openapi.json"
+        openapi_url="/openapi.json",
+        lifespan=lifespan
     )
 
     # Configure CORS Middleware
