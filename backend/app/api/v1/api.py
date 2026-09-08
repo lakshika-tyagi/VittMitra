@@ -10,9 +10,13 @@ from app.api.v1.endpoints import (
     partners,
     applications,
     ai,
+    dashboard,
 )
 
 api_router = APIRouter()
+
+# Include dashboard aggregation router under /api/v1
+api_router.include_router(dashboard.router, tags=["Dashboard"])
 
 # Include health router under /api/v1
 api_router.include_router(health.router, tags=["Health"])

@@ -1,6 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { GlobalAITrigger } from '@/components/ai';
+import { Navbar } from '@/components/ui';
+import { ProfileProvider } from '@/hooks/useProfile';
 
 export const metadata: Metadata = {
   title: 'VittMitra (वित्तमित्र) — AI-Driven Scheme Matching Platform',
@@ -23,10 +25,14 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
-        <GlobalAITrigger />
+        <ProfileProvider>
+          <Navbar />
+          {children}
+          <GlobalAITrigger />
+        </ProfileProvider>
       </body>
     </html>
   );
 }
+
 

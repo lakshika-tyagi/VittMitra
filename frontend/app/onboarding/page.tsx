@@ -826,14 +826,17 @@ export default function OnboardingPage() {
 
               {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <Link href="/" className="btn-secondary">
-                  Back to Dashboard
+                <Link
+                  href={`/dashboard?profile_id=${createdProfile.entrepreneur.id}`}
+                  className="btn-primary"
+                >
+                  Go to Entrepreneur Dashboard →
                 </Link>
                 <Link
                   href={`/schemes?profile_id=${createdProfile.entrepreneur.id}`}
-                  className="btn-primary"
+                  className="btn-secondary"
                 >
-                  View Personalized Scheme Results →
+                  View Personalized Scheme Matches
                 </Link>
               </div>
             </div>

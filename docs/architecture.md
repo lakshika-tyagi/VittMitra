@@ -542,7 +542,83 @@ Google Gemini (`gemini-2.5-flash`) operates exclusively as an **explanation and 
 
 ---
 
-## 12. Database & Spatial Architecture (PostgreSQL + PostGIS)
+## 12. Integrated Dashboard & End-to-End User Experience Architecture `[STEP 12]`
+
+### A. Architectural Aggregation & Coordination Model
+Step 12 unifies all platform intelligence capabilities into a state-aware, reactive entrepreneur product experience without duplicating backend logic:
+
+```mermaid
+flowchart TD
+    subgraph FrontendExperience["Next.js Presentation Layer (Step 12)"]
+        Nav["Global Navbar & Profile Switcher"]
+        DashPage["Unified Dashboard (/dashboard)"]
+        JourneyMap["8-Stage Visual Journey Map"]
+        NextActionCards["Prioritized Next Best Actions"]
+        MetricGrid["Executive 4-Card Metrics Snapshot"]
+        SchemeRecs["Top Recommended Schemes Grid"]
+        AICopilotModal["Grounded AI Copilot Launcher"]
+    end
+
+    subgraph DashboardServiceLayer["Dashboard Aggregation Service (backend/app/services/dashboard/)"]
+        Aggregator["DashboardService.get_dashboard()"]
+        JourneyTracker["Deterministic ProgressJourney Tracker"]
+        ActionEngine["Deterministic NextBestAction Engine"]
+    end
+
+    subgraph CoreMilestoneEngines["Underlying Core Milestone Engines (Steps 3 - 11)"]
+        ProfileCompleteness["Step 7: Profile & Completeness Engine"]
+        MatchingEngine["Step 6: Scheme Matching & Ranking Engine"]
+        FinanceEngine["Step 5: Deterministic Financial Engine"]
+        FeasibilityEngine["Step 9: PostGIS Feasibility Engine"]
+        ApplicationSvc["Step 10: Application Lifecycle Service"]
+        RAGOrchestrator["Step 11: Grounded Gemini AI Orchestrator"]
+    end
+
+    Nav -->|Switches activeProfileId| DashPage
+    DashPage -->|GET /api/v1/dashboard| Aggregator
+    DashPage -->|GET /api/v1/profiles/{id}/dashboard| Aggregator
+
+    Aggregator --> ProfileCompleteness
+    Aggregator --> MatchingEngine
+    Aggregator --> FinanceEngine
+    Aggregator --> FeasibilityEngine
+    Aggregator --> ApplicationSvc
+
+    Aggregator --> JourneyTracker
+    Aggregator --> ActionEngine
+
+    AICopilotModal -->|POST /api/v1/ai/chat| RAGOrchestrator
+```
+
+### B. The 8-Stage Deterministic Progress Journey
+1. **`stage_1_onboarding`**: Basic Demographic & Personal Profile (`/onboarding`)
+2. **`stage_2_completeness`**: Business & Financial Input Completeness (`/onboarding`)
+3. **`stage_3_feasibility`**: PostGIS Location Ecosystem & Cluster Feasibility (`/feasibility`)
+4. **`stage_4_financial`**: Capital Structuring, Own Equity & EMI Amortization (`/schemes`)
+5. **`stage_5_matching`**: Deterministic Scheme Matching & Compatibility Ranking (`/schemes`)
+6. **`stage_6_comparison`**: Scheme Rule Evaluation & Comparison Details (`/schemes`)
+7. **`stage_7_access`**: Application Assistance & Verified Implementing Channel Partners (`/schemes/[id]/access`)
+8. **`stage_8_tracking`**: Application Lifecycle Milestones & Grounded Gemini AI Copilot (`/applications`)
+
+### C. State-Aware Next Best Action Engine
+Evaluates entrepreneur status deterministically to prioritize actions (Priorities 1 to 10):
+- **Priority 1**: Incomplete profile (< 100%) -> "Complete Profile Inputs"
+- **Priority 2**: Critical feasibility risk -> "Review District Risk Signals"
+- **Priority 3**: Missing project cost / financial data -> "Configure Loan & Equity"
+- **Priority 4**: Eligible scheme matched with no active application -> "Apply for Best-Fit Scheme"
+- **Priority 5**: Active application pending action -> "Check Application Status"
+- **Priority 6**: Favourable feasibility -> "Explore Industrial Clusters"
+
+### D. System Trust & Provenance Architecture
+- **Verified Govt Rules**: Grounded in official scheme gazettes; evaluated deterministically.
+- **Mathematical Amortization**: Python `Decimal` formulaic arithmetic.
+- **PostGIS Spatial Feasibility**: Exact spatial distances to industrial clusters and DICs.
+- **User-Recorded Applications**: Explicitly flags tracking as self-reported rather than automated API scraping.
+- **Grounded AI Copilot**: Strict Google Gemini RAG with source citations and zero hallucination protocol.
+
+---
+
+## 13. Database & Spatial Architecture (PostgreSQL + PostGIS)
 
 - **Database Engine**: PostgreSQL 15+ with PostGIS 3.3+ spatial extension.
 - **Spatial Tables**:
@@ -556,12 +632,13 @@ Google Gemini (`gemini-2.5-flash`) operates exclusively as an **explanation and 
 
 ---
 
-## 13. Security & Data Protection
+## 14. Security & Data Protection
 
 - **Public Scheme Knowledge**: Government scheme and MSME cluster data is public and free of PII.
 - **Client Rule Isolation**: Clients cannot manipulate authoritative rule definitions or scoring weights in API requests.
 - **Environment Isolation**: Connection secrets managed strictly through `.env` with zero committed credentials.
 - **Sanitized API Responses**: Clear separation between public API responses and internal database columns.
+
 
 
 

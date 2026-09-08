@@ -48,6 +48,7 @@ import {
   Application,
   ApplicationCreatePayload,
   ApplicationStatusUpdatePayload,
+  DashboardResponse,
 } from '@/types';
 
 export async function createUnifiedProfile(payload: UnifiedProfileCreatePayload): Promise<UnifiedProfileResponse> {
@@ -478,5 +479,28 @@ export async function explainSchemeAI(
   }
   return await res.json();
 }
+
+// -------------------------------------------------------------
+// Step 12: Integrated Dashboard Client Functions
+// -------------------------------------------------------------
+
+export async function fetchDashboard(profileId?: number | null): Promise<DashboardResponse> {
+  const url = profileId
+    ? `${API_BASE_URL}/profiles/${profileId}/dashboard`
+    : `${API_BASE_URL}/dashboard`;
+
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    next: { revalidate: 0 },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || `Failed to fetch dashboard (Status: ${res.status})`);
+  }
+
+  return await res.json();
+}
+
 
 

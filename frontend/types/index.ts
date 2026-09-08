@@ -779,4 +779,140 @@ export interface AIServiceHealth {
   capabilities: string[];
 }
 
+// -------------------------------------------------------------
+// Step 12: Integrated Dashboard & User Experience Types
+// -------------------------------------------------------------
+
+export interface ProfileSummary {
+  id: number;
+  full_name: string;
+  age?: number | null;
+  gender?: string | null;
+  category?: string | null;
+  state?: string | null;
+  district?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+  area_type?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  preferred_language: string;
+  completeness: ProfileCompleteness;
+}
+
+export interface BusinessSummary {
+  id?: number | null;
+  business_name?: string | null;
+  sector?: string | null;
+  sub_sector?: string | null;
+  business_stage?: string | null;
+  business_type?: string | null;
+  is_greenfield?: boolean | null;
+  existing_business_vintage_years?: number | null;
+  location_label?: string | null;
+}
+
+export interface FinancialSummary {
+  project_cost: number;
+  own_contribution_amount: number;
+  own_contribution_percentage: number;
+  proposed_loan_amount: number;
+  subsidy_amount: number;
+  subsidy_percentage: number;
+  estimated_monthly_emi: number;
+  interest_rate_applied: number;
+  tenure_months_applied: number;
+  annual_income?: number | null;
+}
+
+export interface FeasibilitySummary {
+  status: FeasibilityOutcome;
+  status_label: string;
+  summary: string;
+  district?: string | null;
+  state?: string | null;
+  total_signals: number;
+  positive_signals_count: number;
+  caution_signals_count: number;
+  high_risk_signals_count: number;
+  nearby_clusters_count: number;
+  top_signals: Array<Record<string, any>>;
+  has_sufficient_data: boolean;
+}
+
+export interface RecommendedSchemeSummary {
+  rank: number;
+  scheme_id: number;
+  scheme_code: string;
+  scheme_name: string;
+  nodal_ministry: string;
+  match_category: MatchCategory;
+  match_score: number;
+  eligibility_status: EligibilityStatus;
+  key_benefit?: string | null;
+  primary_reason?: string | null;
+  tags: string[];
+  subsidy_display?: string | null;
+  max_loan_display?: string | null;
+}
+
+export interface ApplicationSummary {
+  id: number;
+  scheme_id: number;
+  scheme_code: string;
+  scheme_name: string;
+  application_reference_number?: string | null;
+  current_status: string;
+  status_display: string;
+  application_date?: string | null;
+  last_updated_at: string;
+  partner_name?: string | null;
+  partner_type?: string | null;
+  next_recommended_action?: string | null;
+  is_user_recorded: boolean;
+}
+
+export interface JourneyStage {
+  stage_id: string;
+  title: string;
+  description: string;
+  is_completed: boolean;
+  is_current: boolean;
+  target_url: string;
+  completed_at_label?: string | null;
+}
+
+export interface ProgressJourney {
+  current_stage_id: string;
+  current_stage_title: string;
+  completion_percentage: number;
+  stages: JourneyStage[];
+}
+
+export interface NextBestAction {
+  action_id: string;
+  priority: number;
+  title: string;
+  description: string;
+  badge_label: string;
+  badge_type: 'emerald' | 'blue' | 'amber' | 'purple' | string;
+  cta_label: string;
+  target_url: string;
+  action_category: 'profile' | 'feasibility' | 'schemes' | 'access' | 'application' | string;
+}
+
+export interface DashboardResponse {
+  has_profile: boolean;
+  profile?: ProfileSummary | null;
+  business?: BusinessSummary | null;
+  financial?: FinancialSummary | null;
+  feasibility?: FeasibilitySummary | null;
+  recommended_schemes: RecommendedSchemeSummary[];
+  active_applications: ApplicationSummary[];
+  progress_journey: ProgressJourney;
+  next_actions: NextBestAction[];
+  system_status: Record<string, any>;
+}
+
+
 

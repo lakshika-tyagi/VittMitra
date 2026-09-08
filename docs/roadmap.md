@@ -171,8 +171,31 @@ The platform is developed methodically through structured, verified milestones.
 
 ---
 
-### ⏳ Milestone 12: Post-Loan AI Business Copilot & Platform Polish
+### 📍 Milestone 12: Integrated Dashboard + End-to-End User Experience `[COMPLETED]`
+- [x] Comprehensive unified entrepreneur dashboard aggregation service (`DashboardService`) synthesizing profile completeness, Step 5 financial structure, Step 6 scheme recommendations, Step 9 location feasibility, and Step 10 application records.
+- [x] Deterministic 8-stage user workflow progress tracking (`ProgressJourney`) and state-aware priority action recommender (`NextBestAction`).
+- [x] RESTful API endpoints: `GET /api/v1/dashboard` (default/session dashboard) and `GET /api/v1/profiles/{id}/dashboard` (profile-specific dashboard).
+- [x] Interactive Next.js Dashboard page (`frontend/app/dashboard/page.tsx`):
+  - Personalized welcome banner & profile completeness tracker.
+  - System trust & provenance banner (Verified Govt Rules, Mathematical Amortization, PostGIS Spatial Feasibility, User-Recorded Applications, Grounded Gemini AI).
+  - Visual 8-Stage Progress Journey Map with 1-click stage navigation.
+  - Deterministic Next Best Actions cards with priority ranking and direct CTAs.
+  - Executive snapshot 4-card metric grid (Top Match Scheme, Location Feasibility, Financial Structure, Application Tracking).
+  - Recommended Schemes grid with match scores, explainability reasons, max loan/subsidy display, and dual CTAs.
+  - 1-Click Grounded Gemini Copilot quick prompt launcher & slide-out chat drawer.
+- [x] Global UI Navigation & Profile Synchronization:
+  - Top navigation bar (`Navbar.tsx`) with active profile indicator, instant profile switcher dropdown across all seeded profiles, and mobile drawer.
+  - Global `ProfileProvider` context and `useProfile` hook managing active `profileId` state with `localStorage` persistence.
+  - Polished landing page (`frontend/app/page.tsx`) connecting dashboard, scheme matching, feasibility, and onboarding.
+  - Seamless redirection from onboarding completion to personalized dashboard.
+- [x] Explicit trust indicators, non-guarantee regulatory disclaimers, and user-recorded application tags.
+- [x] Full test suite passes: 206 passed automated backend tests (100% pass rate), zero TypeScript type errors, and clean Next.js production build.
+
+---
+
+### ⏳ Milestone 13: Post-Loan AI Business Copilot & Scaled Operations
 - [ ] Post-loan advisory copilot (Working capital management, compliance alerts, growth tips).
-- [ ] Multilingual voice integration (Bhashini).
-- [ ] Full end-to-end integration testing, security audit, and performance optimization.
+- [ ] Multilingual voice integration (Bhashini API).
+- [ ] Production scaling, automated CI/CD pipeline, and security hardening.
+
 

@@ -690,11 +690,132 @@ Generates a plain-language grounded overview of scheme guidelines, benefits, and
 
 ---
 
+### Integrated Dashboard & Progress Aggregation `[STEP 12]`
+
+#### `GET /api/v1/dashboard`
+Aggregates personalized intelligence for the active session / default entrepreneur profile. Returns profile completeness, Step 5 financial summary, Step 9 location feasibility, Step 6 top recommended schemes, Step 10 active applications, deterministic 8-stage progress journey, and prioritized next best actions.
+
+**Response Example (200 OK)**:
+```json
+{
+  "has_profile": true,
+  "profile": {
+    "id": 1,
+    "full_name": "Ramesh Kumar",
+    "age": 32,
+    "gender": "male",
+    "category": "OBC",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "city": "Pune",
+    "pincode": "411001",
+    "area_type": "rural",
+    "preferred_language": "en",
+    "completeness": {
+      "completion_percentage": 100.0,
+      "is_complete": true,
+      "missing_fields": []
+    }
+  },
+  "business": {
+    "id": 1,
+    "business_name": "Kumar Agro Processing",
+    "sector": "manufacturing",
+    "sub_sector": "food_processing",
+    "business_stage": "new_enterprise",
+    "business_type": "proprietorship",
+    "is_greenfield": true,
+    "location_label": "Pune, Maharashtra"
+  },
+  "financial": {
+    "project_cost": 1500000.0,
+    "own_contribution_amount": 250000.0,
+    "own_contribution_percentage": 16.67,
+    "proposed_loan_amount": 1250000.0,
+    "subsidy_amount": 525000.0,
+    "subsidy_percentage": 35.0,
+    "estimated_monthly_emi": 26265.82,
+    "interest_rate_applied": 9.5,
+    "tenure_months_applied": 60,
+    "annual_income": 600000.0
+  },
+  "feasibility": {
+    "status": "FAVOURABLE",
+    "status_label": "Favourable Business & Location Feasibility",
+    "summary": "Viable MSME ecosystem match in Pune, Maharashtra with active clusters.",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "total_signals": 6,
+    "positive_signals_count": 4,
+    "caution_signals_count": 0,
+    "high_risk_signals_count": 0,
+    "nearby_clusters_count": 2,
+    "has_sufficient_data": true
+  },
+  "recommended_schemes": [
+    {
+      "rank": 1,
+      "scheme_id": 1,
+      "scheme_code": "PMEGP",
+      "scheme_name": "Prime Minister's Employment Generation Programme",
+      "nodal_ministry": "Ministry of Micro, Small and Medium Enterprises",
+      "match_category": "ELIGIBLE",
+      "match_score": 94.0,
+      "eligibility_status": "MATCHED",
+      "key_benefit": "Up to 35% margin money subsidy (Rural Special Category)",
+      "primary_reason": "All 4 mandatory eligibility criteria matched; healthy equity contribution.",
+      "tags": ["Subsidy", "Manufacturing", "Rural"],
+      "subsidy_display": "35% (up to ₹50 Lakh)",
+      "max_loan_display": "₹50 Lakh"
+    }
+  ],
+  "active_applications": [],
+  "progress_journey": {
+    "current_stage_id": "stage_5_matching",
+    "current_stage_title": "Scheme Matching & Ranking",
+    "completion_percentage": 75.0,
+    "stages": [
+      {
+        "stage_id": "stage_1_onboarding",
+        "title": "Profile Onboarding",
+        "description": "Demographic and social background",
+        "is_completed": true,
+        "is_current": false,
+        "target_url": "/onboarding"
+      }
+    ]
+  },
+  "next_actions": [
+    {
+      "action_id": "apply_top_scheme",
+      "priority": 4,
+      "title": "Apply for Top-Ranked Scheme: PMEGP",
+      "description": "You are eligible with a 94/100 match score.",
+      "badge_label": "High Match (94%)",
+      "badge_type": "emerald",
+      "cta_label": "Apply via Partner",
+      "target_url": "/schemes/1/access",
+      "action_category": "access"
+    }
+  ],
+  "system_status": {
+    "engine_status": "operational",
+    "deterministic_mode": true
+  }
+}
+```
+
+#### `GET /api/v1/profiles/{profile_id}/dashboard`
+Aggregates dashboard data for the specific `profile_id`.
+
+---
+
 ## 3. Planned Endpoints (Future Milestones)
 
 | Domain | Method | Endpoint | Milestone |
 | :--- | :--- | :--- | :--- |
-| **Post-Loan Copilot** | `POST` | `/api/v1/copilot/monitor` | Step 12 (Post-Loan Business Copilot) |
+| **Post-Loan Copilot** | `POST` | `/api/v1/copilot/monitor` | Step 13 (Post-Loan Business Copilot) |
+
 
 
 
