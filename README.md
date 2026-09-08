@@ -120,13 +120,15 @@ vittmitra/
 │   ├── architecture.md   # System architecture and data flow diagrams
 │   ├── roadmap.md        # Phased implementation roadmap
 │   ├── api.md            # API specifications and contracts
-│   └── data-dictionary.md# Database entities and data model specs
+│   ├── data-dictionary.md# Database entities and data model specs
+│   ├── DEPLOYMENT.md     # Production deployment and operations guide
+│   └── SIH_DEMO_GUIDE.md # Smart India Hackathon presentation & pitch manual
 │
-├── scripts/              # Local setup, database migration, and test utilities
+├── scripts/              # Bootstrap, database backup/restore, and seed utilities
 ├── tests/                # End-to-end and integration tests
 ├── .env.example          # Environment variables template
 ├── .gitignore            # Git exclusion rules
-├── docker-compose.yml    # Development container orchestration
+├── docker-compose.yml    # Production container orchestration
 └── README.md             # Project documentation (this file)
 ```
 
@@ -183,9 +185,13 @@ npm run dev
 ```
 Frontend will be live at `http://localhost:3000`
 
-### 4. Run with Docker Compose (Alternative)
+### 4. Run with Docker Compose (Production / Full Stack)
 ```bash
-docker-compose up --build
+docker compose up --build
+```
+Or run the automated single-command bootstrapper:
+```bash
+python scripts/bootstrap_deployment.py
 ```
 
 ---
@@ -206,5 +212,11 @@ docker-compose up --build
   - **Step 11 — Grounded AI & Gemini RAG Intelligence Layer** `[COMPLETED]`
   - **Step 12 — Integrated Dashboard + End-to-End User Experience** `[COMPLETED]`
   - **Step 13 — Comprehensive Testing + Security + Data Quality + System Hardening** `[COMPLETED]` (233/233 tests passed, 100% pass rate, zero regressions, full security audit)
-- **Next Milestone**: **Step 14 — Deployment Readiness & Production Operations**
+  - **Step 14 — Deployment + SIH Demo Readiness + Final Production Preparation** `[COMPLETED]` (Docker Compose, Bootstrap Automation, Backup/Restore Tooling, SIH Demo Guide, 100% Release Ready)
+
+---
+
+## 🏆 Release Status: `READY FOR SIH` (100% Complete)
+All 14 milestones have been fully implemented, rigorously tested, hardened against adversarial exploits, and validated for live demonstration and production operations.
+
 

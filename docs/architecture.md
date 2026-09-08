@@ -639,6 +639,85 @@ Evaluates entrepreneur status deterministically to prioritize actions (Prioritie
 - **Environment Isolation**: Connection secrets managed strictly through `.env` with zero committed credentials.
 - **Sanitized API Responses**: Clear separation between public API responses and internal database columns.
 
+---
+
+## 15. Production Deployment & Container Topology `[STEP 14]`
+
+VittMitra is designed for seamless, reproducible containerized deployment via Docker Compose or Kubernetes, with complete healthcheck monitoring and automated initialization.
+
+```mermaid
+flowchart TD
+    subgraph Host["Production Host / Cloud VM (Docker Engine)"]
+        subgraph ReverseProxy["Edge / Reverse Proxy Layer (Nginx / Caddy)"]
+            SSL["TLS / SSL Termination (Ports 80 / 443)"]
+        end
+
+        subgraph DockerNetwork["Internal Bridge Network: vittmitra_network"]
+            subgraph FrontendSvc["Frontend Container (Next.js 14 App Router)"]
+                NextNode["Node.js 18+ Alpine"]
+                Port3000["Port 3000 (Internal)"]
+            end
+
+            subgraph BackendSvc["Backend Container (FastAPI + Uvicorn)"]
+                FastAPIApp["Python 3.11+ / Uvicorn (4 Workers)"]
+                HealthProbe["Health Probes: /health, /health/db, /health/postgis"]
+                Port8000["Port 8000 (Internal)"]
+            end
+
+            subgraph DatabaseSvc["Database Container (PostgreSQL 15 + PostGIS 3.3)"]
+                PGServer["Postgres 15 Engine + PostGIS Extensions"]
+                VolData[("Named Volume: postgres_data")]
+                Port5432["Port 5432 (Internal)"]
+            end
+        end
+
+        subgraph ManagementScripts["Automated Operations & Tooling"]
+            Bootstrap["scripts/bootstrap_deployment.py"]
+            BackupTool["scripts/backup_db.py"]
+            RestoreTool["scripts/restore_db.py"]
+        end
+    end
+
+    ClientDevice(("User / Entrepreneur Browser")) -->|HTTPS :443| SSL
+    SSL -->|HTTP :3000| FrontendSvc
+    SSL -->|HTTP :8000 /api/| BackendSvc
+
+    FrontendSvc -->|REST / JSON| BackendSvc
+    BackendSvc -->|Async SQLAlchemy / PostGIS| DatabaseSvc
+    DatabaseSvc --- VolData
+
+    Bootstrap -.->|Runs Migrations & Seeds| DatabaseSvc
+    BackupTool -.->|Dumps Relational & Spatial Data| DatabaseSvc
+    RestoreTool -.->|Restores Data Safely| DatabaseSvc
+```
+
+### A. Container Roles & Configurations
+1. **`database` (PostgreSQL 15 + PostGIS 3.3-alpine)**:
+   - Persistent named volume `postgres_data` mapping to `/var/lib/postgresql/data`.
+   - Native `pg_isready` healthcheck running every 5 seconds.
+2. **`backend` (FastAPI + Python 3.11/3.13)**:
+   - Multi-worker Uvicorn ASGI server with Gunicorn process manager.
+   - Comprehensive `/health`, `/health/db`, and `/health/postgis` liveness probes.
+   - Depends strictly on healthy `database` container before bootstrapping.
+3. **`frontend` (Next.js 14.2 App Router)**:
+   - Standalone Next.js production build served on port 3000.
+   - Reverse proxy client routing through internal bridge network.
+
+### B. Single-Command Deployment Bootstrap
+The platform features an idempotent bootstrapping script (`scripts/bootstrap_deployment.py`):
+```bash
+python scripts/bootstrap_deployment.py
+```
+This executes the 6-stage production bring-up sequence:
+1. **Environment & Dependency Validation** (`.env` file, database URL, Gemini key).
+2. **Alembic Schema Migrations** (`alembic upgrade head` across all 7 revisions).
+3. **Master Scheme Knowledge Seeding** (5 central government schemes).
+4. **Verified Channel Partner Seeding** (7 implementing agencies with PostGIS coordinates).
+5. **MSME Cluster & Ecosystem Seeding** (8 registered industrial clusters).
+6. **RAG Knowledge Chunking & Vector Indexing** (25 semantic scheme chunks).
+7. **End-to-End System Health Verification** (Core, Database, PostGIS, AI status).
+
+
 
 
 
