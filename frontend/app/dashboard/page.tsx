@@ -134,6 +134,46 @@ export default function DashboardPage() {
     );
   }
 
+  if (error && !dashboard) {
+    return (
+      <div
+        style={{
+          maxWidth: '560px',
+          margin: '4rem auto',
+          padding: '2.5rem 2rem',
+          textAlign: 'center',
+          background: 'rgba(239, 68, 68, 0.08)',
+          border: '1px solid rgba(239, 68, 68, 0.25)',
+          borderRadius: '16px',
+        }}
+      >
+        <AlertTriangle size={42} color="#f87171" style={{ margin: '0 auto 1rem auto' }} />
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f8fafc', marginBottom: '0.5rem' }}>
+          Unable to Load Dashboard Intelligence
+        </h2>
+        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+          {error}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => loadDashboardData(activeProfileId)}
+            className="btn-primary"
+            style={{ padding: '0.65rem 1.25rem', fontSize: '0.85rem' }}
+          >
+            <RefreshCw size={15} /> Try Again
+          </button>
+          <Link
+            href="/onboarding"
+            className="btn-secondary"
+            style={{ padding: '0.65rem 1.25rem', fontSize: '0.85rem' }}
+          >
+            Create / Edit Profile
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const profile = dashboard?.profile;
   const business = dashboard?.business;
   const financial = dashboard?.financial;

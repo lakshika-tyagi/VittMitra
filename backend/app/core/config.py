@@ -5,6 +5,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator
 from typing import List, Union
 
+from pathlib import Path
+_ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+_DEFAULT_SQLITE_PATH = (_ROOT_DIR / "vittmitra.db").as_posix()
+
 class Settings(BaseSettings):
     APP_NAME: str = "VittMitra API"
     ENVIRONMENT: str = "development"
@@ -26,8 +30,15 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return []
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def resolve_sqlite_path(cls, v: str) -> str:
+        if v and "sqlite" in v and "./" in v:
+            return f"sqlite+aiosqlite:///{_DEFAULT_SQLITE_PATH}"
+        return v or f"sqlite+aiosqlite:///{_DEFAULT_SQLITE_PATH}"
     
-    DATABASE_URL: str = "sqlite+aiosqlite:///./vittmitra.db"
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{_DEFAULT_SQLITE_PATH}"
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.5-flash"
     RAG_TOP_K: int = 5

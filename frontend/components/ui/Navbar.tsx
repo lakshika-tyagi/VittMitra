@@ -113,14 +113,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav Links */}
-        <div
-          style={{
-            display: 'none',
-            alignItems: 'center',
-            gap: '0.35rem',
-          }}
-          className="desktop-nav"
-        >
+        <div className="desktop-nav">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href || (link.href !== '/dashboard' && pathname?.startsWith(link.href));
@@ -378,26 +371,6 @@ export function Navbar() {
           })}
         </div>
       )}
-
-      {/* Inline styles for media queries */}
-      <style jsx>{`
-        @media (min-width: 860px) {
-          .desktop-nav {
-            display: flex !important;
-          }
-          .mobile-menu-btn {
-            display: none !important;
-          }
-          .mobile-nav-panel {
-            display: none !important;
-          }
-        }
-        @media (max-width: 859px) {
-          .mobile-menu-btn {
-            display: flex !important;
-          }
-        }
-      `}</style>
     </nav>
   );
 }

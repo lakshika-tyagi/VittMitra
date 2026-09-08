@@ -5,12 +5,19 @@ Loads controlled, verified channel partner records from data/partners/partners_s
 into PostgreSQL and associates them with corresponding schemes.
 """
 import os
+import sys
 import json
 import asyncio
 from pathlib import Path
+
+# Add backend directory to sys.path
+root_dir = Path(__file__).resolve().parent.parent
+backend_dir = root_dir / "backend"
+sys.path.insert(0, str(backend_dir))
+
 from geoalchemy2.elements import WKTElement
 from sqlalchemy import select
-from app.db.session import AsyncSessionLocal
+from app.db.session import async_session_factory
 from app.models.scheme import Scheme
 from app.models.access import ChannelPartner, SchemeChannelPartner
 
@@ -27,7 +34,7 @@ async def seed_channel_partners():
     with open(seed_file, "r", encoding="utf-8") as f:
         partners_data = json.load(f)
 
-    async with AsyncSessionLocal() as session:
+    async with async_session_factory() as session:
         print(f"[*] Seeding {len(partners_data)} verified channel partners...")
 
         for p_data in partners_data:

@@ -189,3 +189,30 @@ a {
   animation: pulse-glow 2s infinite ease-in-out;
 }
 
+/* Responsive Navigation */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mobile-menu-btn {
+  display: none;
+}
+
+.mobile-nav-panel {
+  display: none;
+}
+
+@media (max-width: 859px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .mobile-nav-panel {
+    display: flex !important;
+  }
+}
+
