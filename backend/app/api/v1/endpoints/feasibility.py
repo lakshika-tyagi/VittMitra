@@ -224,49 +224,75 @@ async def get_location_intelligence_endpoint(
     response_model=List[NearbyClusterResponse],
     status_code=status.HTTP_200_OK,
     summary="Find Nearby Verified MSME Clusters",
-    description="Search for active industrial clusters within radius using PostGIS geographic distance.",
+    description="Search for active industrial clusters within radius using PostGIS geographic distance or district/state query.",
 )
 async def get_nearby_clusters_endpoint(
-    latitude: float = Query(..., ge=-90.0, le=90.0, description="Latitude (WGS84)"),
-    longitude: float = Query(..., ge=-180.0, le=180.0, description="Longitude (WGS84)"),
+    latitude: Optional[float] = Query(None, ge=-90.0, le=90.0, description="Latitude (WGS84)"),
+    longitude: Optional[float] = Query(None, ge=-180.0, le=180.0, description="Longitude (WGS84)"),
     radius_km: float = Query(50.0, ge=1.0, le=500.0, description="Search radius in kilometers"),
+    state: Optional[str] = Query(None, description="Optional state filter"),
+    district: Optional[str] = Query(None, description="Optional district filter"),
     sector: Optional[str] = Query(None, description="Optional sector filter (e.g. 'manufacturing')"),
     db: AsyncSession = Depends(get_db),
 ) -> List[NearbyClusterResponse]:
     query = select(MSMECluster).where(MSMECluster.is_active == True)
     if sector:
         query = query.where(MSMECluster.sector.ilike(sector.strip()))
+    if state:
+        query = query.where(MSMECluster.state.ilike(f"%{state.strip()}%"))
+    if district:
+        query = query.where(MSMECluster.district.ilike(f"%{district.strip()}%"))
 
     res = await db.execute(query)
     clusters = list(res.scalars().all())
+
+    # If coordinates are provided or can be resolved from district
+    ref_lat = latitude
+    ref_lng = longitude
+
+    if (ref_lat is None or ref_lng is None) and state and district:
+        eco_res = await db.execute(
+            select(DistrictMSMEEcosystem).where(
+                and_(
+                    DistrictMSMEEcosystem.state.ilike(state.strip()),
+                    DistrictMSMEEcosystem.district.ilike(district.strip()),
+                    DistrictMSMEEcosystem.is_active == True,
+                )
+            )
+        )
+        eco = eco_res.scalars().first()
+        if eco and eco.latitude and eco.longitude:
+            ref_lat = float(eco.latitude)
+            ref_lng = float(eco.longitude)
 
     results: List[NearbyClusterResponse] = []
     for c in clusters:
         c_lat = float(c.latitude)
         c_lng = float(c.longitude)
-        dist = haversine_distance_km(latitude, longitude, c_lat, c_lng)
-        if dist <= radius_km:
-            results.append(
-                NearbyClusterResponse(
-                    cluster_code=c.cluster_code,
-                    cluster_name=c.cluster_name,
-                    state=c.state,
-                    district=c.district,
-                    sector=c.sector,
-                    sub_sector=c.sub_sector,
-                    specialization=c.specialization,
-                    key_products=c.key_products or [],
-                    common_facility_centers=c.common_facility_centers or [],
-                    latitude=c_lat,
-                    longitude=c_lng,
-                    distance_km=dist,
-                    raw_material_access=c.raw_material_access,
-                    market_linkage=c.market_linkage,
-                    data_status=c.data_status,
-                    source_name=c.source_name,
-                    source_url=c.source_url,
-                )
+        dist = haversine_distance_km(ref_lat, ref_lng, c_lat, c_lng) if (ref_lat is not None and ref_lng is not None) else None
+        if dist is not None and dist > radius_km:
+            continue
+        results.append(
+            NearbyClusterResponse(
+                cluster_code=c.cluster_code,
+                cluster_name=c.cluster_name,
+                state=c.state,
+                district=c.district,
+                sector=c.sector,
+                sub_sector=c.sub_sector,
+                specialization=c.specialization,
+                key_products=c.key_products or [],
+                common_facility_centers=c.common_facility_centers or [],
+                latitude=c_lat,
+                longitude=c_lng,
+                distance_km=dist,
+                raw_material_access=c.raw_material_access,
+                market_linkage=c.market_linkage,
+                data_status=c.data_status,
+                source_name=c.source_name,
+                source_url=c.source_url,
             )
+        )
 
-    results.sort(key=lambda x: x.distance_km if x.distance_km is not None else 9999.0)
+    results.sort(key=lambda x: x.distance_km if x.distance_km is not None else 0.0)
     return results
